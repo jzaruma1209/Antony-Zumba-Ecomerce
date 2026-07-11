@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
 import { Search, ShoppingCart, Heart, User, LogOut, Settings, Package, ChevronDown } from "lucide-react"
@@ -21,15 +21,34 @@ import { useCartStore } from "@/stores/cart-store"
 
 export function Header() {
   const [mounted, setMounted] = useState(false)
+  const [isHidden, setIsHidden] = useState(false)
+  const lastScrollY = useRef(0)
   const itemCount = useCartStore((state) => state.getItemCount())
   const { data: session, status } = useSession()
 
-  useEffect(() => {
-    setMounted(true)
+  const handleScroll = useCallback(() => {
+    const currentScrollY = window.scrollY
+    // Only hide after scrolling down past 100px
+    if (currentScrollY > 100 && currentScrollY > lastScrollY.current) {
+      setIsHidden(true)
+    } else {
+      setIsHidden(false)
+    }
+    lastScrollY.current = currentScrollY
   }, [])
 
+  useEffect(() => {
+    setMounted(true)
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [handleScroll])
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header
+      className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-transform duration-300 ease-in-out ${
+        isHidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
