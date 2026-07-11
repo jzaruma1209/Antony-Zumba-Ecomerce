@@ -48,28 +48,28 @@ export default function AdminSettingsPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="storeName">Nombre de la tienda</Label>
-                  <Input id="storeName" defaultValue="BasicTechShop" />
+                  <Input id="storeName" defaultValue="TumbadosZumba" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="storeEmail">Email de contacto</Label>
-                  <Input id="storeEmail" type="email" defaultValue="info@basictechshop.com" />
+                  <Input id="storeEmail" type="email" defaultValue="info@tumbadoszumba.com" />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="storePhone">Telefono</Label>
-                  <Input id="storePhone" defaultValue="+51 999 888 777" />
+                  <Input id="storePhone" defaultValue="0997119881" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="storeAddress">Direccion</Label>
-                  <Input id="storeAddress" defaultValue="Av. Tecnologia 123, Lima" />
+                  <Input id="storeAddress" defaultValue="Av. 25 de agosto y galapagos" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="storeDescription">Descripcion</Label>
                 <Input
                   id="storeDescription"
-                  defaultValue="Tu tienda de tecnologia de confianza"
+                  defaultValue="Tu distribuidor de tumbados de gypsum de confianza"
                 />
               </div>
             </CardContent>

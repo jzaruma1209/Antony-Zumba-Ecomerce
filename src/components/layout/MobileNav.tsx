@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Menu, Monitor, Keyboard, Mouse, Headphones, HardDrive, Cpu, User, Heart, Package } from "lucide-react"
+import { Menu, User, Heart, Package, Building2, PanelTop, Layers, Grid3x3, Frame, LayoutDashboard, Lightbulb, RectangleHorizontal, Wrench } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -14,13 +14,15 @@ import {
 import { Separator } from "@/components/ui/separator"
 
 const categories = [
-  { name: "Computadoras", href: "/products?category=computadoras", icon: Monitor },
-  { name: "Monitores", href: "/products?category=monitores", icon: Monitor },
-  { name: "Teclados", href: "/products?category=teclados", icon: Keyboard },
-  { name: "Mouse", href: "/products?category=mouse", icon: Mouse },
-  { name: "Audifonos", href: "/products?category=audifonos", icon: Headphones },
-  { name: "Almacenamiento", href: "/products?category=almacenamiento", icon: HardDrive },
-  { name: "Componentes", href: "/products?category=componentes", icon: Cpu },
+  { name: "Gypsum", href: "/products?category=gypsum", icon: Building2 },
+  { name: "WPC", href: "/products?category=wpc", icon: PanelTop },
+  { name: "Mármol PVC", href: "/products?category=marmol-pvc", icon: Layers },
+  { name: "Cielo Raso", href: "/products?category=cielo-raso", icon: Grid3x3 },
+  { name: "Molduras", href: "/products?category=molduras", icon: Frame },
+  { name: "Piso Flotante", href: "/products?category=piso-flotante", icon: LayoutDashboard },
+  { name: "Iluminación LED", href: "/products?category=iluminacion-led", icon: Lightbulb },
+  { name: "Duelas de PVC", href: "/products?category=duelas-pvc", icon: RectangleHorizontal },
+  { name: "Insumos", href: "/products?category=insumos", icon: Wrench },
 ]
 
 export function MobileNav() {

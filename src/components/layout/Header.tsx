@@ -35,10 +35,10 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">BT</span>
+              <span className="text-sm font-bold text-primary-foreground">TZ</span>
             </div>
             <span className="hidden text-xl font-bold sm:inline-block">
-              BasicTechShop
+              TumbadosZumba
             </span>
           </Link>
 

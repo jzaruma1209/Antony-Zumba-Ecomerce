@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "BasicTechShop - Tu Tienda de Tecnologia",
-  description: "Los mejores productos de computacion: PCs, monitores, teclados, mouse y mas. Envio a todo Peru.",
+  title: "TumbadosZumba - Tu tienda de tumbados de gypsum y acabados",
+  description: "Los mejores acabados en gypsum, cielo raso, WPC, duelas, molduras y más. Diseños modernos y elegantes para tu hogar.",
 }
 
 export default function RootLayout({

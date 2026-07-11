@@ -4,12 +4,12 @@ import { Separator } from "@/components/ui/separator"
 
 const footerLinks = {
   productos: [
-    { name: "Computadoras", href: "/products?category=computadoras" },
-    { name: "Monitores", href: "/products?category=monitores" },
-    { name: "Teclados", href: "/products?category=teclados" },
-    { name: "Mouse", href: "/products?category=mouse" },
-    { name: "Audifonos", href: "/products?category=audifonos" },
-    { name: "Componentes", href: "/products?category=componentes" },
+    { name: "Gypsum", href: "/products?category=gypsum" },
+    { name: "WPC", href: "/products?category=wpc" },
+    { name: "Mármol PVC", href: "/products?category=marmol-pvc" },
+    { name: "Cielo Raso", href: "/products?category=cielo-raso" },
+    { name: "Molduras", href: "/products?category=molduras" },
+    { name: "Piso Flotante", href: "/products?category=piso-flotante" },
   ],
   empresa: [
     { name: "Sobre Nosotros", href: "/about" },
@@ -40,13 +40,13 @@ export function Footer() {
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <span className="text-sm font-bold text-primary-foreground">BT</span>
-              </div>
-              <span className="text-xl font-bold">BasicTechShop</span>
-            </Link>
-            <p className="mt-4 text-sm text-muted-foreground">
-              Tu tienda de tecnologia de confianza. Los mejores productos de computacion a los mejores precios.
-            </p>
+              <span className="text-sm font-bold text-primary-foreground">TZ</span>
+            </div>
+            <span className="text-xl font-bold">TumbadosZumba</span>
+          </Link>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Tu tienda de tumbados de gypsum de confianza. Los mejores productos y acabados para tu hogar a los mejores precios.
+          </p>
             <div className="mt-4 flex gap-3">
               <Link href="#" className="text-muted-foreground hover:text-foreground">
                 <Facebook className="h-5 w-5" />
@@ -120,15 +120,15 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               <li className="flex items-start gap-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                <span>Av. Tecnologia 123, Lima, Peru</span>
+                <span>Av. 25 de agosto y galapagos</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 shrink-0" />
-                <span>+51 999 888 777</span>
+                <span>0997119881</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 shrink-0" />
-                <span>info@basictechshop.com</span>
+                <span>info@tumbadoszumba</span>
               </li>
             </ul>
           </div>
@@ -139,7 +139,7 @@ export function Footer() {
         {/* Bottom */}
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} BasicTechShop. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} TumbadosZumba. Todos los derechos reservados.
           </p>
           <div className="flex gap-4">
             {footerLinks.legal.map((link) => (
