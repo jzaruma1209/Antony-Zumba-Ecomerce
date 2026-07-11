@@ -64,8 +64,8 @@ async function main() {
       category: 'gypsum',
       price: 12.9,
       images: [
-        'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=500',
-        'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=500',
+        'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600',
+        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600',
       ],
       description: 'Plancha de gypsum regular de 1/2" (12.7mm) para cielo raso y divisiones interiores. Borde rebajado para juntas reforzadas.',
       specs: {
@@ -85,7 +85,7 @@ async function main() {
       brand: 'Knauf',
       category: 'gypsum',
       price: 16.5,
-      images: ['https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=500'],
+      images: ['https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=600'],
       description: 'Plancha de gypsum con núcleo hidrofugado y forro tratado contra humedad. Ideal para baños, cocinas y sótanos.',
       specs: {
         Dimensiones: '1.22 x 2.44 m',
@@ -106,8 +106,7 @@ async function main() {
       category: 'wpc',
       price: 22.0,
       images: [
-        'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=500',
-        'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500',
+        'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=600',
       ],
       description: 'Panel de WPC (Wood Plastic Composite) para revestimiento de paredes. Sistema de instalación oculta con clips. Resistente a UV y humedad.',
       specs: {
@@ -128,7 +127,7 @@ async function main() {
       brand: 'Deceuninck',
       category: 'wpc',
       price: 14.5,
-      images: ['https://images.unsplash.com/photo-1541888946425-d81bbf5e4032?w=500'],
+      images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600'],
       description: 'Perfil liviano de WPC para cielos rasos exteriores e interiores. Resistente a la intemperie, no se oxida ni se pudre.',
       specs: {
         Largo: '3 m',
@@ -150,8 +149,7 @@ async function main() {
       category: 'marmol-pvc',
       price: 35.0,
       images: [
-        'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500',
-        'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=500',
+        'https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=600',
       ],
       description: 'Lámina decorativa de PVC con impresión de alto relieve efecto mármol. Para revestimiento de paredes, columnas y muebles.',
       specs: {
@@ -171,7 +169,7 @@ async function main() {
       brand: 'Novacero',
       category: 'marmol-pvc',
       price: 28.5,
-      images: ['https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500'],
+      images: ['https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600'],
       description: 'Panel ranurado de PVC con diseño marmolado para revestimiento de paredes. Instalación rápida con adhesivo o perfil H.',
       specs: {
         Dimensiones: '0.60 x 2.44 m',
@@ -192,8 +190,7 @@ async function main() {
       category: 'cielo-raso',
       price: 4.8,
       images: [
-        'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=500',
-        'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=500',
+        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600',
       ],
       description: 'Perfil metálico galvanizado en forma de canal listón para estructura de cielo raso suspendido. Para instalación de gypsum o paneles.',
       specs: {
@@ -213,7 +210,7 @@ async function main() {
       brand: 'Novacero',
       category: 'cielo-raso',
       price: 18.5,
-      images: ['https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=500'],
+      images: ['https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600'],
       description: 'Kit de suspensión regulable para cielo raso suspendido. Incluye alambre galvanizado, anclajes de expansión y conectores rápidos.',
       specs: {
         'Tipo': 'Suspensión regulable',
@@ -235,8 +232,7 @@ async function main() {
       category: 'molduras',
       price: 3.5,
       images: [
-        'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500',
-        'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500',
+        'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600',
       ],
       description: 'Moldura lisa de poliestireno expandido de alta densidad para decoración de cielos rasos y paredes. Liviana y fácil de instalar con adhesivo.',
       specs: {
@@ -258,7 +254,7 @@ async function main() {
       category: 'molduras',
       price: 5.2,
       comparePrice: 6.9,
-      images: ['https://images.unsplash.com/photo-1541888946425-d81bbf5e4032?w=500'],
+      images: ['https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=600'],
       description: 'Moldura decorativa de poliestireno con diseño en relieve clásico. Ideal para cornices y marcos decorativos en interiores.',
       specs: {
         Largo: '2 m',
@@ -280,8 +276,7 @@ async function main() {
       category: 'piso-flotante',
       price: 22.5,
       images: [
-        'https://images.unsplash.com/photo-1565008653722-9a8e4e3e0e9f?w=500',
-        'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=500',
+        'https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600',
       ],
       description: 'Piso laminado de 8mm con sistema click AC4. Lámina decorativa Roble Europeo, resistente a rayones y manchas.',
       specs: {
@@ -302,7 +297,7 @@ async function main() {
       brand: 'Gyplac',
       category: 'piso-flotante',
       price: 27.9,
-      images: ['https://images.unsplash.com/photo-1565008653722-9a8e4e3e0e9f?w=500'],
+      images: ['https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=600'],
       description: 'Piso vinílico SPC (Stone Plastic Composite) 100% impermeable. Núcleo rígido de piedra-cal compuesto, ideal para baños y cocinas.',
       specs: {
         Espesor: '5 mm (capa uso +0.5mm)',
@@ -324,8 +319,7 @@ async function main() {
       category: 'iluminacion-led',
       price: 11.5,
       images: [
-        'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500',
-        'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=500',
+        'https://images.unsplash.com/photo-1550985616-10810253b84d?w=600',
       ],
       description: 'Tira LED flexible para iluminación perimetral en cielos rasos y molduras. Temperatura de color ajustable, auto-adhesiva.',
       specs: {
@@ -346,7 +340,7 @@ async function main() {
       brand: 'Novacero',
       category: 'iluminacion-led',
       price: 8.9,
-      images: ['https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=500'],
+      images: ['https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=600'],
       description: 'Spot LED redondo empotrable para cielo raso de gypsum. Corte de 10cm, luz blanca neutra 4000K. Incluye driver.',
       specs: {
         Potencia: '12W',
@@ -369,8 +363,7 @@ async function main() {
       category: 'duelas-pvc',
       price: 12.8,
       images: [
-        'https://images.unsplash.com/photo-1591488320449-011701bb6704?w=500',
-        'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500',
+        'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=600',
       ],
       description: 'Duela de PVC para revestimiento de paredes. Sistema de instalación oculta, imitación madera natural. Resistente a la humedad.',
       specs: {
@@ -392,7 +385,7 @@ async function main() {
       brand: 'Deceuninck',
       category: 'duelas-pvc',
       price: 14.2,
-      images: ['https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=500'],
+      images: ['https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=600'],
       description: 'Duela de PVC liviana para cielos rasos exteriores e interiores. Resistente a UV, no se deforma con el calor ni la humedad.',
       specs: {
         Largo: '2.80 m',
@@ -414,7 +407,7 @@ async function main() {
       brand: 'Gyplac',
       category: 'insumos',
       price: 8.5,
-      images: ['https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=500'],
+      images: ['https://images.unsplash.com/photo-1534224039826-c7a0dea0e66a?w=600'],
       description: 'Clavos de acero electrosoldado con cabeza de sombrero para fijación de planchas de gypsum a perfiles metálicos.',
       specs: {
         Material: 'Acero electrosoldado',
@@ -434,7 +427,7 @@ async function main() {
       brand: 'Novacero',
       category: 'insumos',
       price: 12.5,
-      images: ['https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=500'],
+      images: ['https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?w=600'],
       description: 'Tornillos autoperforantes de fosfatizado negro para fijación de gypsum a perfiles de acero galvanizado de hasta 1.5mm.',
       specs: {
         Material: 'Acero al carbono fosfatizado',
@@ -454,7 +447,7 @@ async function main() {
       brand: 'Knauf',
       category: 'insumos',
       price: 6.9,
-      images: ['https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=500'],
+      images: ['https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600'],
       description: 'Cinta de papel perforado para refuerzo de juntas entre planchas de gypsum. Fibra de vidrio longitudinal para alta resistencia a la tracción.',
       specs: {
         Material: 'Papel kraft perforado con fibra de vidrio',
@@ -473,7 +466,7 @@ async function main() {
       brand: 'Knauf',
       category: 'insumos',
       price: 14.9,
-      images: ['https://images.unsplash.com/photo-1562322140-8baeececf3df?w=500'],
+      images: ['https://images.unsplash.com/photo-1562322140-8baeececf3df?w=600'],
       description: 'Pasta para juntas de gypsum lista para usar. Secado rápido, mínimo encogimiento. Para el sellado y acabado de uniones entre planchas.',
       specs: {
         'Tipo': 'Pasta lista para usar',
