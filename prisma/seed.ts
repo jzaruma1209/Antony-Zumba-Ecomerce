@@ -340,7 +340,7 @@ async function main() {
       brand: 'Novacero',
       category: 'iluminacion-led',
       price: 8.9,
-      images: ['https://images.unsplash.com/photo-1565814636199-ae8133055c1c?w=600'],
+      images: ['https://images.unsplash.com/photo-1497366216548-37526070297c?w=600'],
       description: 'Spot LED redondo empotrable para cielo raso de gypsum. Corte de 10cm, luz blanca neutra 4000K. Incluye driver.',
       specs: {
         Potencia: '12W',
@@ -407,7 +407,7 @@ async function main() {
       brand: 'Gyplac',
       category: 'insumos',
       price: 8.5,
-      images: ['https://images.unsplash.com/photo-1534224039826-c7a0dea0e66a?w=600'],
+      images: ['https://images.unsplash.com/photo-1586864387789-628af9feed72?w=600'],
       description: 'Clavos de acero electrosoldado con cabeza de sombrero para fijación de planchas de gypsum a perfiles metálicos.',
       specs: {
         Material: 'Acero electrosoldado',
