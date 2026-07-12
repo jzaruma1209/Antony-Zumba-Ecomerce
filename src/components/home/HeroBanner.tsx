@@ -68,11 +68,12 @@ export function HeroBanner() {
             <CarouselItem key={slide.id}>
               <div className={`relative overflow-hidden bg-gradient-to-br ${slide.gradient}`}>
                 {/* Background Image */}
-                <div className="absolute inset-0 opacity-20">
+                <div className="absolute inset-0 opacity-20 pointer-events-none select-none">
                   <Image
                     src={slide.image}
                     alt=""
                     fill
+                    draggable={false}
                     className="object-cover"
                     priority={slide.id === 1}
                   />
@@ -105,12 +106,13 @@ export function HeroBanner() {
 
                     {/* Visual Element */}
                     <div className="relative w-72 h-52 sm:w-96 sm:h-72 lg:w-[500px] lg:h-80">
-                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 blur-3xl rounded-full" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 blur-3xl rounded-full pointer-events-none select-none" />
                       <div className="relative h-full rounded-2xl overflow-hidden shadow-2xl">
                         <Image
                           src={slide.image}
                           alt={slide.title}
                           fill
+                          draggable={false}
                           className="object-cover rounded-2xl"
                         />
                       </div>
