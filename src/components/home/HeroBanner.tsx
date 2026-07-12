@@ -51,7 +51,7 @@ const slides = [
 
 export function HeroBanner() {
   const plugin = React.useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: true })
+    Autoplay({ delay: 4000, stopOnInteraction: true })
   )
 
   return (
