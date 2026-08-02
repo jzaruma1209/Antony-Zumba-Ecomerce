@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 import Link from "next/link"
-import { Monitor, Keyboard, Mouse, Headphones, HardDrive, Cpu, Gamepad2, Package } from "lucide-react"
+import { Monitor, Keyboard, Mouse, Headphones, HardDrive, Cpu, Gamepad2, Package, ChevronRight } from "lucide-react"
 import { useProductsStore } from "@/stores/products-store"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -25,12 +25,26 @@ export function CategoryGrid() {
   }, [fetchCategories])
 
   return (
-    <section className="pt-6 pb-2 sm:pt-8 sm:pb-4">
+    <section className="pt-3 pb-1 sm:pt-4 sm:pb-2">
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
+        {/* Title row */}
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Búsquedas recomendadas para ti
+          </h2>
+          <Link
+            href="/products"
+            className="text-xs font-medium text-primary hover:underline flex items-center gap-0.5"
+          >
+            Más sugerencias <ChevronRight className="size-3" />
+          </Link>
+        </div>
+
+        {/* Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
           {categories.length === 0
-            ? Array.from({ length: 7 }).map((_, i) => (
-                <Skeleton key={i} className="h-10 w-32 rounded-full" />
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-8 w-28 shrink-0 rounded-full" />
               ))
             : categories.map((category) => {
                 const Icon = iconMap[category.icon] || Package
@@ -38,11 +52,10 @@ export function CategoryGrid() {
                   <Link
                     key={category.id}
                     href={`/products?category=${category.slug}`}
-                    className="group inline-flex items-center gap-2 rounded-full border bg-card px-4 py-2 text-sm transition-all hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                    className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition-all hover:border-primary hover:text-primary"
                   >
-                    <Icon className="h-4 w-4" />
-                    <span className="font-medium">{category.name}</span>
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary-foreground/20 group-hover:text-primary-foreground">
+                    <span>{category.name}</span>
+                    <span className="text-slate-400 dark:text-slate-500 text-[10px] group-hover:text-primary/70">
                       {category.productCount}
                     </span>
                   </Link>

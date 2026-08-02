@@ -1,6 +1,8 @@
 "use client"
 
 import { useEffect } from "react"
+import Link from "next/link"
+import { ChevronRight } from "lucide-react"
 import { ProductCard } from "@/components/products/ProductCard"
 import { useProductsStore } from "@/stores/products-store"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -13,15 +15,28 @@ export function FeaturedProducts() {
   }, [fetchFeaturedProducts])
 
   return (
-    <section className="pt-4 pb-12 sm:pt-6 sm:pb-16">
+    <section className="py-3 sm:py-4">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Section Header */}
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+            Productos Destacados
+          </h2>
+          <Link
+            href="/products"
+            className="text-xs font-medium text-primary hover:underline flex items-center gap-0.5"
+          >
+            Ver todo <ChevronRight className="size-3" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3">
           {featuredProducts.length === 0
             ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-3">
+                <div key={i} className="space-y-2">
                   <Skeleton className="aspect-square rounded-lg" />
-                  <Skeleton className="h-4 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-3 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
                 </div>
               ))
             : featuredProducts.slice(0, 8).map((product) => (

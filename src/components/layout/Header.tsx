@@ -206,7 +206,112 @@ export function Header() {
             />
           </div>
         </div>
+
+        {/* Sub-header Navigation Bar (Estilo Lowe's) */}
+        <div className="hidden border-t border-border/40 py-2 md:flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300 overflow-x-auto gap-4 scrollbar-none">
+          <div className="flex items-center gap-4 shrink-0">
+            {/* Ver Todo Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="inline-flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white hover:text-primary transition-colors py-0.5 px-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
+                  <Package className="h-4 w-4 text-primary" />
+
+                  <span>Ver todo</span>
+                  <ChevronDown className="h-3 w-3 text-slate-500" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel className="text-xs font-bold text-slate-500">
+                  Departamentos
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=gypsum" className="cursor-pointer font-medium">
+                    Gypsum & Planchas
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=wpc" className="cursor-pointer font-medium">
+                    Paneles WPC Decorativos
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=marmol-pvc" className="cursor-pointer font-medium">
+                    Láminas Mármol PVC
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=duelas-pvc" className="cursor-pointer font-medium">
+                    Duelas de PVC
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=cielo-raso" className="cursor-pointer font-medium">
+                    Cielos Rasos
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=iluminacion-led" className="cursor-pointer font-medium">
+                    Iluminación LED
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=molduras" className="cursor-pointer font-medium">
+                    Molduras & Acabados
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/products?category=insumos" className="cursor-pointer font-medium">
+                    Insumos & Perfilería
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Links con iconos */}
+            <Link href="/products" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+              <Settings className="h-3.5 w-3.5 text-slate-500" />
+              <span>Instalaciones</span>
+            </Link>
+
+            <Link href="/products" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+              <Heart className="h-3.5 w-3.5 text-slate-500" />
+              <span>Ofertas</span>
+            </Link>
+
+            <Link href="/products" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+              <User className="h-3.5 w-3.5 text-slate-500" />
+              <span>Diseño e ideas</span>
+            </Link>
+
+            <span className="inline-flex items-center gap-1">
+              <span className="font-semibold text-slate-900 dark:text-white">TumbadosCare+</span>
+              <span className="rounded-full bg-red-600 px-1.5 py-0.2 text-[10px] font-bold text-white uppercase">
+                Nuevo
+              </span>
+            </span>
+
+            <div className="h-3.5 w-px bg-border/60 mx-1" />
+          </div>
+
+          {/* Categorías secundarias */}
+          <div className="flex items-center gap-4 shrink-0 text-slate-600 dark:text-slate-400">
+            <Link href="/products?category=insumos" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+              Accesorios
+            </Link>
+            <Link href="/products?category=duelas-pvc" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+              Baño
+            </Link>
+            <Link href="/products?category=gypsum" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+              Materiales de construcción
+            </Link>
+            <Link href="/products?category=molduras" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+              Puertas y ventanas
+            </Link>
+          </div>
+        </div>
       </div>
     </header>
   )
 }
+

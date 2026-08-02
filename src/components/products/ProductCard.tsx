@@ -36,8 +36,8 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <Card className="group overflow-hidden transition-all hover:shadow-lg">
-      <div className="relative aspect-square overflow-hidden bg-muted">
+    <Card className="group overflow-hidden transition-all hover:shadow-md border-slate-200 dark:border-slate-800">
+      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         {/* Badges */}
         <div className="absolute left-2 top-2 z-10 flex flex-col gap-1">
           {product.isNew && (
@@ -95,37 +95,37 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      <CardContent className="p-3 sm:p-4">
+      <CardContent className="p-2.5 sm:p-3">
         {/* Brand */}
-        <p className="text-xs text-muted-foreground">{product.brand}</p>
+        <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{product.brand}</p>
 
         {/* Name */}
         <Link href={`/products/${product.slug}`}>
-          <h3 className="mt-1 font-medium leading-tight line-clamp-2 hover:text-primary transition-colors">
+          <h3 className="mt-0.5 text-sm font-medium leading-snug line-clamp-2 hover:text-primary transition-colors">
             {product.name}
           </h3>
         </Link>
 
         {/* Rating */}
-        <div className="mt-2 flex items-center gap-1">
-          <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-          <span className="text-sm font-medium">{product.rating}</span>
+        <div className="mt-1 flex items-center gap-0.5">
+          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+          <span className="text-xs font-medium text-muted-foreground">{product.rating}</span>
         </div>
 
         {/* Price */}
-        <div className="mt-2 flex items-baseline gap-2">
-          <span className="text-lg font-bold text-primary">
+        <div className="mt-1 flex items-baseline gap-1.5">
+          <span className="text-base font-bold text-foreground">
             ${product.price.toFixed(2)}
           </span>
           {hasDiscount && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span className="text-xs text-muted-foreground line-through">
               ${product.originalPrice!.toFixed(2)}
             </span>
           )}
         </div>
 
         {/* Stock */}
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-0.5 text-[11px] text-muted-foreground">
           {product.stock > 0 ? (
             <span className="text-green-600 dark:text-green-400">
               {product.stock} disponibles
