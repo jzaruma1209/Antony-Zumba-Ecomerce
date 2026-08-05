@@ -1,7 +1,8 @@
 "use client"
 
-import { Truck } from "lucide-react"
+import { Truck, MessageCircle } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 import { CartItem } from "@/types"
 import { StripeCheckoutButton } from "./StripeCheckoutButton"
 
@@ -16,6 +17,23 @@ export function CartSummary({ items }: CartSummaryProps) {
   )
   const shipping = subtotal >= 200 ? 0 : 15
   const total = subtotal + shipping
+
+  const handleWhatsAppOrder = () => {
+    let msg = `👋 Hola, me gustaría realizar el siguiente pedido:\n\n🛒 *Resumen del Pedido:*\n`;
+    
+    items.forEach(item => {
+      msg += `- ${item.quantity}x ${item.product.name} ($${(item.product.price * item.quantity).toFixed(2)})\n`;
+    });
+
+    msg += `\n💵 *Subtotal:* $${subtotal.toFixed(2)}`;
+    msg += `\n🚚 *Envío:* ${shipping === 0 ? "Gratis" : "$" + shipping.toFixed(2)}`;
+    msg += `\n💰 *Total:* $${total.toFixed(2)}`;
+    msg += `\n\nPor favor, indíquenme los pasos a seguir para el pago y entrega.`;
+
+    const WHATSAPP_NUM = "593990099265";
+    const uri = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`;
+    window.open(uri, "_blank");
+  };
 
   return (
     <div className="rounded-lg border bg-card p-6">
@@ -48,13 +66,25 @@ export function CartSummary({ items }: CartSummaryProps) {
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6 flex flex-col gap-3">
+        <Button 
+          className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold" 
+          onClick={handleWhatsAppOrder}
+        >
+          <MessageCircle className="w-4 h-4 mr-2" />
+          Hacer compra por WhatsApp
+        </Button>
+        
+        {/* Stripe oculto temporalmente por petición del cliente 
         <StripeCheckoutButton />
+        */}
       </div>
 
+      {/* 
       <p className="mt-4 text-center text-xs text-muted-foreground">
         Pago seguro con Stripe. Impuestos incluidos.
       </p>
+      */}
     </div>
   )
 }

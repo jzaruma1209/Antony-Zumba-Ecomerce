@@ -269,7 +269,7 @@ export function Header() {
             </DropdownMenu>
 
             {/* Links con iconos */}
-            <Link href="/products" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+            <Link href="/instalaciones" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
               <Settings className="h-3.5 w-3.5 text-slate-500" />
               <span>Instalaciones</span>
             </Link>
@@ -279,17 +279,13 @@ export function Header() {
               <span>Ofertas</span>
             </Link>
 
-            <Link href="/products" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+            <Link href="/diseno-e-ideas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
               <User className="h-3.5 w-3.5 text-slate-500" />
-              <span>Diseño e ideas</span>
-            </Link>
-
-            <span className="inline-flex items-center gap-1">
-              <span className="font-semibold text-slate-900 dark:text-white">TumbadosCare+</span>
+              <span className="font-semibold text-slate-900 dark:text-white">Diseño e ideas+</span>
               <span className="rounded-full bg-red-600 px-1.5 py-0.2 text-[10px] font-bold text-white uppercase">
                 Nuevo
               </span>
-            </span>
+            </Link>
 
             <div className="h-3.5 w-px bg-border/60 mx-1" />
           </div>

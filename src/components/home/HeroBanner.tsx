@@ -52,10 +52,10 @@ export function HeroBanner() {
   )
 
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full overflow-hidden rounded-xl">
       <Carousel
         plugins={[plugin.current]}
-        className="w-full h-full"
+        className="w-full h-full [&>[data-slot=carousel-content]]:h-full"
         opts={{
           loop: true,
         }}

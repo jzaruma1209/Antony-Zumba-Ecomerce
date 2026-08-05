@@ -14,16 +14,17 @@ export default function HomePage() {
       <section className="container mx-auto px-4 pb-2">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-stretch">
           {/* Calculadora */}
-          <div className="lg:col-span-3 h-[280px] lg:h-auto">
+          <div className="lg:col-span-3 h-[320px] lg:h-auto">
             <PromoSplitSection />
           </div>
 
           {/* Banner Principal */}
-          <div className="lg:col-span-9 h-[280px] lg:h-auto">
+          <div className="lg:col-span-9 h-[320px] lg:h-auto">
             <HeroBanner />
           </div>
         </div>
       </section>
+
 
       <FeaturedProducts />
       <BrandSection />

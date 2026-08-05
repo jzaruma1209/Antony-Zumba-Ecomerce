@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Widget Calculadora — Popup Demo</title>
+<style>
+  :root{
+    --bg:#05070C;
+    --card:#0B1220;
+    --card-2:#111B2E;
+    --blue:#1E4FD6;
+    --blue-2:#2E6BFF;
+    --naranja:#F0731E;
+    --naranja-2:#FF8A2E;
+    --texto:#E7ECF5;
+    --texto-suave:#8B95AC;
+    --linea:#1F2A40;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--texto);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    padding:60px 20px;min-height:100vh;
+  }
+  .page-hint{max-width:900px;margin:0 auto 30px;color:var(--texto-suave);font-size:13px;}
+  .page-hint b{color:var(--texto);}
+  .stage{max-width:900px;margin:0 auto;display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;}
+
+  /* ============ TARJETA COMPACTA (nunca crece) ============ */
+  .card{
+    width:360px;flex-shrink:0;
+    background:linear-gradient(160deg, var(--blue-2) 0%, var(--blue) 55%, #123 100%);
+    border-radius:16px;padding:20px 20px 22px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+  }
+  .card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .card-icon{
+    width:34px;height:34px;background:rgba(255,255,255,0.15);border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+  }
+  .card-head h3{margin:0;font-size:15px;}
+  .card-head p{margin:1px 0 0;font-size:11.5px;color:rgba(255,255,255,0.7);}
+  .steps{margin-left:auto;display:flex;gap:4px;align-items:center;}
+  .steps span{
+    width:20px;height:20px;border-radius:50%;font-size:10.5px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);
+  }
+  .steps span.on{background:var(--naranja);color:#fff;}
+
+  .field-sm{margin-bottom:10px;}
+  .field-sm label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;color:rgba(255,255,255,0.65);margin-bottom:5px;}
+  .field-sm select, .field-sm input{
+    width:100%;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);
+    border-radius:8px;padding:9px 10px;color:#fff;font-size:13.5px;
+  }
+  .field-sm select option{color:#111;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+  .adv-toggle{
+    font-size:11.5px;color:rgba(255,255,255,0.8);cursor:pointer;user-select:none;
+    display:flex;align-items:center;gap:5px;margin:6px 0 12px;
+  }
+  .adv-toggle .arrow{transition:transform .15s;}
+  .adv-toggle.open .arrow{transform:rotate(90deg);}
+  .adv-body{display:none;margin-bottom:8px;}
+  .adv-body.open{display:block;}
+
+  .cta{
+    width:100%;background:var(--naranja);border:none;color:#fff;font-weight:700;
+    font-size:14.5px;padding:12px;border-radius:10px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    transition:background .15s;
+  }
+  .cta:hover{background:var(--naranja-2);}
+
+  .aside-note{width:280px;font-size:12.5px;color:var(--texto-suave);line-height:1.6;padding-top:6px;}
+  .aside-note b{color:var(--texto);}
+
+  /* ============ POPUP / MODAL ============ */
+  .overlay{
+    position:fixed;inset:0;background:rgba(2,4,10,0.72);backdrop-filter:blur(2px);
+    display:none;align-items:center;justify-content:center;z-index:50;padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    width:100%;max-width:520px;max-height:86vh;overflow:auto;
+    background:var(--card);border:1px solid var(--linea);border-radius:16px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.5);
+  }
+  .modal-head{
+    position:sticky;top:0;background:var(--card);padding:18px 22px 14px;
+    border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;align-items:flex-start;
+  }
+  .modal-head h3{margin:0;font-size:17px;}
+  .modal-head p{margin:3px 0 0;font-size:12px;color:var(--texto-suave);}
+  .modal-close{
+    background:var(--card-2);border:1px solid var(--linea);color:var(--texto-suave);
+    width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;flex-shrink:0;
+  }
+  .modal-close:hover{color:#fff;}
+
+  .modal-body{padding:16px 22px 22px;}
+  .result-row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:10px 0;border-bottom:1px solid var(--linea);
+  }
+  .result-row:last-child{border-bottom:none;}
+  .result-name{font-size:13.5px;}
+  .result-name .coef{display:block;font-size:10.5px;color:var(--texto-suave);margin-top:2px;}
+  .result-qty{font-family:'SFMono-Regular',Consolas,monospace;font-weight:700;color:var(--naranja-2);font-size:15px;white-space:nowrap;padding-left:14px;}
+  .result-unit{font-size:10.5px;color:var(--texto-suave);}
+
+  .modal-foot{
+    margin-top:16px;padding-top:14px;border-top:1px dashed var(--linea);
+    font-size:11.5px;color:var(--texto-suave);line-height:1.6;
+  }
+  .modal-actions{display:flex;gap:10px;margin-top:16px;}
+  .btn-ghost{
+    flex:1;background:var(--card-2);border:1px solid var(--linea);color:var(--texto);
+    padding:10px;border-radius:8px;cursor:pointer;font-size:13px;
+  }
+  .btn-solid{
+    flex:1;background:var(--naranja);border:none;color:#fff;font-weight:700;
+    padding:10px;border-radius:8px;cursor:pointer;font-size:13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-hint">
+  Simulación de tu página: la tarjeta de la izquierda es <b>el mismo tamaño siempre</b> — nunca empuja el contenido de al rededor.
+  Al presionar <b>"Calcular"</b> se abre el resultado completo en un popup encima de la página.
+</div>
+
+<div class="stage">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-icon">🧮</div>
+      <div>
+        <h3>Calculadora de Materiales</h3>
+        <p>Elige el sistema y calcula al instante</p>
+      </div>
+      <div class="steps"><span class="on">1</span><span>2</span></div>
+    </div>
+
+    <div class="field-sm">
+      <label>Sistema</label>
+      <select id="modSel"></select>
+    </div>
+
+    <div class="row2">
+      <div class="field-sm">
+        <label>Ancho (m)</label>
+        <input type="number" id="ancho" value="3.00" step="0.1">
+      </div>
+      <div class="field-sm">
+        <label>Alto (m)</label>
+        <input type="number" id="alto" value="2.40" step="0.1">
+      </div>
+    </div>
+
+    <div class="adv-toggle" id="advToggle"><span class="arrow">›</span> Opciones avanzadas (opcional)</div>
+    <div class="adv-body" id="advBody"></div>
+
+    <button class="cta" id="calcBtn">Calcular <span>→</span></button>
+  </div>
+
+  <div class="aside-note">
+    <b>Por qué popup y no expandir la tarjeta:</b> la tarjeta mantiene el ancho fijo del diseño de tu página (como en tu captura), y el resultado —que puede tener 8 a 13 materiales— tiene todo el alto de pantalla disponible en el popup sin forzar scroll raro dentro de un espacio chico.
+  </div>
+</div>
+
+<!-- ===== POPUP ===== -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="pTitle">—</h3>
+        <p id="pSub">—</p>
+      </div>
+      <button class="modal-close" id="closeBtn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="pRows"></div>
+      <div class="modal-foot" id="pFoot"></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" id="editBtn">← Ajustar medidas</button>
+        <button class="btn-solid" id="doneBtn">Listo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ceil = x => Math.ceil(x - 1e-9);
+const mx = (a,b) => Math.max(a,b);
+const fmt = n => (Number.isInteger(n) ? n : n.toFixed(2));
+
+const MODULES = [
+  { id:'gypsum', name:'Tumbado Gypsum', sub:'Cielorraso continuo',
+    adv:['lana'], calc(A,S){ const lana=S.lana;
+      return [
+        ['Placas Knauf', mx(1, ceil(A*1.05/2.98)), 'und','1.05 m² placa/m²'],
+        ['Ángulo Provind', mx(1, ceil(A*0.35)), 'tira','0.35 und/m²'],
+        ['Principal Provind', mx(1, ceil(A*0.35)), 'tira','0.35 und/m²'],
+        ['Secundario Provind', mx(1, ceil(A*0.80)), 'tira','0.80 und/m²'],
+        ['Clavo de Impacto', mx(2, ceil(A*1.80)), 'und','1.80 und/m²'],
+        ['Clavo 2×20', ceil(A*7.0), 'und','7 und/m²'],
+        ['Tornillo Estructura', mx(1, ceil(A*5)), 'und','5 und/m²'],
+        ['Tornillo de Plancha', mx(40, ceil(A*30.0)), 'und','30 und/m² · paq. mín. 40'],
+        ['Masilla Readymas 28kg', mx(1, ceil(A*1.10/28)), 'balde','1.10 kg/m²'],
+        ['Cinta de Papel 250\'', mx(1, ceil(A*1.3/76.2)), 'rollo','1.30 ml/m²'],
+        ['Lana de Vidrio', ceil(A/lana), 'rollo',`formato ${lana} m²`],
+      ];
+    }, note:'No incluye material para cuelgas o tirantes.' },
+
+  { id:'pared1', name:'Pared Una Cara', sub:'Tabique simple',
+    adv:['stud','lana'], calc(A,S){ const d=S.stud, lana=S.lana;
+      return [
+        ['Placas Knauf', mx(1, ceil(A*1.05/2.98)), 'und','1.05 m² placa/m²'],
+        ['Stud Provind', mx(2, ceil(A/d)), 'ml', `cada ${d} m`],
+        ['Track Provind', mx(1, ceil(A*0.70/3.00)), 'ml','0.70 ml/m²'],
+        ['Clavo de Impacto', ceil(A*4), 'und','4 und/m²'],
+        ['Tornillo Estructura', mx(1, ceil(A*5)), 'und','5 und/m²'],
+        ['Tornillo de Plancha', mx(40, ceil(A*16)), 'und','16 und/m² · paq. mín. 40'],
+        ['Masilla Readymas 28kg', mx(1, ceil(A*0.90/28)), 'balde','0.90 kg/m²'],
+        ['Cinta de Papel 250\'', mx(1, ceil(A*1.65/76.2)), 'rollo','1.65 ml/m²'],
+        ['Lana de Vidrio', ceil(A/lana), 'rollo',`formato ${lana} m²`],
+      ];
+    } },
+
+  { id:'f60', name:'Revestimiento F60', sub:'Trasdosado con perfil Omega',
+    adv:['lana'], calc(A,S){ const lana=S.lana;
+      return [
+        ['Placas Knauf', mx(1, ceil(A*0.35)), 'und','0.35 und/m²'],
+        ['Ángulo Provind', mx(1, ceil(A*0.35)), 'tira','0.35 und/m²'],
+        ['Perfil F60 Provind', mx(1, ceil(A*0.70)), 'tira','0.70 und/m²'],
+        ['Soporte Directo Provind', mx(5, ceil(A*4.50)), 'und','4.5 und/m² · mín. 5'],
+        ['Empalme F60 Provind', mx(1, ceil(A*0.30)), 'und','0.30 und/m²'],
+        ['Taco Golpe 6×40', mx(10, ceil(A*9.0)), 'und','9 und/m² · mín. 10'],
+        ['Clavo 2×20', ceil(A*7.0), 'und','7 und/m²'],
+        ['Tornillo Estructura', ceil(A*12.0), 'und','12 und/m²'],
+        ['Tornillo de Plancha', ceil(A*40.0), 'und','40 und/m²'],
+        ['Masilla Readymas 28kg', mx(1, ceil(A*0.90/28)), 'balde','0.90 kg/m²'],
+        ['Cinta de Papel 250\'', mx(1, ceil(A*1.65/76.2)), 'rollo','1.65 ml/m²'],
+        ['Lana de Vidrio', ceil(A/lana), 'rollo',`formato ${lana} m²`],
+      ];
+    } },
+
+  { id:'revoque', name:'Revoque en Seco', sub:'Placa pegada directo',
+    adv:[], calc(A){
+      return [
+        ['Placas Knauf', mx(1, ceil(A*0.35)), 'und','0.35 und/m²'],
+        ['Pegamento Perlfix 25kg', mx(1, ceil(A*4.5/25.0)), 'saco','4.5 kg/m²'],
+        ['Masilla Readymas 28kg', mx(1, ceil(A*0.6/28.0)), 'balde','0.60 kg/m²'],
+        ['Cinta de Papel 250\'', mx(1, ceil(A*1.4/76.2)), 'rollo','1.40 ml/m²'],
+      ];
+    } },
+];
+
+const modSel = document.getElementById('modSel');
+MODULES.forEach(m=>{
+  const o = document.createElement('option');
+  o.value = m.id; o.textContent = m.name;
+  modSel.appendChild(o);
+});
+
+function renderAdv(){
+  const mod = MODULES.find(m=>m.id===modSel.value);
+  const box = document.getElementById('advBody');
+  box.innerHTML='';
+  if(mod.adv.includes('stud')){
+    box.innerHTML += `<div class="field-sm"><label>Distancia entre Stud</label>
+      <select id="advStud">
+        <option value="0.610">0.610 m</option>
+        <option value="0.407">0.407 m</option>
+        <option value="0.305">0.305 m</option>
+      </select></div>`;
+  }
+  if(mod.adv.includes('lana')){
+    box.innerHTML += `<div class="field-sm"><label>Formato lana de vidrio</label>
+      <select id="advLanaSel">
+        <option value="35.70">35.70 m²</option>
+        <option value="18.85">18.85 m²</option>
+        <option value="custom">Personalizado…</option>
+      </select></div>
+      <div class="field-sm" id="advLanaCustomWrap" style="display:none;">
+        <label>m² por rollo (personalizado)</label>
+        <input type="number" id="advLanaCustom" value="20" step="0.5">
+      </div>`;
+  }
+  const lanaSel = document.getElementById('advLanaSel');
+  if(lanaSel){
+    lanaSel.addEventListener('change', ()=>{
+      document.getElementById('advLanaCustomWrap').style.display = lanaSel.value==='custom' ? 'block':'none';
+    });
+  }
+  document.getElementById('advToggle').style.display = mod.adv.length ? 'flex' : 'none';
+  if(!mod.adv.length){ box.classList.remove('open'); document.getElementById('advToggle').classList.remove('open'); }
+}
+modSel.addEventListener('change', renderAdv);
+renderAdv();
+
+document.getElementById('advToggle').onclick = ()=>{
+  document.getElementById('advToggle').classList.toggle('open');
+  document.getElementById('advBody').classList.toggle('open');
+};
+
+function currentParams(){
+  const studEl = document.getElementById('advStud');
+  const lanaSelEl = document.getElementById('advLanaSel');
+  const lanaCustomEl = document.getElementById('advLanaCustom');
+  let lana = 35.70;
+  if(lanaSelEl){
+    lana = lanaSelEl.value==='custom' ? (parseFloat(lanaCustomEl.value)||1) : parseFloat(lanaSelEl.value);
+  }
+  return {
+    stud: studEl ? parseFloat(studEl.value) : 0.610,
+    lana: lana,
+  };
+}
+
+document.getElementById('calcBtn').onclick = ()=>{
+  const mod = MODULES.find(m=>m.id===modSel.value);
+  const ancho = parseFloat(document.getElementById('ancho').value)||0;
+  const alto = parseFloat(document.getElementById('alto').value)||0;
+  const A = ancho*alto;
+  const S = currentParams();
+  const rows = mod.calc(A, S);
+
+  document.getElementById('pTitle').textContent = mod.name;
+  document.getElementById('pSub').textContent = `Área calculada: ${ancho}m × ${alto}m = ${fmt(A)} m²`;
+
+  const rowsEl = document.getElementById('pRows');
+  rowsEl.innerHTML = rows.map(([name,qty,unit,coef])=>`
+    <div class="result-row">
+      <div class="result-name">${name}<span class="coef">${coef}</span></div>
+      <div>
+        <span class="result-qty">${fmt(qty)}</span>
+        <span class="result-unit"> ${unit}</span>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('pFoot').innerHTML = mod.note
+    ? `⚠ ${mod.note}`
+    : 'Cantidades redondeadas a presentación comercial (función techo).';
+
+  document.getElementById('overlay').classList.add('show');
+};
+
+document.getElementById('closeBtn').onclick = ()=> document.getElementById('overlay').classList.remove('show');
+document.getElementById('doneBtn').onclick = ()=> document.getElementById('overlay').classList.remove('show');
+document.getElementById('editBtn').onclick = ()=> document.getElementById('overlay').classList.remove('show');
+document.getElementById('overlay').addEventListener('click', e=>{
+  if(e.target.id==='overlay') document.getElementById('overlay').classList.remove('show');
+});
+</script>
+</body>
+</html>
