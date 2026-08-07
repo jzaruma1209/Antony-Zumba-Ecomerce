@@ -1,4 +1,21 @@
 import { Lightbulb, Video } from "lucide-react"
+import { TikTokEmbed } from "@/components/TikTokEmbed"
+
+// Para añadir nuevos videos de TikTok, simplemente agrega el ID del video a esta lista:
+const TIKTOK_VIDEO_IDS = [
+  "7570510366111714580",
+  "7264984821947075846",
+  "7546027741934521656",
+  "7621243081207188756",
+  "7299297356502060294",
+  "7658085920134057236",
+  "7652516558354337045",
+]
+
+const tiktokVideos = TIKTOK_VIDEO_IDS.map(id => ({
+  id,
+  cite: `https://www.tiktok.com/@tumbados_zumba/video/${id}`
+}))
 
 export default function DisenoEIdeasPage() {
   return (
@@ -13,15 +30,24 @@ export default function DisenoEIdeasPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-        {/* Placeholders for TikTok videos */}
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-          <div key={item} className="bg-card border rounded-xl overflow-hidden aspect-[9/16] flex flex-col items-center justify-center text-muted-foreground bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
+        {/* Videos reales de TikTok */}
+        {tiktokVideos.map((video) => (
+          <div key={video.id} className="flex justify-center w-full">
+            <TikTokEmbed videoId={video.id} citeUrl={video.cite} />
+          </div>
+        ))}
+
+        {/* Placeholders para más videos de TikTok (calcula cuántos faltan para completar 6 espacios) */}
+        {Array.from({ length: Math.max(0, 6 - tiktokVideos.length) }).map((_, index) => (
+          <div key={`placeholder-${index}`} className="bg-card border rounded-xl overflow-hidden min-h-[580px] flex flex-col items-center justify-center text-muted-foreground bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors">
             <Video className="w-10 h-10 mb-3 opacity-40" />
             <p className="text-sm font-medium opacity-60">Espacio para Video TikTok</p>
           </div>
         ))}
       </div>
+
     </div>
   )
 }
+

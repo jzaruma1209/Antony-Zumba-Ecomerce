@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TumbadosZumba - Premium Gypsum &amp; Drywall</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'tz-bg': '#EFECE5',
+            'tz-orange': '#F5821F',
+            'tz-text': '#2A2A2A',
+            'tz-accent': '#D9D3C8'
+          },
+          fontFamily: {
+            'sans': ['"Helvetica Neue"', 'Helvetica', 'Arial', 'sans-serif'],
+            'serif': ['"Playfair Display"', 'Georgia', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-utilities">
+    /* Remove default margins/padding for a cleaner slate */
+    body {
+      background-color: #EFECE5;
+      color: #2A2A2A;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Square corners enforced */
+    img, div, section {
+      border-radius: 0 !important;
+    }
+    /* Subtle horizontal line animation for links */
+    .link-hover-effect {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 2px;
+    }
+    .link-hover-effect::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      transform: scaleX(0);
+      height: 1px;
+      bottom: 0;
+      left: 0;
+      background-color: currentColor;
+      transform-origin: bottom right;
+      transition: transform 0.25s ease-out;
+    }
+    .link-hover-effect:hover::after {
+      transform: scaleX(1);
+      transform-origin: bottom left;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-tz-orange selection:text-white">
+<!-- BEGIN: Navigation -->
+<nav class="sticky top-0 z-50 bg-tz-bg/90 backdrop-blur-sm border-b border-tz-accent/50">
+<div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<div class="text-2xl font-serif font-bold tracking-tighter uppercase">
+        Tumbados<span class="text-tz-orange">Zumba</span>
+</div>
+<div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest font-medium">
+<a class="link-hover-effect hover:text-tz-orange transition-colors" href="#projects">Projects</a>
+<a class="link-hover-effect hover:text-tz-orange transition-colors" href="#services">Services</a>
+<a class="link-hover-effect hover:text-tz-orange transition-colors" href="#about">About</a>
+<a class="link-hover-effect hover:text-tz-orange transition-colors" href="#contact">Contact</a>
+</div>
+<button class="md:hidden p-2">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="square" stroke-linejoin="miter" stroke-width="2"></path></svg>
+</button>
+</div>
+</nav>
+<!-- END: Navigation -->
+<!-- BEGIN: Hero Section -->
+<header class="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+<!-- Hero Image Placeholder -->
+<img alt="Luxury interior with custom ceiling" class="absolute inset-0 w-full h-full object-cover opacity-80 mix-blend-multiply grayscale-[20%]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBtLyq3q98JPg10hXKNlGoIIHLQuhfiPCoNKVanJTYYoZSQASNLT4R2tGC57qjTQhuItLl9S0IRiaAJRKfm136ZWR5sbGaHKouv1tCRslasvXZco8xDNLvA6SgzwGYVpguim8UsLlxyYxLRyVpjP5K8i2EhULNuO4N2BdujpWtNF0OJjrswSluUQWQBYH5U4WGSpof70rzuY_0CAEW2CqwB2IcfIwMG-YHssizJiLGB-b1lgPMKzY"/>
+<div class="absolute inset-0 bg-tz-bg/20"></div>
+<div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+<h1 class="text-5xl md:text-7xl font-serif text-white leading-tight mb-6 drop-shadow-lg">
+        Mastering the Art of Interior Structure.
+      </h1>
+<p class="text-lg md:text-xl text-white/90 font-light mb-10 max-w-2xl mx-auto">
+        Elevating Ecuadorian architecture through precision drywall, custom gypsum ceilings, and flawless finishing.
+      </p>
+<a class="inline-block bg-tz-orange text-white px-8 py-4 text-sm uppercase tracking-widest font-semibold hover:bg-black transition-colors duration-300" href="#projects">
+        View Our Portfolio
+      </a>
+</div>
+</header>
+<!-- END: Hero Section -->
+<!-- BEGIN: Intro / Philosophy -->
+<section class="py-24 px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+<div class="md:col-span-5 text-sm uppercase tracking-widest text-tz-orange font-semibold mb-4 md:mb-0">
+      Our Philosophy
+    </div>
+<div class="md:col-span-7">
+<h2 class="text-3xl md:text-4xl font-serif leading-snug mb-8">
+        We believe that the foundation of a beautiful space lies in its unseen geometry and flawless surfaces.
+      </h2>
+<p class="text-gray-600 leading-relaxed max-w-xl">
+        At TumbadosZumba, we don't just build walls; we craft the canvases for luxury living. Our dedication to precision, premium materials, and meticulous technique ensures that every project—from intricate floating ceilings to expansive commercial build-outs—meets the highest standards of structural integrity and aesthetic perfection.
+      </p>
+</div>
+</section>
+<!-- END: Intro / Philosophy -->
+<!-- BEGIN: Masonry Gallery (Editorial Style) -->
+<section class="py-12 bg-white px-6" id="projects">
+<div class="max-w-7xl mx-auto">
+<!-- Grid Layout mimicking the reference structure -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">
+<!-- Block 1: Text Left, Image Right -->
+<article class="flex flex-col justify-center bg-[#FAF9F6] p-10 md:p-16 border border-tz-accent/30 h-full">
+<span class="text-xs uppercase tracking-widest text-gray-500 mb-4 block">Residential</span>
+<h3 class="text-3xl font-serif mb-4">The Modernist Villa</h3>
+<p class="text-gray-600 text-sm leading-relaxed mb-8">
+            Complete interior framing and custom recessed lighting integration for a high-end coastal residence.
+          </p>
+<a class="text-xs uppercase tracking-widest font-semibold flex items-center border-b border-black w-max pb-1 group hover:text-tz-orange hover:border-tz-orange transition-colors" href="#">
+            Read More <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+</a>
+</article>
+<div class="h-full min-h-[400px]">
+<img alt="Finished modern living room" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8xyiR_zZAZcjnXzScxNhhQ1gElQgM_29PVUo8XO94sfw_3DWwdZ8LuQFlivfTMvMPc5e2GpQ_TJasuTUyteDUzg7wThpZmesJzOBG_IGaz5uNiC5w8OJ0NLD4C7I9qoPYp9A0Dy7ZWTT9mphTbAhzTLdDKAjRbvHltamFlxKaUZh79feafq61ROEbksAi71GAaOeQ3sstYtOh_fgHyg2k1NAHadLGQoc105rDzy50P8Ti_iBkO3o"/>
+</div>
+<!-- Block 2: Image Left, Text Right (Reversed order on desktop) -->
+<div class="h-full min-h-[400px] order-4 md:order-3">
+<img alt="Intricate ceiling framing" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARsWUXcv-lPSTpaWk6r-p_yghzuJKZAh6SSXG568v0ZZipp5WdjAGxhPG8jFQuVefPEpMUbP4turU2wY1AK8dLxn_roFsjfrlVwy6me7sdtP57ic4yl3vlp9YkebYSRjDTwx0eUfo-nEqOQVbooqJiMsVmj3czw76JqC4Coowc2VMSAwZTHjOrjeQ1SQQ-kv_cM0batnvXoi21aHj5RNvAKzp7JniCl9ydntuHYoU0nhrw-ILvExw"/>
+</div>
+<article class="flex flex-col justify-center bg-[#FAF9F6] p-10 md:p-16 border border-tz-accent/30 h-full order-3 md:order-4">
+<span class="text-xs uppercase tracking-widest text-gray-500 mb-4 block">Commercial</span>
+<h3 class="text-3xl font-serif mb-4">Corporate Atrium</h3>
+<p class="text-gray-600 text-sm leading-relaxed mb-8">
+            Large-scale suspended ceilings and acoustic drywall solutions engineered for optimal sound dampening and aesthetic grandeur.
+          </p>
+<a class="text-xs uppercase tracking-widest font-semibold flex items-center border-b border-black w-max pb-1 group hover:text-tz-orange hover:border-tz-orange transition-colors" href="#">
+            Read More <span class="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+</a>
+</article>
+</div>
+<!-- Full Width Breakout -->
+<div class="mt-12 w-full h-[60vh] relative group cursor-pointer overflow-hidden">
+<img alt="Large architectural project" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMCoiaBA68MMSyql2VvsXU093qu1QVfCmE2p_L_kT995zxfslha9JvGxW3Diyi_K0YwHgtTX6fb3QbR6L5agD0yUCWacRjtr4xk8-I8x5hZtaimfoZuFvV9M2wiSjzc6G7KZ4B7_xxVpYmknItIPOpt9H0S4qrfVn6r-j8jrPC-_L0q404_9nzVJA15APyWLh6Zo7xmqo-zu_WVKX7MmOv-o4P4k_MViy4ShNhz89qZdYiF8Rg51w"/>
+<div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500"></div>
+<div class="absolute bottom-10 left-10 text-white">
+<span class="text-xs uppercase tracking-widest mb-2 block opacity-80">Featured Work</span>
+<h3 class="text-4xl font-serif">Quito Luxury Apartments</h3>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Masonry Gallery -->
+<!-- BEGIN: Before / After Comparison -->
+<section class="py-24 px-6 max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-serif mb-4">From Structure to Surface</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">Witness the transformation from raw framing to immaculate finished interiors.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-1 max-w-5xl mx-auto bg-tz-accent">
+<div class="relative h-[500px]">
+<img alt="Metal framing construction phase" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDayY2zm0KacWHyLLaQjtBwje3fj9UVioG-GcNrpRnyqoMuWYrYRB5YCzUg5dJG2A9dRNMItW_oUOqYIYYVWqUTxNpiYlRB-nE4UzEKRJUcaOJAu9054HPInry8kN_y77EbD8pMnNTOKym91dQdQODpOUMrcI474RBdWymPP9NIUCPEmzNqRj5oSTs3ENQiu2lASYZiQK3L_EzfyJEVkVq5NIgh-fEg-mkmXwid4d_nGgHvUkn5ZQQ"/>
+<div class="absolute bottom-4 left-4 bg-black/50 text-white text-xs uppercase tracking-widest px-3 py-1 backdrop-blur-sm">Before</div>
+</div>
+<div class="relative h-[500px]">
+<img alt="Finished smooth painted drywall" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8GSR46gtdA7Ux-WA_THPeWjJO4oNYPQ58Jo0veYte2G5MYTkMzQ921slQHeV0kNVv5UELmvyCIDTtx_A32gPRmBSpdAUEIwNb4iv-8OJvsEpz_g2NinLqab7q_EZJ82KU13_M2SWFvKAcCoRzdpMg4EK78RMqhNpxCe9Bt1SYrYxkqh4wwQUX303omTfZRNlerUfStf5t-GWnowrWn-HrxkZMFj6bAcnfFz-DkGLGUddK-_dOVDw"/>
+<div class="absolute bottom-4 right-4 bg-white/80 text-black text-xs uppercase tracking-widest px-3 py-1 backdrop-blur-sm">After</div>
+</div>
+</div>
+</section>
+<!-- END: Before / After Comparison -->
+<!-- BEGIN: Partner Logos -->
+<section class="border-y border-tz-accent bg-[#F9F8F6] py-12">
+<div class="max-w-7xl mx-auto px-6">
+<p class="text-center text-xs uppercase tracking-widest text-gray-500 mb-8">Trusted by industry leaders</p>
+<div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<!-- Placeholder logos for material partners -->
+<img alt="Partner Logo 1" class="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5NZ3WqrDOPiJ9XIhOoelhnK-_vApnEoF9CzGb9SIJjK2I6EgTlpNKTVF6DAudP-87BZ6hRld2c2SoqGqI0sot0joIkAbb5RyudEBeHKyqJIGCv_T41FyZRCLiKCaifQZzM5njs8JmhQjYkMojlI_EIZWNDBuev919CunrVEQn50KHK-iGwbl7JyP-F4AdtZ13ekTCCeWeQiNmo1SauSQ7v7jLyvpVLrmgTvK39drRjXK3Fwh1eeQ"/>
+<img alt="Partner Logo 2" class="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9dq9clDnFpDACSjR89V8eo_bfrinopXdbvQWiEiC8LkQjgKvEOLpdsABRhxX1T3c6z3GgQz90Oof-tX9EQMe59AmbSgBjqHDIs7SohqFfLKhL5ENdaUpR_8nRP9d6vgjyZJwd-nbyiXEBJsHpUU6FWKdqa2UgZUzlH0H7nrQQlTEr6-Tlh9Bfv-rA4gRrE5jWRrmbRGulxTGflUw6q_gLu-lHCX1i_YFSWauiLEetyVyYeV1YsA"/>
+<img alt="Partner Logo 3" class="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBchsWRxJyNJb_ywZMR-ZtoFgP42S-aOQ3u9N3jXZm5KeO1NdGAolL6CBmFCLlHOVgCOBzRvfZBRQ07pYDTaWJGN0xWIqrZIqdwyukxJ226mXbrIKfQZVMOGW9vMYP0exF9-iJFm3wd_AtHS2v3xL3FSV6tw-W5crvDuezhu1pfbISDkUK2Ji61jp20lQiHbMXhjPe69IjLZ0j3_uJ99PQEmMoCXg_Ng30W-VTSUCkjTbCsBMP3ilw"/>
+<img alt="Partner Logo 4" class="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQAJMJ5cAiYjsvt2Ay6E_oY0X1HmQbuVbJ8F8AH5eU5XLyd-_jy-NziQV7I8EBQq5bu5HgzrCJA5rRwRdCVHoCtCjd3akprcWGpgxcnFQti3izKZ_UI_dsUC5WcjTUpfhGHdp0BZgGSixNHOBVglPGybQEawqCiQ4KyrW2XuIc2Nnhv_dLhvCKGfly76y3J4LjA05vjiatskUURp8-M4AXdeOlsDd4OPMHeaRcdugrbiYwficpQls"/>
+</div>
+</div>
+</section>
+<!-- END: Partner Logos -->
+<!-- BEGIN: Footer / Contact CTA -->
+<footer class="bg-[#1A1A1A] text-[#EFECE5] py-24">
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16">
+<div>
+<h2 class="text-4xl md:text-5xl font-serif mb-6 text-white">Start your project.</h2>
+<p class="text-gray-400 mb-10 max-w-md leading-relaxed">
+          Partner with TumbadosZumba for unparalleled craftsmanship in drywall and gypsum ceilings. Contact us to discuss your architectural vision.
+        </p>
+<a class="text-tz-orange text-2xl font-serif hover:text-white transition-colors block mb-4" href="mailto:info@tumbadoszumba.com">
+          info@tumbadoszumba.com
+        </a>
+<p class="text-gray-400">+593 99 123 4567</p>
+</div>
+<div class="grid grid-cols-2 gap-8 text-sm">
+<div>
+<h4 class="uppercase tracking-widest text-gray-500 mb-4 font-semibold">Location</h4>
+<p class="text-gray-300 leading-relaxed">
+            Av. de los Shyris<br/>
+            Edificio Zura, Of 401<br/>
+            Quito, Ecuador
+          </p>
+</div>
+<div>
+<h4 class="uppercase tracking-widest text-gray-500 mb-4 font-semibold">Social</h4>
+<ul class="space-y-2">
+<li><a class="text-gray-300 hover:text-tz-orange transition-colors" href="#">Instagram</a></li>
+<li><a class="text-gray-300 hover:text-tz-orange transition-colors" href="#">LinkedIn</a></li>
+<li><a class="text-gray-300 hover:text-tz-orange transition-colors" href="#">Facebook</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-6 mt-24 pt-8 border-t border-gray-800 text-xs text-gray-500 flex justify-between items-center">
+<p>© 2023 TumbadosZumba. All rights reserved.</p>
+<div class="space-x-4">
+<a class="hover:text-gray-300" href="#">Privacy Policy</a>
+<a class="hover:text-gray-300" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+<!-- END: Footer / Contact CTA -->
+</body></html>
