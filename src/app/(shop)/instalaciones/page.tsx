@@ -1,8 +1,63 @@
+"use client";
+
 import BeforeAfterSlider from "@/components/ui/BeforeAfterSlider";
 import Link from "next/link";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { MessageCircle } from "lucide-react";
+
+interface FormData {
+  nombre: string;
+  telefono: string;
+  email?: string;
+  tipoProyecto: string;
+  detalles?: string;
+}
 
 export default function InstalacionesPage() {
+  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>();
+
+  const onSubmit = (data: FormData) => {
+    // Aquí puedes agregar la lógica para enviar el formulario tradicional
+    console.log("Formulario enviado:", data);
+    alert("Solicitud de cotización enviada correctamente. ¡Pronto nos pondremos en contacto!");
+  };
+
+  const handleWhatsAppClick = () => {
+    const data = getValues();
+    
+    // Validar campos requeridos manualmente
+    if (!data.nombre || !data.telefono || !data.tipoProyecto) {
+      alert("Por favor completa todos los campos requeridos (*)");
+      return;
+    }
+
+    // Número de WhatsApp de la empresa (cambia este número)
+    const whatsappNumber = "593991234567"; // Formato: código país + número sin +
+    
+    // Crear mensaje formateado
+    const mensaje = `
+🏗️ *Solicitud de Cotización - TumbadosZumba*
+
+👤 *Nombre:* ${data.nombre}
+📱 *Teléfono:* ${data.telefono}
+${data.email ? `📧 *Email:* ${data.email}` : ''}
+
+📋 *Tipo de Proyecto:*
+${data.tipoProyecto}
+
+${data.detalles ? `📝 *Detalles del Proyecto:*\n${data.detalles}` : ''}
+
+---
+_Mensaje generado desde tumbadoszumba.com/instalaciones_
+    `.trim();
+
+    // Crear URL de WhatsApp
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensaje)}`;
+    
+    // Abrir WhatsApp en nueva ventana
+    window.open(whatsappURL, '_blank');
+  };
   return (
     <div className="font-sans antialiased selection:bg-tz-orange selection:text-white bg-[#EFECE5] text-[#2A2A2A] min-h-screen">
       <style dangerouslySetInnerHTML={{__html: `

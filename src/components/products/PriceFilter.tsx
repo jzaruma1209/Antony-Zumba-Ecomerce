@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { Slider } from "@/components/ui/slider"
 import { Input } from "@/components/ui/input"
@@ -19,22 +19,55 @@ export function PriceFilter({
   maxPrice = 5000,
 }: PriceFilterProps) {
   const [isOpen, setIsOpen] = useState(true)
+  const [localMin, setLocalMin] = useState(priceRange[0].toString())
+  const [localMax, setLocalMax] = useState(priceRange[1].toString())
+
+  useEffect(() => {
+    setLocalMin(priceRange[0].toString())
+    setLocalMax(priceRange[1].toString())
+  }, [priceRange])
 
   const handleSliderChange = (values: number[]) => {
     onPriceChange([values[0], values[1]])
   }
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value)
-    if (value >= minPrice && value <= priceRange[1]) {
-      onPriceChange([value, priceRange[1]])
-    }
+    setLocalMin(e.target.value)
   }
 
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Number(e.target.value)
-    if (value <= maxPrice && value >= priceRange[0]) {
+    setLocalMax(e.target.value)
+  }
+
+  const handleMinBlur = () => {
+    let value = localMin === "" ? minPrice : Number(localMin)
+    if (isNaN(value)) value = minPrice
+    if (value < minPrice) value = minPrice
+    if (value > priceRange[1]) value = priceRange[1]
+    
+    if (value !== priceRange[0]) {
+      onPriceChange([value, priceRange[1]])
+    } else {
+      setLocalMin(value.toString())
+    }
+  }
+
+  const handleMaxBlur = () => {
+    let value = localMax === "" ? maxPrice : Number(localMax)
+    if (isNaN(value)) value = maxPrice
+    if (value > maxPrice) value = maxPrice
+    if (value < priceRange[0]) value = priceRange[0]
+    
+    if (value !== priceRange[1]) {
       onPriceChange([priceRange[0], value])
+    } else {
+      setLocalMax(value.toString())
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, type: 'min' | 'max') => {
+    if (e.key === 'Enter') {
+      type === 'min' ? handleMinBlur() : handleMaxBlur()
     }
   }
 
@@ -72,8 +105,10 @@ export function PriceFilter({
                 </span>
                 <Input
                   type="number"
-                  value={priceRange[0]}
+                  value={localMin}
                   onChange={handleMinChange}
+                  onBlur={handleMinBlur}
+                  onKeyDown={(e) => handleKeyDown(e, 'min')}
                   className="pl-7 h-9 text-sm"
                   min={minPrice}
                   max={priceRange[1]}
@@ -89,8 +124,10 @@ export function PriceFilter({
                 </span>
                 <Input
                   type="number"
-                  value={priceRange[1]}
+                  value={localMax}
                   onChange={handleMaxChange}
+                  onBlur={handleMaxBlur}
+                  onKeyDown={(e) => handleKeyDown(e, 'max')}
                   className="pl-7 h-9 text-sm"
                   min={priceRange[0]}
                   max={maxPrice}

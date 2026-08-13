@@ -18,12 +18,14 @@ import {
 import { ThemeToggle } from "./ThemeToggle"
 import { MobileNav } from "./MobileNav"
 import { useCartStore } from "@/stores/cart-store"
+import { useFavoritesStore } from "@/stores/favorites-store"
 
 export function Header() {
   const [mounted, setMounted] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
   const lastScrollY = useRef(0)
   const itemCount = useCartStore((state) => state.getItemCount())
+  const favoriteCount = useFavoritesStore((state) => state.getItemCount())
   const { data: session, status } = useSession()
 
   const handleScroll = useCallback(() => {
@@ -90,10 +92,19 @@ export function Header() {
 
             <ThemeToggle />
 
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <Heart className="h-4 w-4" />
-              <span className="sr-only">Favoritos</span>
-            </Button>
+            <Link href="/profile/favorites">
+              <Button variant="ghost" size="icon" className="relative h-9 w-9">
+                <Heart className="h-4 w-4" />
+                {mounted && favoriteCount > 0 && (
+                  <Badge
+                    className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center bg-red-500 text-white"
+                  >
+                    {favoriteCount > 99 ? "99+" : favoriteCount}
+                  </Badge>
+                )}
+                <span className="sr-only">Favoritos</span>
+              </Button>
+            </Link>
 
             <Link href="/cart">
               <Button variant="ghost" size="icon" className="relative h-9 w-9">

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Product } from "@/types"
 import { useCartStore } from "@/stores/cart-store"
+import { useFavoritesStore } from "@/stores/favorites-store"
 
 interface ProductCardProps {
   product: Product
@@ -19,6 +20,15 @@ const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1629429408209-1f912
 export function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem)
   const [added, setAdded] = useState(false)
+  
+  const toggleFavorite = useFavoritesStore((state) => state.toggleItem)
+  const isFavorite = useFavoritesStore((state) => state.isFavorite(product.id))
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleFavorite(product)
+  }
 
   const hasDiscount = product.originalPrice && product.originalPrice > product.price
   const discountPercent = hasDiscount
@@ -52,9 +62,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-2 z-10 h-8 w-8 rounded-full bg-background/80 opacity-0 transition-opacity group-hover:opacity-100"
+          onClick={handleToggleFavorite}
+          className={`absolute right-2 top-2 z-10 h-8 w-8 rounded-full bg-background/80 transition-opacity ${
+            isFavorite ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100'
+          }`}
         >
-          <Heart className="h-4 w-4" />
+          <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
           <span className="sr-only">Agregar a favoritos</span>
         </Button>
 

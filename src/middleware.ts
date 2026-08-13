@@ -32,21 +32,26 @@ export default auth((req) => {
     nextUrl.pathname.startsWith(route)
   )
 
+  // Construct a stable base URL using headers to avoid Vercel/NextAuth env var issues
+  const host = req.headers.get("host") || nextUrl.host
+  const protocol = req.headers.get("x-forwarded-proto") || nextUrl.protocol.replace(":", "")
+  const baseUrl = `${protocol}://${host}`
+
   // Redirect to login if accessing protected route without auth
   if (isProtectedRoute && !isLoggedIn) {
-    const loginUrl = new URL("/login", nextUrl)
+    const loginUrl = new URL("/login", baseUrl)
     loginUrl.searchParams.set("callbackUrl", nextUrl.pathname)
     return NextResponse.redirect(loginUrl)
   }
 
   // Redirect to home if accessing admin route without admin role
   if (isAdminRoute && !isAdmin) {
-    return NextResponse.redirect(new URL("/", nextUrl))
+    return NextResponse.redirect(new URL("/", baseUrl))
   }
 
   // Redirect to home if accessing guest route while logged in
   if (isGuestRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/", nextUrl))
+    return NextResponse.redirect(new URL("/", baseUrl))
   }
 
   return NextResponse.next()

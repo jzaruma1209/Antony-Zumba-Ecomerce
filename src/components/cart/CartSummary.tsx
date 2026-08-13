@@ -5,12 +5,14 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { CartItem } from "@/types"
 import { StripeCheckoutButton } from "./StripeCheckoutButton"
+import { useCartStore } from "@/stores/cart-store"
 
 interface CartSummaryProps {
   items: CartItem[]
 }
 
 export function CartSummary({ items }: CartSummaryProps) {
+  const clearCart = useCartStore((state) => state.clearCart)
   const subtotal = items.reduce(
     (acc, item) => acc + item.product.price * item.quantity,
     0
@@ -33,6 +35,7 @@ export function CartSummary({ items }: CartSummaryProps) {
     const WHATSAPP_NUM = "593990099265";
     const uri = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(msg)}`;
     window.open(uri, "_blank");
+    clearCart();
   };
 
   return (

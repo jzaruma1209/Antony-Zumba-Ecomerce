@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Product } from "@/types"
 import { useCartStore } from "@/stores/cart-store"
+import { useFavoritesStore } from "@/stores/favorites-store"
 
 interface ProductDetailProps {
   product: Product
@@ -16,6 +17,8 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1)
   const [added, setAdded] = useState(false)
   const addItem = useCartStore((state) => state.addItem)
+  const toggleFavorite = useFavoritesStore((state) => state.toggleItem)
+  const isFavorite = useFavoritesStore((state) => state.isFavorite(product.id))
 
   const hasDiscount = product.originalPrice && product.originalPrice > product.price
   const discountPercent = hasDiscount
@@ -151,8 +154,13 @@ export function ProductDetail({ product }: ProductDetailProps) {
               </>
             )}
           </Button>
-          <Button variant="outline" size="lg">
-            <Heart className="h-4 w-4" />
+          <Button 
+            variant="outline" 
+            size="lg"
+            onClick={() => toggleFavorite(product)}
+            className={isFavorite ? "text-red-500 hover:text-red-600" : ""}
+          >
+            <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
           </Button>
         </div>
       </div>
