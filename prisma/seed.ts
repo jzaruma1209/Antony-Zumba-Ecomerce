@@ -2,6 +2,7 @@ import "dotenv/config"
 import { PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
 import { Pool } from "pg"
+import bcrypt from "bcryptjs"
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const adapter = new PrismaPg(pool)
@@ -503,10 +504,12 @@ async function main() {
   console.log(`Created ${productsData.length} products`)
 
   // Create Admin User
+  const defaultPasswordHash = await bcrypt.hash("admin123", 10)
+
   const adminUser = await prisma.user.create({
     data: {
       email: "admin@tumbadoszumba.com",
-      password: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu9lK", // password: admin123
+      password: defaultPasswordHash,
       name: "Admin Tumbados Zumba",
       phone: "+593 99 999 9999",
       role: "ADMIN",
@@ -519,7 +522,7 @@ async function main() {
   const customerUser = await prisma.user.create({
     data: {
       email: "juan@email.com",
-      password: "$2b$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu9lK", // password: admin123
+      password: defaultPasswordHash,
       name: "Juan Perez",
       phone: "+593 98 765 4321",
       role: "CUSTOMER",
