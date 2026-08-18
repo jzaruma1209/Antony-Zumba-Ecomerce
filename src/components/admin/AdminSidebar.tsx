@@ -1,14 +1,16 @@
 "use client"
 
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   Package,
-  CreditCard,
+  FolderTree,
+  ShoppingCart,
   Users,
   Settings,
-  ChevronLeft,
+  CreditCard,
   Store,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -17,6 +19,8 @@ import { Button } from "@/components/ui/button"
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Productos", href: "/admin/products", icon: Package },
+  { name: "Categorias", href: "/admin/categories", icon: FolderTree },
+  { name: "Ordenes", href: "/admin/orders", icon: ShoppingCart },
   { name: "Pagos", href: "/admin/payments", icon: CreditCard },
   { name: "Usuarios", href: "/admin/users", icon: Users },
   { name: "Configuracion", href: "/admin/settings", icon: Settings },
@@ -29,9 +33,13 @@ export function AdminSidebar() {
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 border-r bg-card">
       {/* Logo */}
       <div className="flex h-16 items-center gap-2 border-b px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-          <span className="text-sm font-bold text-primary-foreground">TZ</span>
-        </div>
+        <Image
+          src="/iconozumba.png"
+          alt="TumbadosZumba"
+          width={32}
+          height={32}
+          className="h-8 w-8 rounded-lg object-contain"
+        />
         <span className="font-bold">Admin Panel</span>
       </div>
 

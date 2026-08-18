@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
@@ -39,11 +40,15 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">TZ</span>
-            </div>
-            <span className="text-xl font-bold">TumbadosZumba</span>
-          </Link>
+              <Image
+                src="/iconozumba.png"
+                alt="TumbadosZumba"
+                width={36}
+                height={36}
+                className="h-9 w-9 rounded-lg object-contain"
+              />
+              <span className="text-xl font-bold">TumbadosZumba</span>
+            </Link>
           <p className="mt-4 text-sm text-muted-foreground">
             Tu tienda de tumbados de gypsum de confianza. Los mejores productos y acabados para tu hogar a los mejores precios.
           </p>

@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "TumbadosZumba - Tu tienda de tumbados de gypsum y acabados",
   description: "Los mejores acabados en gypsum, cielo raso, WPC, duelas, molduras y más. Diseños modernos y elegantes para tu hogar.",
+  icons: {
+    icon: "/iconozumba.png",
+    shortcut: "/iconozumba.png",
+    apple: "/iconozumba.png",
+  },
 }
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef, useCallback } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
 import { Search, ShoppingCart, Heart, User, LogOut, Settings, Package, ChevronDown } from "lucide-react"
@@ -54,23 +55,25 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <span className="text-sm font-bold text-primary-foreground">TZ</span>
-            </div>
-            <span className="hidden text-xl font-bold sm:inline-block">
-              TumbadosZumba
-            </span>
+          <Link href="/" className="flex items-center shrink-0" aria-label="TumbadosZumba">
+            <Image
+              src="/iconozumba.png"
+              alt="TumbadosZumba"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-lg object-contain transition-transform hover:scale-105"
+              priority
+            />
           </Link>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden flex-1 max-w-xl md:flex">
+          <div className="hidden flex-1 max-w-2xl md:flex">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
               <Input
                 type="search"
-                placeholder="Buscar productos..."
-                className="w-full pl-10 pr-4"
+                placeholder="Buscar productos, materiales, acabados..."
+                className="w-full pl-10 pr-4 h-10 bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
               />
             </div>
           </div>

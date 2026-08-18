@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-// ── Número de WhatsApp destino (cambiar en producción) ─────────────────────
+// ── Número de WhatsApp destino ─────────────────────────────────────────────
 const WA_NUMBER = "593990099265" // Ecuador: 0990099265 → internacional sin +
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -13,6 +13,15 @@ const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2))
 // ── Tipos ──────────────────────────────────────────────────────────────────
 type ResultRow = [string, number, string, string]
 
+export interface MaterialItem {
+  id: string
+  name: string
+  qty: number
+  unit: string
+  coef: string
+  isCustom?: boolean
+}
+
 interface Module {
   id: string
   name: string
@@ -21,6 +30,23 @@ interface Module {
   calc: (area: number, settings: { stud: number; lana: number }) => ResultRow[]
   note?: string
 }
+
+// ── Unidades disponibles para materiales personalizados ────────────────────
+const AVAILABLE_UNITS = [
+  "und",
+  "tira",
+  "rollo",
+  "balde",
+  "saco",
+  "ml",
+  "caja",
+  "galón",
+  "par",
+  "paquete",
+  "kg",
+  "plancha",
+  "otro",
+]
 
 // ── Módulos de cálculo ─────────────────────────────────────────────────────
 const MODULES: Module[] = [
@@ -108,23 +134,19 @@ const MODULES: Module[] = [
 ]
 
 // ── Tipos de popup ─────────────────────────────────────────────────────────
-// "adv"     → popup previo para opciones avanzadas + medidas (sistemas que lo necesiten)
-// "results" → lista de materiales calculados
-// "identify"→ datos de contacto (nombre + correo)
-// "confirm" → confirmación antes de enviar
-// "sent"    → pantalla de éxito
 type PopupStep = "adv" | "results" | "identify" | "confirm" | "sent"
 
-interface CalcResult {
+export interface CalcResult {
   modName: string
+  inputMode: "area" | "dimensions"
   area: number
-  ancho: number
-  alto: number
-  rows: ResultRow[]
+  ancho?: number
+  alto?: number
+  items: MaterialItem[]
   note?: string
 }
 
-// ── Estilos compartidos inline (evita conflictos con Tailwind) ─────────────
+// ── Estilos compartidos inline ─────────────────────────────────────────────
 const CARD_BG = "#0B1220"
 const BORDER = "#1F2A40"
 const CARD2 = "#111B2E"
@@ -142,17 +164,21 @@ function CloseBtn({ onClick }: { onClick: () => void }) {
       style={{ background: CARD2, border: `1px solid ${BORDER}`, color: TEXT_SOFT }}
       onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = "#fff")}
       onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.color = TEXT_SOFT)}
-    >✕</button>
+    >
+      ✕
+    </button>
   )
 }
 
 export function PromoSplitSection() {
   // ── Calculadora (widget fijo) ──
   const [modId, setModId] = useState(MODULES[0].id)
+  const [inputMode, setInputMode] = useState<"area" | "dimensions">("area")
+  const [areaDirecta, setAreaDirecta] = useState("")
   const [ancho, setAncho] = useState("")
   const [alto, setAlto] = useState("")
 
-  // ── Opciones avanzadas (solo en popup) ──
+  // ── Opciones avanzadas ──
   const [advStud, setAdvStud] = useState("0.610")
   const [advLana, setAdvLana] = useState("35.70")
   const [advLanaCustom, setAdvLanaCustom] = useState("20")
@@ -162,10 +188,19 @@ export function PromoSplitSection() {
   const [popupStep, setPopupStep] = useState<PopupStep>("results")
   const [calcResult, setCalcResult] = useState<CalcResult | null>(null)
 
+  // ── Agregar material adicional ("Otro material") ──
+  const [showAddCustom, setShowAddCustom] = useState(false)
+  const [customName, setCustomName] = useState("")
+  const [customQty, setCustomQty] = useState("1")
+  const [customUnit, setCustomUnit] = useState("und")
+
   // ── Identificación ──
   const [clientName, setClientName] = useState("")
   const [clientEmail, setClientEmail] = useState("")
   const [contactError, setContactError] = useState("")
+
+  // ── Confirmación de eliminación de ítem ──
+  const [itemToDelete, setItemToDelete] = useState<MaterialItem | null>(null)
 
   const currentMod = MODULES.find((m) => m.id === modId)!
   const hasAdv = currentMod.adv.length > 0
@@ -177,34 +212,53 @@ export function PromoSplitSection() {
   // ── Cuando el usuario pulsa "Calcular" ──
   function handleCalcClick() {
     if (hasAdv) {
-      // Abrir popup de opciones avanzadas primero
       setPopupStep("adv")
       setPopupOpen(true)
     } else {
-      // Si no hay opciones avanzadas, calcular directo
       doCalc()
     }
   }
 
   // ── Cálculo efectivo ──
   function doCalc() {
-    const a = parseFloat(ancho) || 0
-    const al = parseFloat(alto) || 0
-    const A = a * al
+    let A = 0
+    let a = 0
+    let al = 0
 
-    if (A <= 0) {
-      alert("Por favor ingresa medidas válidas (Ancho y Alto > 0)")
-      setPopupOpen(false)
-      return
+    if (inputMode === "area") {
+      A = parseFloat(areaDirecta) || 0
+      if (A <= 0) {
+        alert("Por favor ingresa un área válida en metros cuadrados (m² > 0)")
+        setPopupOpen(false)
+        return
+      }
+    } else {
+      a = parseFloat(ancho) || 0
+      al = parseFloat(alto) || 0
+      A = a * al
+      if (A <= 0) {
+        alert("Por favor ingresa medidas válidas (Ancho y Alto > 0)")
+        setPopupOpen(false)
+        return
+      }
     }
 
-    const rows = currentMod.calc(A, { stud: effectiveStud, lana: effectiveLana })
+    const rawRows = currentMod.calc(A, { stud: effectiveStud, lana: effectiveLana })
+    const items: MaterialItem[] = rawRows.map(([name, qty, unit, coef], idx) => ({
+      id: `calc-${idx}-${name}`,
+      name,
+      qty,
+      unit,
+      coef,
+    }))
+
     setCalcResult({
       modName: currentMod.name,
+      inputMode,
       area: A,
-      ancho: a,
-      alto: al,
-      rows,
+      ancho: a > 0 ? a : undefined,
+      alto: al > 0 ? al : undefined,
+      items,
       note: currentMod.note,
     })
     setPopupStep("results")
@@ -217,34 +271,131 @@ export function PromoSplitSection() {
     setClientName("")
     setClientEmail("")
     setContactError("")
+    setShowAddCustom(false)
+    setCustomName("")
+    setCustomQty("1")
+    setCustomUnit("und")
+    setItemToDelete(null)
   }
 
+  // ── Modificar cantidad de un material ──
+  function handleUpdateQty(id: string, newQty: number) {
+    if (!calcResult) return
+    const validQty = Math.max(1, Number.isFinite(newQty) ? newQty : 1)
+    setCalcResult({
+      ...calcResult,
+      items: calcResult.items.map((item) =>
+        item.id === id ? { ...item, qty: validQty } : item
+      ),
+    })
+  }
+
+  // ── Incrementar o decrementar cantidad (+ / -) ──
+  function handleIncrementQty(id: string, delta: number) {
+    if (!calcResult) return
+    setCalcResult({
+      ...calcResult,
+      items: calcResult.items.map((item) => {
+        if (item.id === id) {
+          const nextQty = Math.max(1, Math.round(item.qty + delta))
+          return { ...item, qty: nextQty }
+        }
+        return item
+      }),
+    })
+  }
+
+  // ── Eliminar un material de la lista ──
+  function handleDeleteItem(id: string) {
+    if (!calcResult) return
+    setCalcResult({
+      ...calcResult,
+      items: calcResult.items.filter((item) => item.id !== id),
+    })
+  }
+
+  // ── Agregar material adicional ("Otro material") ──
+  function handleAddCustomItem() {
+    if (!calcResult) return
+    if (!customName.trim()) {
+      alert("Por favor ingresa el nombre del material a agregar.")
+      return
+    }
+    const qty = parseFloat(customQty) || 1
+    const newItem: MaterialItem = {
+      id: `custom-${Date.now()}`,
+      name: customName.trim(),
+      qty: Math.max(1, qty),
+      unit: customUnit.trim() || "und",
+      coef: "Material personalizado",
+      isCustom: true,
+    }
+    setCalcResult({
+      ...calcResult,
+      items: [...calcResult.items, newItem],
+    })
+    setCustomName("")
+    setCustomQty("1")
+    setCustomUnit("und")
+    setShowAddCustom(false)
+  }
+
+  // ── Restablecer lista original de materiales calculados ──
+  function handleResetItems() {
+    if (!calcResult) return
+    const rawRows = currentMod.calc(calcResult.area, { stud: effectiveStud, lana: effectiveLana })
+    const items: MaterialItem[] = rawRows.map(([name, qty, unit, coef], idx) => ({
+      id: `calc-${idx}-${name}`,
+      name,
+      qty,
+      unit,
+      coef,
+    }))
+    setCalcResult({
+      ...calcResult,
+      items,
+    })
+  }
+
+  // ── Paso de identificación (Correo es opcional) ──
   function handleSendIdentify() {
     if (!clientName.trim()) {
       setContactError("Por favor ingresa tu nombre.")
-      return
-    }
-    if (!clientEmail.trim()) {
-      setContactError("Por favor ingresa tu correo electrónico.")
       return
     }
     setContactError("")
     setPopupStep("confirm")
   }
 
+  // ── Construir mensaje de WhatsApp ──
   function buildWAMessage(result: CalcResult) {
-    const rows = result.rows
-      .map(([name, qty, unit]) => `• ${name}: *${fmt(qty)} ${unit}*`)
-      .join("\n")
+    const itemsList =
+      result.items.length > 0
+        ? result.items
+            .map(
+              (item) =>
+                `• ${item.name}: *${fmt(item.qty)} ${item.unit}*${
+                  item.isCustom ? " _(adicional)_" : ""
+                }`
+            )
+            .join("\n")
+        : "_(Sin materiales seleccionados)_"
+
+    const areaStr =
+      result.inputMode === "dimensions" && result.ancho && result.alto
+        ? `${result.ancho}m × ${result.alto}m = ${fmt(result.area)} m²`
+        : `${fmt(result.area)} m²`
+
+    const emailStr = clientEmail.trim() ? `📧 *Correo:* ${clientEmail.trim()}\n` : ""
 
     return (
       `🏗️ *Solicitud de Proforma de Materiales - TumbadosZumba*\n\n` +
-      `👤 *Cliente:* ${clientName}\n` +
-      `📧 *Correo:* ${clientEmail}\n\n` +
-      `📐 *Sistema:* ${result.modName}\n` +
-      `📏 *Área:* ${result.ancho}m × ${result.alto}m = ${fmt(result.area)} m²\n\n` +
-      `📦 *Materiales calculados:*\n${rows}\n\n` +
-      `Por favor cotizar los materiales indicados. ¡Gracias! 🙏`
+      `👤 *Cliente:* ${clientName.trim()}\n` +
+      emailStr +
+      `\n📐 *Sistema:* ${result.modName}\n` +
+      `📏 *Área:* ${areaStr}\n\n` +
+      `📦 *Materiales solicitados (${result.items.length}):*\n${itemsList}\n\n` +
+      `Por favor cotizar los materiales indicados. ¡Muchas gracias! 🙏`
     )
   }
 
@@ -258,7 +409,7 @@ export function PromoSplitSection() {
   return (
     <>
       {/* ══════════════════════════════════════════════
-          WIDGET FIJO — nunca cambia de tamaño
+          WIDGET FIJO (Calculadora en Inicio)
       ══════════════════════════════════════════════ */}
       <article
         className="relative h-full w-full overflow-hidden rounded-xl text-white select-none"
@@ -273,21 +424,21 @@ export function PromoSplitSection() {
           style={{ background: "rgba(46,107,255,0.2)", filter: "blur(24px)" }}
         />
 
-        <div className="relative z-10 flex flex-col h-full p-4 gap-3">
+        <div className="relative z-10 flex flex-col h-full p-4 gap-2.5">
           {/* Header */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <div
-              className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base"
+              className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-sm"
               style={{ background: "rgba(255,255,255,0.15)" }}
             >
               🧮
             </div>
             <div>
-              <h3 className="text-sm font-bold leading-none text-white">
+              <h3 className="text-xs font-bold leading-none text-white uppercase tracking-wider">
                 Calculadora de Materiales
               </h3>
               <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>
-                Elige el sistema y calcula al instante
+                Cotiza tus materiales al instante
               </p>
             </div>
           </div>
@@ -295,18 +446,18 @@ export function PromoSplitSection() {
           {/* Sistema */}
           <div>
             <label
-              className="block text-[10px] font-medium uppercase tracking-wide mb-1"
-              style={{ color: "rgba(255,255,255,0.65)" }}
+              className="block text-[10px] font-semibold uppercase tracking-wide mb-1"
+              style={{ color: "rgba(255,255,255,0.75)" }}
             >
-              Sistema
+              Sistema constructivo
             </label>
             <select
               value={modId}
               onChange={(e) => setModId(e.target.value)}
-              className="w-full rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none"
+              className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none cursor-pointer"
               style={{
                 background: "rgba(255,255,255,0.12)",
-                border: "1px solid rgba(255,255,255,0.18)",
+                border: "1px solid rgba(255,255,255,0.22)",
               }}
             >
               {MODULES.map((m) => (
@@ -317,74 +468,126 @@ export function PromoSplitSection() {
             </select>
           </div>
 
-          {/* Ancho / Alto */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label
-                className="block text-[10px] font-medium uppercase tracking-wide mb-1"
-                style={{ color: "rgba(255,255,255,0.65)" }}
+          {/* Selector de modo: m² Directos vs Ancho × Alto */}
+          <div>
+            <div
+              className="flex rounded-lg p-0.5 mb-1.5"
+              style={{ background: "rgba(0, 0, 0, 0.25)", border: "1px solid rgba(255,255,255,0.1)" }}
+            >
+              <button
+                type="button"
+                onClick={() => setInputMode("area")}
+                className={`flex-1 py-1 text-[11px] font-semibold rounded-md transition-all flex items-center justify-center gap-1 ${
+                  inputMode === "area"
+                    ? "bg-white text-blue-900 shadow-sm"
+                    : "text-white/75 hover:text-white"
+                }`}
               >
-                Ancho (m)
-              </label>
-              <input
-                type="number"
-                value={ancho}
-                onChange={(e) => setAncho(e.target.value)}
-                placeholder="3.00"
-                step="0.1"
-                className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder:text-white/30 focus:outline-none"
-                style={{
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                }}
-              />
-            </div>
-            <div>
-              <label
-                className="block text-[10px] font-medium uppercase tracking-wide mb-1"
-                style={{ color: "rgba(255,255,255,0.65)" }}
+                <span>📐</span> m² Área
+              </button>
+              <button
+                type="button"
+                onClick={() => setInputMode("dimensions")}
+                className={`flex-1 py-1 text-[11px] font-semibold rounded-md transition-all flex items-center justify-center gap-1 ${
+                  inputMode === "dimensions"
+                    ? "bg-white text-blue-900 shadow-sm"
+                    : "text-white/75 hover:text-white"
+                }`}
               >
-                Alto (m)
-              </label>
-              <input
-                type="number"
-                value={alto}
-                onChange={(e) => setAlto(e.target.value)}
-                placeholder="2.40"
-                step="0.1"
-                className="w-full rounded-lg px-2.5 py-2 text-xs text-white placeholder:text-white/30 focus:outline-none"
-                style={{
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                }}
-              />
+                <span>📏</span> Ancho × Alto
+              </button>
             </div>
+
+            {inputMode === "area" ? (
+              <div>
+                <label
+                  className="block text-[10px] font-semibold uppercase tracking-wide mb-1"
+                  style={{ color: "rgba(255,255,255,0.75)" }}
+                >
+                  Metros Cuadrados (m²)
+                </label>
+                <input
+                  type="number"
+                  value={areaDirecta}
+                  onChange={(e) => setAreaDirecta(e.target.value)}
+                  placeholder="Ej: 15.00"
+                  step="0.1"
+                  min="0.1"
+                  className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-white/35 focus:outline-none"
+                  style={{
+                    background: "rgba(255,255,255,0.12)",
+                    border: "1px solid rgba(255,255,255,0.22)",
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label
+                    className="block text-[10px] font-semibold uppercase tracking-wide mb-1"
+                    style={{ color: "rgba(255,255,255,0.75)" }}
+                  >
+                    Ancho (m)
+                  </label>
+                  <input
+                    type="number"
+                    value={ancho}
+                    onChange={(e) => setAncho(e.target.value)}
+                    placeholder="3.00"
+                    step="0.1"
+                    className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-white/35 focus:outline-none"
+                    style={{
+                      background: "rgba(255,255,255,0.12)",
+                      border: "1px solid rgba(255,255,255,0.22)",
+                    }}
+                  />
+                </div>
+                <div>
+                  <label
+                    className="block text-[10px] font-semibold uppercase tracking-wide mb-1"
+                    style={{ color: "rgba(255,255,255,0.75)" }}
+                  >
+                    Alto (m)
+                  </label>
+                  <input
+                    type="number"
+                    value={alto}
+                    onChange={(e) => setAlto(e.target.value)}
+                    placeholder="2.40"
+                    step="0.1"
+                    className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-white/35 focus:outline-none"
+                    style={{
+                      background: "rgba(255,255,255,0.12)",
+                      border: "1px solid rgba(255,255,255,0.22)",
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-
-
           {/* Botón Calcular */}
-          <div className="mt-auto">
+          <div className="mt-auto pt-1">
             <button
               onClick={handleCalcClick}
-              className="w-full flex items-center justify-center gap-1.5 font-bold text-sm py-2.5 rounded-lg transition-colors"
+              className="w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 rounded-lg transition-all shadow-md active:scale-95"
               style={{ background: ORANGE, color: "#fff", border: "none" }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE_H)}
               onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE)}
             >
-              Calcular →
+              Calcular Materiales →
             </button>
           </div>
         </div>
       </article>
 
       {/* ══════════════════════════════════════════════
-          POPUP MODAL (todos los pasos)
+          POPUP MODAL MULTIPASO
       ══════════════════════════════════════════════ */}
       {popupOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ background: "rgba(2,4,10,0.78)", backdropFilter: "blur(4px)" }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+          style={{ background: "rgba(2,4,10,0.82)", backdropFilter: "blur(5px)" }}
           onClick={(e) => {
             if (e.target === e.currentTarget) handleClosePopup()
           }}
@@ -392,17 +595,16 @@ export function PromoSplitSection() {
           <div
             className="w-full rounded-2xl overflow-hidden"
             style={{
-              maxWidth: 520,
-              maxHeight: "90vh",
+              maxWidth: 540,
+              maxHeight: "92vh",
               background: CARD_BG,
               border: `1px solid ${BORDER}`,
-              boxShadow: "0 30px 60px rgba(0,0,0,0.6)",
+              boxShadow: "0 30px 60px rgba(0,0,0,0.7)",
               display: "flex",
               flexDirection: "column",
               animation: "fadeScaleIn 0.18s ease-out",
             }}
           >
-
             {/* ── PASO: Opciones avanzadas + medidas ── */}
             {popupStep === "adv" && (
               <>
@@ -413,43 +615,91 @@ export function PromoSplitSection() {
                   <div>
                     <h3 className="text-base font-bold text-white m-0">{currentMod.name}</h3>
                     <p className="text-xs mt-0.5" style={{ color: TEXT_SOFT }}>
-                      {currentMod.sub} — ajusta las opciones y confirma las medidas
+                      {currentMod.sub} — ajusta las opciones y medidas
                     </p>
                   </div>
                   <CloseBtn onClick={handleClosePopup} />
                 </div>
 
-                <div className="px-5 py-4 space-y-3 overflow-y-auto" style={{ flex: 1 }}>
-                  {/* Medidas (confirmación visual) */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: TEXT_SOFT }}>
-                        Ancho (m)
-                      </label>
-                      <input
-                        type="number"
-                        value={ancho}
-                        onChange={(e) => setAncho(e.target.value)}
-                        placeholder="3.00"
-                        step="0.1"
-                        className="w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none"
-                        style={{ background: CARD2, border: `1px solid ${BORDER}` }}
-                      />
+                <div className="px-5 py-4 space-y-3.5 overflow-y-auto" style={{ flex: 1 }}>
+                  {/* Selector de modo y medidas */}
+                  <div>
+                    <div
+                      className="flex rounded-lg p-0.5 mb-2"
+                      style={{ background: CARD2, border: `1px solid ${BORDER}` }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setInputMode("area")}
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1 ${
+                          inputMode === "area"
+                            ? "bg-blue-600 text-white shadow-sm"
+                            : "text-gray-400 hover:text-white"
+                        }`}
+                      >
+                        <span>📐</span> Por Área (m²)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setInputMode("dimensions")}
+                        className={`flex-1 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1 ${
+                          inputMode === "dimensions"
+                            ? "bg-blue-600 text-white shadow-sm"
+                            : "text-gray-400 hover:text-white"
+                        }`}
+                      >
+                        <span>📏</span> Ancho × Alto
+                      </button>
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: TEXT_SOFT }}>
-                        Alto (m)
-                      </label>
-                      <input
-                        type="number"
-                        value={alto}
-                        onChange={(e) => setAlto(e.target.value)}
-                        placeholder="2.40"
-                        step="0.1"
-                        className="w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none"
-                        style={{ background: CARD2, border: `1px solid ${BORDER}` }}
-                      />
-                    </div>
+
+                    {inputMode === "area" ? (
+                      <div>
+                        <label className="block text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: TEXT_SOFT }}>
+                          Metros Cuadrados (m²)
+                        </label>
+                        <input
+                          type="number"
+                          value={areaDirecta}
+                          onChange={(e) => setAreaDirecta(e.target.value)}
+                          placeholder="Ej: 15.00"
+                          step="0.1"
+                          min="0.1"
+                          className="w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none"
+                          style={{ background: CARD2, border: `1px solid ${BORDER}` }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: TEXT_SOFT }}>
+                            Ancho (m)
+                          </label>
+                          <input
+                            type="number"
+                            value={ancho}
+                            onChange={(e) => setAncho(e.target.value)}
+                            placeholder="3.00"
+                            step="0.1"
+                            className="w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none"
+                            style={{ background: CARD2, border: `1px solid ${BORDER}` }}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: TEXT_SOFT }}>
+                            Alto (m)
+                          </label>
+                          <input
+                            type="number"
+                            value={alto}
+                            onChange={(e) => setAlto(e.target.value)}
+                            placeholder="2.40"
+                            step="0.1"
+                            className="w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none"
+                            style={{ background: CARD2, border: `1px solid ${BORDER}` }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Divider */}
@@ -509,7 +759,7 @@ export function PromoSplitSection() {
                   )}
                 </div>
 
-                <div className="flex gap-2.5 px-5 pb-5 pt-2">
+                <div className="flex gap-2.5 px-5 pb-5 pt-2 border-t" style={{ borderColor: BORDER }}>
                   <button
                     onClick={handleClosePopup}
                     className="flex-1 py-2.5 rounded-lg text-sm transition-colors"
@@ -521,77 +771,247 @@ export function PromoSplitSection() {
                   </button>
                   <button
                     onClick={doCalc}
-                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors"
+                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-lg"
                     style={{ background: ORANGE, border: "none", color: "#fff" }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE_H)}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE)}
                   >
-                    Calcular →
+                    Calcular Materiales →
                   </button>
                 </div>
               </>
             )}
 
-            {/* ── PASO: Resultados ── */}
+            {/* ── PASO: Resultados de Materiales (Editable) ── */}
             {popupStep === "results" && calcResult && (
               <>
                 <div
                   className="flex items-start justify-between px-5 py-4 border-b"
-                  style={{ borderColor: BORDER, background: CARD_BG, position: "sticky", top: 0 }}
+                  style={{ borderColor: BORDER, background: CARD_BG, position: "sticky", top: 0, zIndex: 10 }}
                 >
                   <div>
-                    <h3 className="text-base font-bold text-white m-0">{calcResult.modName}</h3>
+                    <h3 className="text-base font-bold text-white m-0 flex items-center gap-2">
+                      <span>📦</span> {calcResult.modName}
+                    </h3>
                     <p className="text-xs mt-0.5" style={{ color: TEXT_SOFT }}>
-                      Área calculada: {calcResult.ancho}m × {calcResult.alto}m = {fmt(calcResult.area)} m²
+                      {calcResult.inputMode === "dimensions" && calcResult.ancho && calcResult.alto
+                        ? `Área: ${calcResult.ancho}m × ${calcResult.alto}m = ${fmt(calcResult.area)} m²`
+                        : `Área: ${fmt(calcResult.area)} m²`}
                     </p>
                   </div>
                   <CloseBtn onClick={handleClosePopup} />
                 </div>
 
-                <div className="overflow-y-auto px-5 py-3" style={{ flex: 1 }}>
-                  {calcResult.rows.map(([name, qty, unit, coef], i) => (
-                    <div
-                      key={i}
-                      className="flex items-baseline justify-between py-2.5"
-                      style={{
-                        borderBottom: i < calcResult.rows.length - 1 ? `1px solid ${BORDER}` : "none",
-                      }}
-                    >
-                      <div>
-                        <span className="text-sm text-white">{name}</span>
-                        <span className="block text-[10px] mt-0.5" style={{ color: TEXT_SOFT }}>
-                          {coef}
-                        </span>
-                      </div>
-                      <div className="text-right pl-3 flex-shrink-0">
-                        <span
-                          className="font-bold text-[15px]"
-                          style={{ color: ORANGE_H, fontFamily: "monospace" }}
-                        >
-                          {fmt(qty)}
-                        </span>
-                        <span className="text-[10px] ml-1" style={{ color: TEXT_SOFT }}>
-                          {unit}
-                        </span>
-                      </div>
+                {/* Sub-header de ayuda */}
+                <div className="px-5 py-2 flex items-center justify-between text-[11px] bg-blue-950/40 border-b" style={{ borderColor: BORDER }}>
+                  <span className="text-blue-200">
+                    💡 Puedes modificar cantidades con <strong>+ / -</strong> o eliminar materiales.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleResetItems}
+                    className="text-[10px] text-orange-400 hover:underline hover:text-orange-300 ml-2"
+                  >
+                    ↺ Restablecer
+                  </button>
+                </div>
+
+                <div className="overflow-y-auto px-5 py-3 divide-y" style={{ flex: 1, borderColor: BORDER }}>
+                  {calcResult.items.length === 0 ? (
+                    <div className="py-8 text-center">
+                      <p className="text-sm text-gray-400">No hay materiales en la lista.</p>
+                      <button
+                        type="button"
+                        onClick={handleResetItems}
+                        className="mt-2 text-xs text-orange-400 font-semibold hover:underline"
+                      >
+                        Restablecer cálculo de materiales
+                      </button>
                     </div>
-                  ))}
+                  ) : (
+                    calcResult.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-between py-2.5 gap-2"
+                        style={{ borderColor: BORDER }}
+                      >
+                        {/* Nombre del material y detalle */}
+                        <div className="flex-1 min-w-0 pr-2">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm text-white font-medium truncate">
+                              {item.name}
+                            </span>
+                            {item.isCustom && (
+                              <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-blue-600/30 text-blue-300 font-semibold border border-blue-500/30">
+                                Extra
+                              </span>
+                            )}
+                          </div>
+                          <span className="block text-[10px] mt-0.5 truncate" style={{ color: TEXT_SOFT }}>
+                            {item.coef}
+                          </span>
+                        </div>
+
+                        {/* Controles de Cantidad (+ / -) y Eliminar */}
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {/* Botón Decrementar (-) */}
+                          <button
+                            type="button"
+                            onClick={() => handleIncrementQty(item.id, -1)}
+                            className="w-7 h-7 rounded-md flex items-center justify-center text-sm font-bold text-white transition-colors bg-white/10 hover:bg-white/20 active:scale-95"
+                            title="Disminuir cantidad"
+                          >
+                            −
+                          </button>
+
+                          {/* Input numérico de cantidad */}
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.qty}
+                            onChange={(e) => handleUpdateQty(item.id, parseFloat(e.target.value) || 1)}
+                            className="w-12 text-center text-sm font-bold font-mono text-orange-400 rounded-md py-1 px-1 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                            style={{ background: CARD2, border: `1px solid ${BORDER}` }}
+                          />
+
+                          {/* Botón Incrementar (+) */}
+                          <button
+                            type="button"
+                            onClick={() => handleIncrementQty(item.id, 1)}
+                            className="w-7 h-7 rounded-md flex items-center justify-center text-sm font-bold text-white transition-colors bg-white/10 hover:bg-white/20 active:scale-95"
+                            title="Aumentar cantidad"
+                          >
+                            +
+                          </button>
+
+                          {/* Unidad */}
+                          <span className="text-xs w-10 text-left font-medium" style={{ color: TEXT_SOFT }}>
+                            {item.unit}
+                          </span>
+
+                          {/* Botón Eliminar item (con confirmación) */}
+                          <button
+                            type="button"
+                            onClick={() => setItemToDelete(item)}
+                            className="w-7 h-7 ml-1 rounded-md flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-500/15 transition-colors"
+                            title="Eliminar este material"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+
+                  {/* ── Sección: Agregar "Otro Material" ── */}
+                  <div className="pt-3 pb-1 border-t" style={{ borderColor: BORDER }}>
+                    {!showAddCustom ? (
+                      <button
+                        type="button"
+                        onClick={() => setShowAddCustom(true)}
+                        className="w-full py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors border border-dashed hover:border-solid"
+                        style={{
+                          background: "rgba(255,255,255,0.04)",
+                          borderColor: "rgba(255,255,255,0.2)",
+                          color: "#E7ECF5",
+                        }}
+                        onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.08)")}
+                        onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)")}
+                      >
+                        <span className="text-orange-400 text-sm font-bold">＋</span> Agregar otro material personalizado
+                      </button>
+                    ) : (
+                      <div
+                        className="p-3 rounded-xl space-y-2.5 animate-fadeIn"
+                        style={{ background: CARD2, border: `1px solid ${BORDER}` }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-white flex items-center gap-1">
+                            <span>➕</span> Agregar otro material
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setShowAddCustom(false)}
+                            className="text-[11px] text-gray-400 hover:text-white"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+
+                        <div>
+                          <input
+                            type="text"
+                            value={customName}
+                            onChange={(e) => setCustomName(e.target.value)}
+                            placeholder="Nombre del material (ej: Cinta de Malla, Sellador...)"
+                            className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-gray-500 focus:outline-none"
+                            style={{ background: CARD_BG, border: `1px solid ${BORDER}` }}
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-[10px] uppercase font-semibold text-gray-400 mb-1">
+                              Cantidad
+                            </label>
+                            <input
+                              type="number"
+                              min="1"
+                              value={customQty}
+                              onChange={(e) => setCustomQty(e.target.value)}
+                              placeholder="1"
+                              className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-gray-500 focus:outline-none"
+                              style={{ background: CARD_BG, border: `1px solid ${BORDER}` }}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[10px] uppercase font-semibold text-gray-400 mb-1">
+                              Unidad
+                            </label>
+                            <select
+                              value={customUnit}
+                              onChange={(e) => setCustomUnit(e.target.value)}
+                              className="w-full rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none"
+                              style={{ background: CARD_BG, border: `1px solid ${BORDER}` }}
+                            >
+                              {AVAILABLE_UNITS.map((u) => (
+                                <option key={u} value={u} style={{ color: "#111" }}>
+                                  {u}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleAddCustomItem}
+                          className="w-full py-1.5 rounded-lg text-xs font-bold text-white transition-colors"
+                          style={{ background: ORANGE }}
+                          onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE_H)}
+                          onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE)}
+                        >
+                          ✓ Guardar material en la lista
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
                   <p
-                    className="text-[11px] mt-3 pt-3"
-                    style={{ color: TEXT_SOFT, borderTop: `1px dashed ${BORDER}` }}
+                    className="text-[11px] mt-2 pt-2"
+                    style={{ color: TEXT_SOFT }}
                   >
                     {calcResult.note
                       ? `⚠ ${calcResult.note}`
-                      : "Cantidades redondeadas a presentación comercial (función techo)."}
+                      : "Cantidades redondeadas comercialmente. Puedes modificarlas libremente."}
                   </p>
                 </div>
 
-                <div className="flex gap-2.5 px-5 pb-5 pt-3">
+                <div className="flex gap-2.5 px-5 pb-5 pt-3 border-t" style={{ borderColor: BORDER }}>
                   <button
-                    onClick={() => {
-                      handleClosePopup()
-                    }}
+                    onClick={handleClosePopup}
                     className="flex-1 py-2.5 rounded-lg text-sm transition-colors"
                     style={{ background: CARD2, border: `1px solid ${BORDER}`, color: "#E7ECF5" }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#1a2540")}
@@ -601,18 +1021,19 @@ export function PromoSplitSection() {
                   </button>
                   <button
                     onClick={() => setPopupStep("identify")}
-                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors"
+                    disabled={calcResult.items.length === 0}
+                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                     style={{ background: ORANGE, border: "none", color: "#fff" }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE_H)}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE)}
                   >
-                    Pedir Proforma
+                    Pedir Proforma ({calcResult.items.length}) →
                   </button>
                 </div>
               </>
             )}
 
-            {/* ── PASO: Identificación ── */}
+            {/* ── PASO: Identificación (Correo opcional) ── */}
             {popupStep === "identify" && (
               <>
                 <div
@@ -622,7 +1043,7 @@ export function PromoSplitSection() {
                   <div>
                     <h3 className="text-base font-bold text-white m-0">Datos de contacto</h3>
                     <p className="text-xs mt-0.5" style={{ color: TEXT_SOFT }}>
-                      Para identificarte y enviarte la cotización
+                      Para personalizar tu cotización por WhatsApp
                     </p>
                   </div>
                   <CloseBtn onClick={handleClosePopup} />
@@ -634,7 +1055,7 @@ export function PromoSplitSection() {
                       className="block text-xs font-medium uppercase tracking-wide mb-1.5"
                       style={{ color: TEXT_SOFT }}
                     >
-                      Tu nombre *
+                      Tu nombre <span className="text-orange-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -650,16 +1071,19 @@ export function PromoSplitSection() {
                       className="block text-xs font-medium uppercase tracking-wide mb-1.5"
                       style={{ color: TEXT_SOFT }}
                     >
-                      Correo electrónico *
+                      Correo electrónico <span className="text-gray-400 lowercase font-normal">(opcional)</span>
                     </label>
                     <input
                       type="email"
                       value={clientEmail}
                       onChange={(e) => setClientEmail(e.target.value)}
-                      placeholder="tucorreo@ejemplo.com"
+                      placeholder="tucorreo@ejemplo.com (opcional)"
                       className="w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none"
                       style={{ background: CARD2, border: `1px solid ${BORDER}` }}
                     />
+                    <p className="text-[11px] text-gray-500 mt-1">
+                      Si deseas recibir una copia digital de la cotización por correo.
+                    </p>
                   </div>
                   {contactError && (
                     <p className="text-xs" style={{ color: ORANGE_H }}>
@@ -668,7 +1092,7 @@ export function PromoSplitSection() {
                   )}
                 </div>
 
-                <div className="flex gap-2.5 px-5 pb-5 pt-2">
+                <div className="flex gap-2.5 px-5 pb-5 pt-2 border-t" style={{ borderColor: BORDER }}>
                   <button
                     onClick={() => setPopupStep("results")}
                     className="flex-1 py-2.5 rounded-lg text-sm transition-colors"
@@ -676,11 +1100,11 @@ export function PromoSplitSection() {
                     onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#1a2540")}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = CARD2)}
                   >
-                    ← Volver
+                    ← Volver a materiales
                   </button>
                   <button
                     onClick={handleSendIdentify}
-                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors"
+                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-lg"
                     style={{ background: ORANGE, border: "none", color: "#fff" }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE_H)}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE)}
@@ -701,7 +1125,7 @@ export function PromoSplitSection() {
                   <div>
                     <h3 className="text-base font-bold text-white m-0">Confirmar solicitud</h3>
                     <p className="text-xs mt-0.5" style={{ color: TEXT_SOFT }}>
-                      Revisa antes de enviar por WhatsApp
+                      Revisa tu solicitud antes de abrir WhatsApp
                     </p>
                   </div>
                   <CloseBtn onClick={handleClosePopup} />
@@ -713,7 +1137,11 @@ export function PromoSplitSection() {
                       Tus datos
                     </p>
                     <p className="text-sm text-white">👤 {clientName}</p>
-                    <p className="text-sm text-white mt-1">📧 {clientEmail}</p>
+                    {clientEmail.trim() ? (
+                      <p className="text-sm text-white mt-1">📧 {clientEmail}</p>
+                    ) : (
+                      <p className="text-xs text-gray-400 mt-1">📧 Sin correo (opcional)</p>
+                    )}
                   </div>
 
                   <div className="rounded-lg p-3" style={{ background: CARD2, border: `1px solid ${BORDER}` }}>
@@ -724,15 +1152,17 @@ export function PromoSplitSection() {
                       🏗️ <strong>{calcResult.modName}</strong>
                     </p>
                     <p className="text-sm mt-0.5" style={{ color: TEXT_SOFT }}>
-                      {calcResult.ancho}m × {calcResult.alto}m = {fmt(calcResult.area)} m²
+                      {calcResult.inputMode === "dimensions" && calcResult.ancho && calcResult.alto
+                        ? `${calcResult.ancho}m × ${calcResult.alto}m = ${fmt(calcResult.area)} m²`
+                        : `Área: ${fmt(calcResult.area)} m²`}
                     </p>
-                    <p className="text-xs mt-2" style={{ color: TEXT_SOFT }}>
-                      {calcResult.rows.length} materiales calculados
+                    <p className="text-xs mt-2 text-orange-400 font-semibold">
+                      📦 {calcResult.items.length} materiales en la lista
                     </p>
                   </div>
 
                   <p className="text-[11px]" style={{ color: TEXT_SOFT }}>
-                    Al continuar, se abrirá WhatsApp con el detalle completo para que un asesor te cotice.
+                    Al pulsar el botón se abrirá WhatsApp con la lista exacta de materiales para que nuestro asesor te responda con la cotización formal.
                   </p>
 
                   <button
@@ -740,11 +1170,11 @@ export function PromoSplitSection() {
                     className="text-xs underline"
                     style={{ color: TEXT_SOFT, background: "none", border: "none", cursor: "pointer", padding: 0 }}
                   >
-                    ¿Quieres cambiar tus datos? → Editar
+                    ¿Deseas editar tus datos de contacto? → Editar
                   </button>
                 </div>
 
-                <div className="flex gap-2.5 px-5 pb-5 pt-2">
+                <div className="flex gap-2.5 px-5 pb-5 pt-2 border-t" style={{ borderColor: BORDER }}>
                   <button
                     onClick={() => setPopupStep("results")}
                     className="flex-1 py-2.5 rounded-lg text-sm transition-colors"
@@ -756,7 +1186,7 @@ export function PromoSplitSection() {
                   </button>
                   <button
                     onClick={handleConfirmSend}
-                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-1.5 shadow-lg"
                     style={{ background: GREEN, border: "none", color: "#fff" }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = GREEN_H)}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = GREEN)}
@@ -785,13 +1215,12 @@ export function PromoSplitSection() {
                 <div>
                   <h3 className="text-lg font-bold text-white mb-1">¡Solicitud enviada!</h3>
                   <p className="text-sm" style={{ color: TEXT_SOFT }}>
-                    Se abrió WhatsApp con tu lista de materiales. Un asesor de TumbadosZumba te
-                    contactará pronto.
+                    Se abrió WhatsApp con tu lista personalizada de materiales. Un asesor de TumbadosZumba te contactará pronto.
                   </p>
                 </div>
                 <button
                   onClick={handleClosePopup}
-                  className="mt-2 px-8 py-2.5 rounded-lg text-sm font-bold transition-colors"
+                  className="mt-2 px-8 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-lg"
                   style={{ background: ORANGE, border: "none", color: "#fff" }}
                   onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE_H)}
                   onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = ORANGE)}
@@ -800,15 +1229,65 @@ export function PromoSplitSection() {
                 </button>
               </div>
             )}
+
+            {/* ── Modal de Confirmación de Eliminación ── */}
+            {itemToDelete && (
+              <div
+                className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                onClick={() => setItemToDelete(null)}
+              >
+                <div
+                  className="w-full max-w-sm rounded-2xl p-5 text-center shadow-2xl border animate-fadeScaleIn"
+                  style={{ background: CARD_BG, borderColor: BORDER }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center text-2xl mx-auto mb-3">
+                    🗑️
+                  </div>
+                  <h4 className="text-base font-bold text-white mb-1.5">
+                    ¿Estás seguro de eliminar?
+                  </h4>
+                  <p className="text-xs text-gray-300 mb-4 leading-relaxed">
+                    Se eliminará <strong className="text-white">"{itemToDelete.name}"</strong> ({itemToDelete.qty} {itemToDelete.unit}) de tu lista de cotización.
+                  </p>
+                  <div className="flex gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setItemToDelete(null)}
+                      className="flex-1 py-2.5 rounded-lg text-xs font-semibold transition-colors"
+                      style={{ background: CARD2, border: `1px solid ${BORDER}`, color: "#E7ECF5" }}
+                      onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#1a2540")}
+                      onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = CARD2)}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleDeleteItem(itemToDelete.id)
+                        setItemToDelete(null)
+                      }}
+                      className="flex-1 py-2.5 rounded-lg text-xs font-bold text-white transition-colors bg-red-600 hover:bg-red-500 shadow-md"
+                    >
+                      Sí, eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Animación de entrada del modal */}
+      {/* Animaciones */}
       <style>{`
         @keyframes fadeScaleIn {
           from { opacity: 0; transform: scale(0.95) translateY(8px); }
           to   { opacity: 1; transform: scale(1)    translateY(0); }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-4px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </>
