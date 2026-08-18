@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
 
-export const runtime = "nodejs"
 
 // Routes that require authentication
 const protectedRoutes = ["/profile", "/checkout"]
@@ -12,7 +11,7 @@ const adminRoutes = ["/admin"]
 // Routes only for guests (not logged in)
 const guestRoutes = ["/login", "/register"]
 
-export default auth((req) => {
+const proxyHandler = auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
   const isAdmin = req.auth?.user?.role === "ADMIN"
@@ -56,6 +55,9 @@ export default auth((req) => {
 
   return NextResponse.next()
 })
+
+export const proxy = proxyHandler
+export default proxyHandler
 
 export const config = {
   matcher: [
