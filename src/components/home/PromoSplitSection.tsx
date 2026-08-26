@@ -51,83 +51,91 @@ const AVAILABLE_UNITS = [
 // ── Módulos de cálculo ─────────────────────────────────────────────────────
 const MODULES: Module[] = [
   {
-    id: "gypsum",
-    name: "Tumbado Gypsum",
-    sub: "Cielorraso continuo",
-    adv: ["lana"],
-    calc(A, S) {
-      const lana = S.lana
-      return [
-        ["Placas Knauf", mx(1, ceil((A * 1.05) / 2.98)), "und", "1.05 m² placa/m²"],
-        ["Ángulo Provind", mx(1, ceil(A * 0.35)), "tira", "0.35 und/m²"],
-        ["Principal Provind", mx(1, ceil(A * 0.35)), "tira", "0.35 und/m²"],
-        ["Secundario Provind", mx(1, ceil(A * 0.8)), "tira", "0.80 und/m²"],
-        ["Clavo de Impacto", mx(2, ceil(A * 1.8)), "und", "1.80 und/m²"],
-        ["Clavo 2×20", ceil(A * 7.0), "und", "7 und/m²"],
-        ["Tornillo Estructura", mx(1, ceil(A * 5)), "und", "5 und/m²"],
-        ["Tornillo de Plancha", mx(40, ceil(A * 30.0)), "und", "30 und/m² · paq. mín. 40"],
-        ["Masilla Readymas 28kg", mx(1, ceil((A * 1.1) / 28)), "balde", "1.10 kg/m²"],
-        ["Cinta de Papel 250'", mx(1, ceil((A * 1.3) / 76.2)), "rollo", "1.30 ml/m²"],
-        ["Lana de Vidrio", ceil(A / lana), "rollo", `formato ${lana} m²`],
-      ]
-    },
-    note: "No incluye material para cuelgas o tirantes.",
-  },
-  {
-    id: "pared1",
-    name: "Pared Una Cara",
-    sub: "Tabique simple",
-    adv: ["stud", "lana"],
-    calc(A, S) {
-      const d = S.stud
-      const lana = S.lana
-      return [
-        ["Placas Knauf", mx(1, ceil((A * 1.05) / 2.98)), "und", "1.05 m² placa/m²"],
-        ["Stud Provind", mx(2, ceil(A / d)), "ml", `cada ${d} m`],
-        ["Track Provind", mx(1, ceil((A * 0.7) / 3.0)), "ml", "0.70 ml/m²"],
-        ["Clavo de Impacto", ceil(A * 4), "und", "4 und/m²"],
-        ["Tornillo Estructura", mx(1, ceil(A * 5)), "und", "5 und/m²"],
-        ["Tornillo de Plancha", mx(40, ceil(A * 16)), "und", "16 und/m² · paq. mín. 40"],
-        ["Masilla Readymas 28kg", mx(1, ceil((A * 0.9) / 28)), "balde", "0.90 kg/m²"],
-        ["Cinta de Papel 250'", mx(1, ceil((A * 1.65) / 76.2)), "rollo", "1.65 ml/m²"],
-        ["Lana de Vidrio", ceil(A / lana), "rollo", `formato ${lana} m²`],
-      ]
-    },
-  },
-  {
-    id: "f60",
-    name: "Revestimiento F60",
-    sub: "Trasdosado con perfil Omega",
-    adv: ["lana"],
-    calc(A, S) {
-      const lana = S.lana
-      return [
-        ["Placas Knauf", mx(1, ceil(A * 0.35)), "und", "0.35 und/m²"],
-        ["Ángulo Provind", mx(1, ceil(A * 0.35)), "tira", "0.35 und/m²"],
-        ["Perfil F60 Provind", mx(1, ceil(A * 0.7)), "tira", "0.70 und/m²"],
-        ["Soporte Directo Provind", mx(5, ceil(A * 4.5)), "und", "4.5 und/m² · mín. 5"],
-        ["Empalme F60 Provind", mx(1, ceil(A * 0.3)), "und", "0.30 und/m²"],
-        ["Taco Golpe 6×40", mx(10, ceil(A * 9.0)), "und", "9 und/m² · mín. 10"],
-        ["Clavo 2×20", ceil(A * 7.0), "und", "7 und/m²"],
-        ["Tornillo Estructura", ceil(A * 12.0), "und", "12 und/m²"],
-        ["Tornillo de Plancha", ceil(A * 40.0), "und", "40 und/m²"],
-        ["Masilla Readymas 28kg", mx(1, ceil((A * 0.9) / 28)), "balde", "0.90 kg/m²"],
-        ["Cinta de Papel 250'", mx(1, ceil((A * 1.65) / 76.2)), "rollo", "1.65 ml/m²"],
-        ["Lana de Vidrio", ceil(A / lana), "rollo", `formato ${lana} m²`],
-      ]
-    },
-  },
-  {
-    id: "revoque",
-    name: "Revoque en Seco",
-    sub: "Placa pegada directo",
+    id: "gypsum_pared",
+    name: "Gypsum (Pared/Tumbado)",
+    sub: "Plancha, estructura y masilla",
     adv: [],
     calc(A) {
       return [
-        ["Placas Knauf", mx(1, ceil(A * 0.35)), "und", "0.35 und/m²"],
-        ["Pegamento Perlfix 25kg", mx(1, ceil((A * 4.5) / 25.0)), "saco", "4.5 kg/m²"],
-        ["Masilla Readymas 28kg", mx(1, ceil((A * 0.6) / 28.0)), "balde", "0.60 kg/m²"],
-        ["Cinta de Papel 250'", mx(1, ceil((A * 1.4) / 76.2)), "rollo", "1.40 ml/m²"],
+        ["Planchas", ceil(A * 0.35), "plancha", "0.35 plancha/m²"],
+        ["Ángulos", ceil(A * 0.6), "und", "0.60 und/m²"],
+        ["Primarios", ceil(A * 0.24), "und", "0.24 und/m²"],
+        ["Omegas", ceil(A * 0.45), "und", "0.45 und/m²"],
+        ["Clavos", ceil(A * 8), "und", "8.00 und/m²"],
+        ["Autoperforantes", ceil(A * 6), "und", "6.00 und/m²"],
+        ["Tornillo Plancha", ceil(A * 15), "und", "15.00 und/m²"],
+        ["Masilla", ceil(A * 0.03), "caneca", "0.03 caneca/m²"],
+        ["Cinta Fibra Malla", ceil(A * 0.02), "und", "0.02 und/m²"],
+        ["Cinta Papel", ceil(A * 0.02), "und", "0.02 und/m²"],
+        ["Lija 150", ceil(A * 0.05), "und", "0.05 und/m²"],
+        ["Wesco Caneca", ceil(A * 0.01), "caneca", "0.01 caneca/m²"],
+        ["Wesco Galón", ceil(A * 0.02), "galón", "0.02 galón/m²"],
+      ]
+    },
+  },
+  {
+    id: "cielo_raso_120x60",
+    name: "Cielo Raso 1.20×0.60",
+    sub: "Planchas y perfilería",
+    adv: [],
+    calc(A) {
+      return [
+        ["Planchas Cielo", ceil(A * 1.4), "plancha", "1.40 plancha/m²"],
+        ["Ángulos", ceil(A * 0.3), "und", "0.30 und/m²"],
+        ["Tee 12", ceil(A * 0.23), "und", "0.23 und/m²"],
+        ["Tee 4", ceil(A * 1.35), "und", "1.35 und/m²"],
+        ["Clavos", ceil(A * 8), "und", "8.00 und/m²"],
+        ["Alambre 18", ceil(A * 0.04), "rollo", "0.04 rollo/m²"],
+      ]
+    },
+  },
+  {
+    id: "cielo_raso_60x60",
+    name: "Cielo Raso 60×60",
+    sub: "Planchas y perfilería",
+    adv: [],
+    calc(A) {
+      return [
+        ["Planchas Cielo", ceil(A * 1.4), "plancha", "1.40 plancha/m²"],
+        ["Ángulos", ceil(A * 0.3), "und", "0.30 und/m²"],
+        ["Tee 12", ceil(A * 0.23), "und", "0.23 und/m²"],
+        ["Tee 4", ceil(A * 1.35), "und", "1.35 und/m²"],
+        ["Tee 2", ceil(A * 1.35), "und", "1.35 und/m²"],
+        ["Clavos", ceil(A * 8), "und", "8.00 und/m²"],
+        ["Alambre 18", ceil(A * 0.04), "rollo", "0.04 rollo/m²"],
+      ]
+    },
+  },
+  {
+    id: "duela_pvc",
+    name: "Duela PVC 5.95×0.25m",
+    sub: "Duelas y estructura",
+    adv: [],
+    calc(A) {
+      return [
+        ["Duelas", ceil(A * 0.72), "und", "0.72 und/m²"],
+        ["Cornisa", ceil(A * 0.12), "und", "0.12 und/m²"],
+        ["Ángulos", ceil(A * 0.6), "und", "0.60 und/m²"],
+        ["Primarios", ceil(A * 0.24), "und", "0.24 und/m²"],
+        ["Omegas", ceil(A * 0.45), "und", "0.45 und/m²"],
+        ["Clavos", ceil(A * 8), "und", "8.00 und/m²"],
+        ["Autoperforantes", ceil(A * 6), "und", "6.00 und/m²"],
+        ["Autoperforante Punta Aguja", ceil(A * 10), "und", "10.00 und/m²"],
+      ]
+    },
+  },
+  {
+    id: "empaste",
+    name: "Empaste",
+    sub: "Empaste, pintura y sellador",
+    adv: [],
+    calc(A) {
+      return [
+        ["Empaste", ceil(A * 0.05), "und", "0.05 und/m²"],
+        ["Pintura", ceil(A * 0.01), "caneca", "0.01 caneca/m²"],
+        ["Sellador", ceil(A * 0.02), "galón", "0.02 galón/m²"],
+        ["Lija 36", ceil(A * 0.03), "und", "0.03 und/m²"],
+        ["Lija 150 180", ceil(A * 0.05), "und", "0.05 und/m²"],
       ]
     },
   },
