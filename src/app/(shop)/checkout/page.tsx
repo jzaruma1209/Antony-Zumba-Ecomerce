@@ -110,9 +110,9 @@ export default function CheckoutPage() {
                   <h3 className="font-medium">Direccion de Envio</h3>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Juan Perez<br />
-                    Av. Principal 123<br />
-                    Lima, Lima 15001<br />
-                    Peru
+                    Av. Amazonas y Naciones Unidas<br />
+                    Quito, Pichincha 170505<br />
+                    Ecuador
                   </p>
                 </div>
 

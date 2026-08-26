@@ -91,14 +91,24 @@ export function MobileNav() {
 
           <Separator />
 
-          {/* All Products */}
-          <Link
-            href="/products"
-            onClick={() => setOpen(false)}
-            className="flex items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Ver Todos los Productos
-          </Link>
+          {/* All Products & Offers */}
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/ofertas"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+            >
+              <Heart className="h-4 w-4" strokeWidth={1.75} />
+              Ver Productos en Oferta
+            </Link>
+            <Link
+              href="/products"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-center rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Ver Todos los Productos
+            </Link>
+          </div>
         </div>
       </SheetContent>
     </Sheet>

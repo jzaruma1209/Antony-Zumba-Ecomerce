@@ -32,32 +32,34 @@ export function ShippingForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="phone">Telefono</Label>
-        <Input id="phone" type="tel" placeholder="+51 999 888 777" />
+        <Label htmlFor="phone">Teléfono</Label>
+        <Input id="phone" type="tel" placeholder="+593 99 988 8777" />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="address">Direccion</Label>
-        <Input id="address" placeholder="Av. Principal 123" />
+        <Label htmlFor="address">Dirección</Label>
+        <Input id="address" placeholder="Av. Amazonas y Naciones Unidas" />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-2">
           <Label htmlFor="city">Ciudad</Label>
-          <Input id="city" placeholder="Lima" />
+          <Input id="city" placeholder="Quito" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="state">Departamento</Label>
+          <Label htmlFor="state">Provincia</Label>
           <Select>
             <SelectTrigger id="state">
               <SelectValue placeholder="Seleccionar" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="lima">Lima</SelectItem>
-              <SelectItem value="arequipa">Arequipa</SelectItem>
-              <SelectItem value="cusco">Cusco</SelectItem>
-              <SelectItem value="trujillo">La Libertad</SelectItem>
-              <SelectItem value="piura">Piura</SelectItem>
+              <SelectItem value="pichincha">Pichincha</SelectItem>
+              <SelectItem value="guayas">Guayas</SelectItem>
+              <SelectItem value="azuay">Azuay</SelectItem>
+              <SelectItem value="manabi">Manabí</SelectItem>
+              <SelectItem value="el-oro">El Oro</SelectItem>
+              <SelectItem value="loja">Loja</SelectItem>
+              <SelectItem value="tungurahua">Tungurahua</SelectItem>
             </SelectContent>
           </Select>
         </div>

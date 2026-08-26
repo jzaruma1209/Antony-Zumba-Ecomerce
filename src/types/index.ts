@@ -4,6 +4,9 @@ export interface Product {
   slug: string
   brand: string
   category: string
+  categoryId?: string
+  brandId?: string
+  isActive?: boolean
   price: number
   originalPrice?: number
   images: string[]
@@ -26,6 +29,7 @@ export interface Category {
 export interface Brand {
   id: string
   name: string
+  slug: string
   logo?: string
   productCount: number
 }
@@ -40,4 +44,5 @@ export interface FilterState {
   brands: string[]
   priceRange: [number, number]
   sortBy: 'popular' | 'price-asc' | 'price-desc' | 'newest' | 'rating'
+  offersOnly?: boolean
 }

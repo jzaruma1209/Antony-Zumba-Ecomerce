@@ -57,7 +57,7 @@ export function OrderSummary({ items }: OrderSummaryProps) {
           <span>${subtotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">IGV (18%)</span>
+          <span className="text-muted-foreground">IVA (15%)</span>
           <span>Incluido</span>
         </div>
         <div className="flex justify-between text-sm">

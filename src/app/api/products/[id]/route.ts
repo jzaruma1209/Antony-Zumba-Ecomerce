@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { transformProduct } from "@/lib/transformers"
+import { cloudinary } from "@/lib/cloudinary"
 
 type Params = Promise<{ id: string }>
 
@@ -15,7 +16,6 @@ export async function GET(
     const product = await prisma.product.findFirst({
       where: {
         OR: [{ slug: id }, { id: id }],
-        isActive: true,
       },
       include: {
         category: true,
@@ -55,13 +55,13 @@ export async function PUT(
         slug: body.slug,
         description: body.description,
         price: body.price,
-        comparePrice: body.comparePrice,
+        comparePrice: body.comparePrice ? Number(body.comparePrice) : null,
         stock: body.stock,
         images: body.images,
         specs: body.specs,
         isNew: body.isNew,
         isFeatured: body.isFeatured,
-        isActive: body.isActive,
+        isActive: body.isActive !== undefined ? body.isActive : true,
         categoryId: body.categoryId,
         brandId: body.brandId,
       },
@@ -88,6 +88,40 @@ export async function DELETE(
   try {
     const { id } = await params
 
+    // 1. Obtener el producto con sus imágenes antes de eliminarlo
+    const product = await prisma.product.findUnique({
+      where: { id },
+      select: { images: true },
+    })
+
+    if (!product) {
+      return NextResponse.json(
+        { error: "Product not found" },
+        { status: 404 }
+      )
+    }
+
+    // 2. Eliminar imágenes de Cloudinary si existen
+    if (product.images && product.images.length > 0) {
+      const deletePromises = product.images.map(async (imageUrl) => {
+        try {
+          // Extraer el public_id de la URL de Cloudinary
+          // Formato: https://res.cloudinary.com/<cloud>/image/upload/v<version>/<public_id>.<ext>
+          const match = imageUrl.match(/\/upload\/(?:v\d+\/)?(.+?)(?:\.\w+)?$/)
+          if (match && match[1]) {
+            const publicId = match[1]
+            await cloudinary.uploader.destroy(publicId)
+          }
+        } catch (cloudinaryError) {
+          // Loggear error pero no interrumpir la eliminación del producto
+          console.error(`Error eliminando imagen de Cloudinary: ${imageUrl}`, cloudinaryError)
+        }
+      })
+
+      await Promise.all(deletePromises)
+    }
+
+    // 3. Eliminar el producto de la base de datos
     await prisma.product.delete({
       where: { id },
     })

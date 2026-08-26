@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get("sortBy") || "newest"
     const featured = searchParams.get("featured")
     const isNew = searchParams.get("new")
+    const offers = searchParams.get("offers") || searchParams.get("onSale")
     const limit = searchParams.get("limit")
     const offset = searchParams.get("offset")
     const search = searchParams.get("search")
@@ -43,6 +44,10 @@ export async function GET(request: NextRequest) {
 
     if (isNew === "true") {
       where.isNew = true
+    }
+
+    if (offers === "true") {
+      where.comparePrice = { not: null, gt: 0 }
     }
 
     if (search) {
@@ -107,7 +112,7 @@ export async function POST(request: NextRequest) {
         slug: body.slug,
         description: body.description,
         price: body.price,
-        comparePrice: body.comparePrice,
+        comparePrice: body.comparePrice ? Number(body.comparePrice) : null,
         stock: body.stock || 0,
         images: body.images || [],
         specs: body.specs || {},

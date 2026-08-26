@@ -86,27 +86,28 @@ export default function AdminSettingsPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label>Zona horaria</Label>
-                  <Select defaultValue="america-lima">
+                  <Select defaultValue="america-guayaquil">
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="america-lima">America/Lima (GMT-5)</SelectItem>
+                      <SelectItem value="america-guayaquil">America/Guayaquil (GMT-5)</SelectItem>
                       <SelectItem value="america-bogota">America/Bogota (GMT-5)</SelectItem>
+                      <SelectItem value="america-lima">America/Lima (GMT-5)</SelectItem>
                       <SelectItem value="america-mexico">America/Mexico_City (GMT-6)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label>Moneda</Label>
-                  <Select defaultValue="pen">
+                  <Select defaultValue="usd">
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="usd">Dólares ($ USD)</SelectItem>
                       <SelectItem value="pen">Soles (S/)</SelectItem>
-                      <SelectItem value="usd">Dolares ($)</SelectItem>
-                      <SelectItem value="eur">Euros (EUR)</SelectItem>
+                      <SelectItem value="eur">Euros (€ EUR)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -171,7 +172,7 @@ export default function AdminSettingsPage() {
                   <Input type="number" defaultValue="15" />
                 </div>
                 <div className="space-y-2">
-                  <Label>Envio gratis desde (S/)</Label>
+                  <Label>Envío gratis desde ($)</Label>
                   <Input type="number" defaultValue="200" />
                 </div>
               </div>

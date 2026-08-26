@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, use } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Loader2 } from "lucide-react"
@@ -30,6 +30,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { ImageUpload } from "@/components/admin/ImageUpload"
+import type { Product } from "@/types"
 
 interface UploadedImage {
   url: string
@@ -66,7 +67,12 @@ interface Brand {
   slug: string
 }
 
-export default function NewProductPage() {
+interface EditProductPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default function EditProductPage({ params }: EditProductPageProps) {
+  const { id } = use(params)
   const router = useRouter()
   const [categories, setCategories] = useState<Category[]>([])
   const [brands, setBrands] = useState<Brand[]>([])
@@ -81,6 +87,7 @@ export default function NewProductPage() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
@@ -94,16 +101,47 @@ export default function NewProductPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesRes, brandsRes] = await Promise.all([
+        const [categoriesRes, brandsRes, productRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/brands"),
+          fetch(`/api/products/${id}`),
         ])
 
-        const categoriesData = await categoriesRes.json()
-        const brandsData = await brandsRes.json()
+        const categoriesData: Category[] = await categoriesRes.json()
+        const brandsData: Brand[] = await brandsRes.json()
+        const productData: Product = await productRes.json()
 
         setCategories(categoriesData || [])
         setBrands(brandsData || [])
+
+        if (productData && !("error" in productData)) {
+          reset({
+            name: productData.name,
+            slug: productData.slug,
+            description: productData.description || "",
+            price: productData.price,
+            comparePrice: productData.originalPrice,
+            stock: productData.stock,
+            categoryId: productData.categoryId || categoriesData.find(c => c.slug === productData.category)?.id || "",
+            brandId: productData.brandId || brandsData.find(b => b.name === productData.brand)?.id || "",
+            isNew: productData.isNew || false,
+            isFeatured: productData.isFeatured || false,
+          })
+
+          // Inicializar isOffer si el producto ya tiene precio anterior
+          if (productData.originalPrice && productData.originalPrice > 0) {
+            setIsOffer(true)
+          }
+
+          if (productData.images && productData.images.length > 0) {
+            setImages(
+              productData.images.map((url, index) => ({
+                url,
+                publicId: `img-${index}`,
+              }))
+            )
+          }
+        }
       } catch (error) {
         console.error("Error fetching data:", error)
       } finally {
@@ -112,16 +150,7 @@ export default function NewProductPage() {
     }
 
     fetchData()
-  }, [])
-
-  const generateSlug = (name: string) => {
-    return name
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")
-  }
+  }, [id, reset])
 
   const handleOfferToggle = (checked: boolean) => {
     if (checked) {
@@ -134,6 +163,15 @@ export default function NewProductPage() {
     } else {
       setIsOffer(false)
     }
+  }
+
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "")
   }
 
   const onSubmit = async (data: ProductFormData) => {
@@ -149,8 +187,8 @@ export default function NewProductPage() {
 
     setSaving(true)
     try {
-      const response = await fetch("/api/products", {
-        method: "POST",
+      const response = await fetch(`/api/products/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
@@ -159,11 +197,12 @@ export default function NewProductPage() {
         }),
       })
 
-      if (!response.ok) throw new Error("Error creating product")
+      if (!response.ok) throw new Error("Error updating product")
 
       router.push("/admin/products")
     } catch (error) {
-      console.error("Error creating product:", error)
+      console.error("Error updating product:", error)
+      alert("Error al actualizar el producto")
     } finally {
       setSaving(false)
     }
@@ -186,9 +225,9 @@ export default function NewProductPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Nuevo Producto</h1>
+          <h1 className="text-2xl font-bold">Editar Producto</h1>
           <p className="text-muted-foreground">
-            Agrega un nuevo producto al catalogo
+            Modifica la información y detalles del producto
           </p>
         </div>
       </div>
@@ -196,7 +235,7 @@ export default function NewProductPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Informacion Basica</CardTitle>
+            <CardTitle>Información Básica</CardTitle>
             <CardDescription>
               Datos principales del producto
             </CardDescription>
@@ -232,10 +271,10 @@ export default function NewProductPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Descripcion</Label>
+              <Label htmlFor="description">Descripción</Label>
               <Textarea
                 id="description"
-                placeholder="Descripcion detallada del producto"
+                placeholder="Descripción detallada del producto"
                 rows={4}
                 {...register("description")}
               />
@@ -246,10 +285,13 @@ export default function NewProductPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="categoryId">Categoria</Label>
-                <Select onValueChange={(value) => setValue("categoryId", value)}>
+                <Label htmlFor="categoryId">Categoría</Label>
+                <Select
+                  value={watch("categoryId")}
+                  onValueChange={(value) => setValue("categoryId", value)}
+                >
                   <SelectTrigger id="categoryId">
-                    <SelectValue placeholder="Seleccionar categoria" />
+                    <SelectValue placeholder="Seleccionar categoría" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -265,7 +307,10 @@ export default function NewProductPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="brandId">Marca</Label>
-                <Select onValueChange={(value) => setValue("brandId", value)}>
+                <Select
+                  value={watch("brandId")}
+                  onValueChange={(value) => setValue("brandId", value)}
+                >
                   <SelectTrigger id="brandId">
                     <SelectValue placeholder="Seleccionar marca" />
                   </SelectTrigger>
@@ -335,9 +380,9 @@ export default function NewProductPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Imagenes</CardTitle>
+            <CardTitle>Imágenes</CardTitle>
             <CardDescription>
-              Sube las imagenes del producto (máximo 5)
+              Gestiona las imágenes del producto (máximo 5)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -398,10 +443,10 @@ export default function NewProductPage() {
             {saving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Guardando...
+                Guardando cambios...
               </>
             ) : (
-              "Guardar Producto"
+              "Actualizar Producto"
             )}
           </Button>
         </div>

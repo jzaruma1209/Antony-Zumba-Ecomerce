@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect, useState, useCallback, useRef } from "react"
+import { Suspense, useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import {
   Breadcrumb,
@@ -17,42 +17,40 @@ import { SortSelect } from "@/components/products/SortSelect"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useProductsStore } from "@/stores/products-store"
 import { FilterState } from "@/types"
+import { Tag } from "lucide-react"
 
-function ProductsContent() {
+function OffersContent() {
   const searchParams = useSearchParams()
   const { products, loading, filters, setFilters, fetchProducts, fetchCategories, fetchBrands } = useProductsStore()
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  // Ref para saber si ya se hizo el montaje inicial
-  const isMounted = useRef(false)
 
-  // Efecto de inicialización: se ejecuta UNA VEZ al montar
+  // Initialize filters from URL params with offersOnly = true
   useEffect(() => {
-    isMounted.current = true  // Marcar como montado PRIMERO
     const category = searchParams.get("category")
+    const brand = searchParams.get("brand")
 
+    const initialFilters: Partial<FilterState> = {
+      offersOnly: true,
+    }
     if (category) {
-      // Si hay filtro de URL, lo seteamos → el segundo efecto dispara fetchProducts
-      setFilters({ categories: [category] })
-    } else {
-      // Sin filtros de URL, hacemos el fetch directamente
-      fetchProducts()
+      initialFilters.categories = [category]
+    }
+    if (brand) {
+      initialFilters.brands = [brand]
     }
 
+    setFilters(initialFilters)
     fetchCategories()
     fetchBrands()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Solo al montar — las funciones del store son estables
+  }, [searchParams, setFilters, fetchCategories, fetchBrands])
 
-  // Efecto reactivo: se ejecuta cuando cambian los filtros DESPUÉS del montaje
+  // Fetch products when filters change
   useEffect(() => {
-    if (!isMounted.current) return
-    fetchProducts()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters])
-
+    fetchProducts({ offersOnly: true })
+  }, [filters, fetchProducts])
 
   const handleFiltersChange = useCallback((newFilters: FilterState) => {
-    setFilters(newFilters)
+    setFilters({ ...newFilters, offersOnly: true })
   }, [setFilters])
 
   const activeFilterCount =
@@ -70,7 +68,11 @@ function ProductsContent() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Productos</BreadcrumbPage>
+            <BreadcrumbLink href="/products">Productos</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Ofertas</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
@@ -78,9 +80,15 @@ function ProductsContent() {
       {/* Results count and controls */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Todos los Productos</h1>
-          <p className="text-sm text-muted-foreground">
-            {loading ? "Cargando..." : `${products.length} productos encontrados`}
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">Productos de Oferta</h1>
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand-orange/10 px-2.5 py-0.5 text-xs font-semibold text-brand-orange">
+              <Tag className="h-3.5 w-3.5" strokeWidth={1.75} />
+              Descuentos
+            </span>
+          </div>
+          <p className="text-sm text-muted-foreground mt-1">
+            {loading ? "Cargando..." : `${products.length} productos en oferta encontrados`}
           </p>
         </div>
 
@@ -122,7 +130,7 @@ function ProductsContent() {
   )
 }
 
-function ProductsPageSkeleton() {
+function OffersPageSkeleton() {
   return (
     <div className="container mx-auto px-4 py-6">
       <Skeleton className="mb-6 h-6 w-48" />
@@ -152,10 +160,10 @@ function ProductsPageSkeleton() {
   )
 }
 
-export default function ProductsPage() {
+export default function OffersPage() {
   return (
-    <Suspense fallback={<ProductsPageSkeleton />}>
-      <ProductsContent />
+    <Suspense fallback={<OffersPageSkeleton />}>
+      <OffersContent />
     </Suspense>
   )
 }

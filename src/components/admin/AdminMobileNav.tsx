@@ -14,6 +14,7 @@ import {
   Users,
   Settings,
   Store,
+  Tag,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -29,6 +30,7 @@ const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Productos", href: "/admin/products", icon: Package },
   { name: "Categorias", href: "/admin/categories", icon: FolderTree },
+  { name: "Marcas", href: "/admin/brands", icon: Tag },
   { name: "Ordenes", href: "/admin/orders", icon: ShoppingCart },
   { name: "Pagos", href: "/admin/payments", icon: CreditCard },
   { name: "Usuarios", href: "/admin/users", icon: Users },

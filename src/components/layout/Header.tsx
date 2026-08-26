@@ -288,7 +288,7 @@ export function Header() {
               <span>Instalaciones</span>
             </Link>
 
-            <Link href="/products" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
+            <Link href="/ofertas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
               <Heart className="h-3.5 w-3.5 text-slate-500" />
               <span>Ofertas</span>
             </Link>

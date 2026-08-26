@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp, Search } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { brands } from "@/data/mock-products"
+import { useProductsStore } from "@/stores/products-store"
 
 interface BrandFilterProps {
   selectedBrands: string[]
@@ -13,6 +13,7 @@ interface BrandFilterProps {
 }
 
 export function BrandFilter({ selectedBrands, onBrandsChange }: BrandFilterProps) {
+  const { brands } = useProductsStore()
   const [isOpen, setIsOpen] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -20,11 +21,11 @@ export function BrandFilter({ selectedBrands, onBrandsChange }: BrandFilterProps
     brand.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const handleBrandToggle = (brandName: string) => {
-    if (selectedBrands.includes(brandName)) {
-      onBrandsChange(selectedBrands.filter((b) => b !== brandName))
+  const handleBrandToggle = (brandSlug: string) => {
+    if (selectedBrands.includes(brandSlug)) {
+      onBrandsChange(selectedBrands.filter((b) => b !== brandSlug))
     } else {
-      onBrandsChange([...selectedBrands, brandName])
+      onBrandsChange([...selectedBrands, brandSlug])
     }
   }
 
@@ -56,24 +57,28 @@ export function BrandFilter({ selectedBrands, onBrandsChange }: BrandFilterProps
           </div>
 
           <div className="max-h-48 space-y-2 overflow-y-auto">
-            {filteredBrands.map((brand) => (
-              <div key={brand.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`brand-${brand.id}`}
-                  checked={selectedBrands.includes(brand.name)}
-                  onCheckedChange={() => handleBrandToggle(brand.name)}
-                />
-                <Label
-                  htmlFor={`brand-${brand.id}`}
-                  className="flex flex-1 cursor-pointer items-center justify-between text-sm"
-                >
-                  <span>{brand.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {brand.productCount}
-                  </span>
-                </Label>
-              </div>
-            ))}
+            {filteredBrands.length === 0 ? (
+              <p className="text-xs text-muted-foreground py-2">No hay marcas disponibles</p>
+            ) : (
+              filteredBrands.map((brand) => (
+                <div key={brand.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`brand-${brand.id}`}
+                    checked={selectedBrands.includes(brand.slug)}
+                    onCheckedChange={() => handleBrandToggle(brand.slug)}
+                  />
+                  <Label
+                    htmlFor={`brand-${brand.id}`}
+                    className="flex flex-1 cursor-pointer items-center justify-between text-sm"
+                  >
+                    <span>{brand.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {brand.productCount}
+                    </span>
+                  </Label>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}

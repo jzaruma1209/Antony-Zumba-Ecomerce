@@ -70,7 +70,7 @@ export function PaymentForm() {
             <div>
               <p className="font-medium">Transferencia Bancaria</p>
               <p className="text-sm text-muted-foreground">
-                BCP, BBVA, Interbank, Scotiabank
+                Banco Pichincha, Banco Guayaquil, Produbanco, Pacífico
               </p>
             </div>
           </Label>
@@ -91,7 +91,7 @@ export function PaymentForm() {
             <div>
               <p className="font-medium">Billetera Digital</p>
               <p className="text-sm text-muted-foreground">
-                Yape, Plin, PayPal
+                DeUna, Payphone, PayPal
               </p>
             </div>
           </Label>

@@ -27,19 +27,19 @@ const addressSchema = z.object({
   phone: z.string().min(1, "El telefono es requerido"),
   address: z.string().min(1, "La direccion es requerida"),
   city: z.string().min(1, "La ciudad es requerida"),
-  state: z.string().min(1, "El departamento es requerido"),
+  state: z.string().min(1, "La provincia es requerida"),
   zipCode: z.string().min(1, "El codigo postal es requerido"),
   isDefault: z.boolean(),
 })
 
 type AddressFormData = z.infer<typeof addressSchema>
 
-const departments = [
-  "Amazonas", "Ancash", "Apurimac", "Arequipa", "Ayacucho",
-  "Cajamarca", "Callao", "Cusco", "Huancavelica", "Huanuco",
-  "Ica", "Junin", "La Libertad", "Lambayeque", "Lima",
-  "Loreto", "Madre de Dios", "Moquegua", "Pasco", "Piura",
-  "Puno", "San Martin", "Tacna", "Tumbes", "Ucayali",
+const provinces = [
+  "Azuay", "Bolívar", "Cañar", "Carchi", "Chimborazo", "Cotopaxi",
+  "El Oro", "Esmeraldas", "Galápagos", "Guayas", "Imbabura", "Loja",
+  "Los Ríos", "Manabí", "Morona Santiago", "Napo", "Orellana",
+  "Pastaza", "Pichincha", "Santa Elena", "Santo Domingo de los Tsáchilas",
+  "Sucumbíos", "Tungurahua", "Zamora Chinchipe",
 ]
 
 export default function NewAddressPage() {
@@ -151,7 +151,7 @@ export default function NewAddressPage() {
                 <Label htmlFor="city">Ciudad</Label>
                 <Input
                   id="city"
-                  placeholder="Lima"
+                  placeholder="Quito"
                   {...register("city")}
                 />
                 {errors.city && (
@@ -159,15 +159,15 @@ export default function NewAddressPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="state">Departamento</Label>
+                <Label htmlFor="state">Provincia</Label>
                 <Select onValueChange={(value) => setValue("state", value)}>
                   <SelectTrigger id="state">
                     <SelectValue placeholder="Seleccionar" />
                   </SelectTrigger>
                   <SelectContent>
-                    {departments.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
+                    {provinces.map((prov) => (
+                      <SelectItem key={prov} value={prov}>
+                        {prov}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -25,6 +25,9 @@ export function transformProduct(product: ProductWithRelations): Product {
     slug: product.slug,
     brand: product.brand.name,
     category: product.category.slug,
+    categoryId: product.categoryId,
+    brandId: product.brandId,
+    isActive: product.isActive,
     price: Number(product.price),
     originalPrice: product.comparePrice ? Number(product.comparePrice) : undefined,
     images: product.images,
@@ -51,6 +54,7 @@ export function transformBrand(brand: BrandWithCount): Brand {
   return {
     id: brand.id,
     name: brand.name,
+    slug: brand.slug,
     logo: brand.logo || undefined,
     productCount: brand._count?.products || 0,
   }

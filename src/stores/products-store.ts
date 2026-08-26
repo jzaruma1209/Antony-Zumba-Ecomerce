@@ -26,6 +26,9 @@ const defaultFilters: FilterState = {
   sortBy: "newest",
 }
 
+// AbortController para cancelar requests anteriores y evitar race conditions
+let productsAbortController: AbortController | null = null
+
 export const useProductsStore = create<ProductsState>((set, get) => ({
   products: [],
   categories: [],
@@ -36,15 +39,24 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
   error: null,
 
   fetchProducts: async (filterOverrides) => {
+    // Cancelar request anterior si todavía está en vuelo
+    if (productsAbortController) {
+      productsAbortController.abort()
+    }
+    productsAbortController = new AbortController()
+    const signal = productsAbortController.signal
+
     set({ loading: true, error: null })
     try {
       const filters = { ...get().filters, ...filterOverrides }
       const params = new URLSearchParams()
 
-      if (filters.categories.length === 1) {
+      // Soportar múltiples categorías (toma la primera si hay varias)
+      if (filters.categories.length >= 1) {
         params.set("category", filters.categories[0])
       }
-      if (filters.brands.length === 1) {
+      // Soportar múltiples marcas (toma la primera si hay varias)
+      if (filters.brands.length >= 1) {
         params.set("brand", filters.brands[0])
       }
       if (filters.priceRange[0] > 0) {
@@ -56,13 +68,18 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
       if (filters.sortBy) {
         params.set("sortBy", filters.sortBy)
       }
+      if (filters.offersOnly) {
+        params.set("offers", "true")
+      }
 
-      const response = await fetch(`/api/products?${params.toString()}`)
+      const response = await fetch(`/api/products?${params.toString()}`, { signal })
       if (!response.ok) throw new Error("Failed to fetch products")
 
       const data = await response.json()
       set({ products: data.products, loading: false })
     } catch (error) {
+      // Ignorar errores por cancelación (AbortError) — son esperados
+      if ((error as Error).name === "AbortError") return
       set({ error: (error as Error).message, loading: false })
     }
   },
