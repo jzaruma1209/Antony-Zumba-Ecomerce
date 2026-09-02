@@ -41,12 +41,9 @@ const productSchema = z.object({
   name: z.string().min(1, "El nombre es requerido"),
   slug: z.string().min(1, "El slug es requerido"),
   description: z.string().min(1, "La descripcion es requerida"),
-  price: z.number({ invalid_type_error: "El precio es requerido" }).min(0, "El precio debe ser mayor a 0"),
-  comparePrice: z.preprocess(
-    (val) => (val === "" || val === null || val === undefined || (typeof val === "number" && Number.isNaN(val)) ? undefined : Number(val)),
-    z.number().min(0, "El precio anterior debe ser mayor o igual a 0").optional()
-  ),
-  stock: z.number({ invalid_type_error: "El stock es requerido" }).min(0, "El stock debe ser mayor o igual a 0"),
+  price: z.number({ error: "El precio es requerido" }).min(0, "El precio debe ser mayor a 0"),
+  comparePrice: z.number().min(0, "El precio anterior debe ser mayor o igual a 0").optional(),
+  stock: z.number({ error: "El stock es requerido" }).min(0, "El stock debe ser mayor o igual a 0"),
   categoryId: z.string().min(1, "La categoria es requerida"),
   brandId: z.string().min(1, "La marca es requerida"),
   isNew: z.boolean(),
@@ -359,7 +356,9 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                   type="number"
                   step="0.01"
                   placeholder="0.00"
-                  {...register("comparePrice", { valueAsNumber: true })}
+                  {...register("comparePrice", {
+                    setValueAs: (v) => (v === "" || v === null || v === undefined || Number.isNaN(Number(v)) ? undefined : Number(v)),
+                  })}
                 />
               </div>
               <div className="space-y-2">

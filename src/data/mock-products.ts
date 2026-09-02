@@ -13,14 +13,14 @@ export const categories: Category[] = [
 ]
 
 export const brands: Brand[] = [
-  { id: "1", name: "Knauf", productCount: 28 },
-  { id: "2", name: "Gyplac", productCount: 22 },
-  { id: "3", name: "Deceuninck", productCount: 35 },
-  { id: "4", name: "Novacero", productCount: 42 },
-  { id: "5", name: "ZumbaGypsum", productCount: 31 },
-  { id: "6", name: "Placo", productCount: 18 },
-  { id: "7", name: "Sheetrock", productCount: 15 },
-  { id: "8", name: "Pladur", productCount: 24 },
+  { id: "1", name: "Knauf", slug: "knauf", productCount: 28 },
+  { id: "2", name: "Gyplac", slug: "gyplac", productCount: 22 },
+  { id: "3", name: "Deceuninck", slug: "deceuninck", productCount: 35 },
+  { id: "4", name: "Novacero", slug: "novacero", productCount: 42 },
+  { id: "5", name: "ZumbaGypsum", slug: "zumba-gypsum", productCount: 31 },
+  { id: "6", name: "Placo", slug: "placo", productCount: 18 },
+  { id: "7", name: "Sheetrock", slug: "sheetrock", productCount: 15 },
+  { id: "8", name: "Pladur", slug: "pladur", productCount: 24 },
 ]
 
 export const products: Product[] = [

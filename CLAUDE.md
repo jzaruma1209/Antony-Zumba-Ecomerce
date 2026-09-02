@@ -1,10 +1,11 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) and AI agents when working with code in this repository.
+> 📖 **Para la documentación completa, arquitectura de backend, modelos de datos, endpoints y reglas de diseño, consulta el documento maestro: [ARQUITECTURA.md](./ARQUITECTURA.md)**
 
 ## Project Overview
 
-BasicTechShop is an e-commerce application for computer products built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4, and shadcn/ui. Currently in UI-only phase with mock data - backend integration (PostgreSQL/Prisma) planned for future.
+TumbadosZumba is an e-commerce application for dry construction, gypsum, ceilings, and architectural finishes built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4, Prisma 7, PostgreSQL, and shadcn/ui.
 
 ### Component Organization
 ```
@@ -48,7 +49,7 @@ src/components/
 
 ## Project Plan
 
-See `/docs/PLAN.md` for detailed implementation phases and roadmap.
+Consulta [ARQUITECTURA.md](./ARQUITECTURA.md) para el roadmap y fases de implementación.
 
 
 ## Rules
