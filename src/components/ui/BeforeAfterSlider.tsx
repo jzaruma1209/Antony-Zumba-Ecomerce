@@ -10,9 +10,8 @@ interface BeforeAfterSliderProps {
 }
 
 /**
- * Slider Antes/Después — estilo Van Praet (crema, sin bordes redondeados, sin sombras)
- * Uso: <BeforeAfterSlider beforeSrc="..." afterSrc="..." />
- * Si no pasas imágenes, muestra placeholders de textura para maquetar.
+ * Slider Antes/Después integrado con los tokens de diseño de TumbadosZumba
+ * (Navy marca, Orange marca, bordes sutiles y soporte Dark Mode)
  */
 export default function BeforeAfterSlider({
   beforeSrc,
@@ -65,81 +64,45 @@ export default function BeforeAfterSlider({
   };
 
   return (
-    <div
-      style={{
-        fontFamily: "'Helvetica Neue', Arial, sans-serif",
-        background: "#F5F1E8",
-        padding: "48px 24px",
-        width: "100%",
-        height: "100%",
-      }}
-    >
+    <div className="relative w-full h-full bg-slate-900 overflow-hidden select-none">
       <div
         ref={containerRef}
         onMouseDown={onPointerDown}
         onTouchStart={onPointerDown}
-        style={{
-          position: "relative",
-          width: "100%",
-          maxWidth: 960,
-          margin: "0 auto",
-          aspectRatio: "16 / 9",
-          overflow: "hidden",
-          cursor: "ew-resize",
-          userSelect: "none",
-          background: "#3a3530",
-        }}
+        className="relative w-full h-full cursor-ew-resize overflow-hidden"
       >
         {/* Capa DESPUÉS (fondo completo) */}
         <Layer src={afterSrc} label={afterLabel} tone="after" />
 
         {/* Capa ANTES (recortada por la posición del slider) */}
         <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            height: "100%",
-            width: `${position}%`,
-            overflow: "hidden",
-          }}
+          className="absolute top-0 left-0 h-full overflow-hidden"
+          style={{ width: `${position}%` }}
         >
           <div style={{ width: containerRef.current?.offsetWidth || "100%", height: "100%" }}>
             <Layer src={beforeSrc} label={beforeLabel} tone="before" fixedWidth={containerRef.current?.offsetWidth} />
           </div>
         </div>
 
-        {/* Línea divisora + manija */}
+        {/* Línea divisora + manija con naranja de marca #F47B20 */}
         <div
+          className="absolute top-0 bottom-0 pointer-events-none bg-white/90 dark:bg-white/80 shadow-sm"
           style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
             left: `${position}%`,
-            width: 1,
-            background: "#F5F1E8",
-            transform: "translateX(-0.5px)",
-            pointerEvents: "none",
+            width: 2,
+            transform: "translateX(-1px)",
           }}
         />
         <div
+          className="absolute top-1/2 pointer-events-none flex items-center justify-center size-9 sm:size-10 rounded-full bg-[#F47B20] text-white shadow-lg border-2 border-white transition-transform hover:scale-110"
           style={{
-            position: "absolute",
-            top: "50%",
             left: `${position}%`,
             transform: "translate(-50%, -50%)",
-            width: 40,
-            height: 40,
-            background: "#F5821F",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            pointerEvents: "none",
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M5 3L1 8L5 13" stroke="#F5F1E8" strokeWidth="1.5" />
-            <path d="M11 3L15 8L11 13" stroke="#F5F1E8" strokeWidth="1.5" />
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 3L1 8L5 13" />
+            <path d="M11 3L15 8L11 13" />
           </svg>
         </div>
 
@@ -152,68 +115,8 @@ export default function BeforeAfterSlider({
           onChange={(e) => setPosition(Number(e.target.value))}
           onKeyDown={onKeyDown}
           aria-label="Comparar antes y después"
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            opacity: 0,
-            cursor: "ew-resize",
-          }}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize"
         />
-      </div>
-
-      <div
-        style={{
-          maxWidth: 960,
-          margin: "16px auto 0",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <span
-          style={{
-            fontSize: 11,
-            letterSpacing: "0.12em",
-            color: "#8a8478",
-            textTransform: "uppercase",
-          }}
-        >
-          Arrastra la línea para comparar
-        </span>
-        <button
-          style={{
-            border: "none",
-            background: "transparent",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: 12,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: "#2A2621",
-            cursor: "pointer",
-            padding: "4px 0",
-            borderBottom: "1px solid #2A2621",
-          }}
-        >
-          Cotizar Instalación
-          <span
-            style={{
-              width: 20,
-              height: 20,
-              background: "#F5821F",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M1 5H9M9 5L5.5 1.5M9 5L5.5 8.5" stroke="#F5F1E8" strokeWidth="1.2" />
-            </svg>
-          </span>
-        </button>
       </div>
     </div>
   );
@@ -227,10 +130,11 @@ interface LayerProps {
 }
 
 function Layer({ src, label, tone, fixedWidth }: LayerProps) {
+  // Patrón técnico blueprint/obra usando navy y slate oscuro cuando no hay imagen
   const placeholderBg =
     tone === "before"
-      ? "repeating-linear-gradient(135deg, #6b6258, #6b6258 2px, #5c534a 2px, #5c534a 4px)"
-      : "repeating-linear-gradient(135deg, #d8d2c4, #d8d2c4 2px, #cfc8b8 2px, #cfc8b8 4px)";
+      ? "linear-gradient(135deg, #0A3580 0%, #061e4a 100%)"
+      : "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)";
 
   return (
     <div
@@ -245,27 +149,39 @@ function Layer({ src, label, tone, fixedWidth }: LayerProps) {
           src={src}
           alt={label}
           draggable={false}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-          }}
+          className="w-full h-full object-cover block"
         />
       ) : (
-        <div style={{ width: "100%", height: "100%", background: placeholderBg }} />
+        <div 
+          className="w-full h-full flex flex-col items-center justify-center relative overflow-hidden" 
+          style={{ background: placeholderBg }}
+        >
+          {/* Textura sutil técnica estilo plano / blueprint */}
+          <div 
+            className="absolute inset-0 opacity-15"
+            style={{
+              backgroundImage: "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)",
+              backgroundSize: "20px 20px"
+            }}
+          />
+          <div className="relative z-10 text-center px-4">
+            <span className="text-xs uppercase tracking-widest text-white/80 font-mono">
+              Fase Estructural
+            </span>
+            <p className="text-sm text-white/90 font-semibold mt-1">
+              Perfilería y Armazón
+            </p>
+          </div>
+        </div>
       )}
       <span
+        className="absolute bottom-3 text-[11px] font-bold tracking-wider uppercase px-2.5 py-1 rounded shadow-sm backdrop-blur-md"
         style={{
-          position: "absolute",
-          bottom: 12,
           left: tone === "before" ? 12 : "auto",
           right: tone === "after" ? 12 : "auto",
-          fontSize: 11,
-          letterSpacing: "0.12em",
-          color: "#F5F1E8",
-          background: "rgba(20,18,15,0.55)",
-          padding: "4px 10px",
+          color: "#ffffff",
+          backgroundColor: tone === "before" ? "rgba(10, 53, 128, 0.85)" : "rgba(15, 23, 42, 0.85)",
+          border: "1px solid rgba(255, 255, 255, 0.2)"
         }}
       >
         {label}

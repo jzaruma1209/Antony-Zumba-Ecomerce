@@ -3,8 +3,42 @@
 import { useState } from "react";
 import BeforeAfterSlider from "@/components/ui/BeforeAfterSlider";
 import Link from "next/link";
-import Image from "next/image";
-import { MessageCircle, CheckCircle2 } from "lucide-react";
+import { 
+  Send, 
+  CheckCircle2, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Clock, 
+  ArrowRight,
+  ShieldCheck,
+  Award,
+  Sparkles
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+// SVG oficial de WhatsApp (conservando excepción de logo de marca según el sistema de diseño)
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg 
+      className={className} 
+      viewBox="0 0 24 24" 
+      fill="currentColor"
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  );
+}
 
 export default function InstalacionesPage() {
   const [formData, setFormData] = useState({
@@ -63,7 +97,6 @@ export default function InstalacionesPage() {
   };
 
   const handleWhatsAppClick = () => {
-    // Validar campos requeridos manualmente
     if (!formData.name || !formData.phone || !formData.tipoProyecto) {
       alert("Por favor completa los campos requeridos (Nombre, Teléfono y Tipo de Proyecto)");
       return;
@@ -71,7 +104,6 @@ export default function InstalacionesPage() {
 
     const whatsappNumber = "593997119881";
     
-    // Crear mensaje formateado
     const mensaje = `
 🏗️ *Solicitud de Cotización - TumbadosZumba*
 
@@ -91,332 +123,344 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
     const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensaje)}`;
     window.open(whatsappURL, '_blank');
   };
+
   return (
-    <div className="font-sans antialiased selection:bg-tz-orange selection:text-white bg-[#EFECE5] text-[#2A2A2A] min-h-screen">
-      <style dangerouslySetInnerHTML={{__html: `
-        .link-hover-effect {
-          position: relative;
-          display: inline-block;
-          padding-bottom: 2px;
-        }
-        .link-hover-effect::after {
-          content: '';
-          position: absolute;
-          width: 100%;
-          transform: scaleX(0);
-          height: 1px;
-          bottom: 0;
-          left: 0;
-          background-color: currentColor;
-          transform-origin: bottom right;
-          transition: transform 0.25s ease-out;
-        }
-        .link-hover-effect:hover::after {
-          transform: scaleX(1);
-          transform-origin: bottom left;
-        }
-      `}} />
-      
+    <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
-      <header className="relative w-full h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full opacity-80 mix-blend-multiply grayscale-[20%]">
+      <header className="relative w-full h-[70vh] min-h-[520px] flex items-center justify-center overflow-hidden bg-slate-950">
+        <div className="absolute inset-0 w-full h-full opacity-60">
            <BeforeAfterSlider 
               afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuCBtLyq3q98JPg10hXKNlGoIIHLQuhfiPCoNKVanJTYYoZSQASNLT4R2tGC57qjTQhuItLl9S0IRiaAJRKfm136ZWR5sbGaHKouv1tCRslasvXZco8xDNLvA6SgzwGYVpguim8UsLlxyYxLRyVpjP5K8i2EhULNuO4N2BdujpWtNF0OJjrswSluUQWQBYH5U4WGSpof70rzuY_0CAEW2CqwB2IcfIwMG-YHssizJiLGB-b1lgPMKzY"
            />
         </div>
-        <div className="absolute inset-0 bg-[#EFECE5]/20 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-slate-950/60 to-slate-950/70 pointer-events-none"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto pointer-events-none">
-          <h1 className="text-5xl md:text-7xl font-serif text-white leading-tight mb-6 drop-shadow-lg">
-            Dominando el arte de la instalación en Gypsum.
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange text-xs font-semibold uppercase tracking-wider mb-4 border border-brand-orange/30 backdrop-blur-xs">
+            <Sparkles className="size-3.5" strokeWidth={1.75} />
+            Mano de Obra Certificada
+          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-tight mb-4 drop-shadow-sm">
+            Dominando el arte de la instalación en Gypsum
           </h1>
-          <p className="text-lg md:text-xl text-white/90 font-light mb-10 max-w-2xl mx-auto">
-            Transformamos tus espacios con instalaciones profesionales de gypsum, cielo raso, divisiones y paredes con acabados perfectos.
+          <p className="text-base sm:text-lg text-slate-200 font-normal mb-8 max-w-2xl mx-auto leading-relaxed">
+            Transformamos tus espacios con instalaciones profesionales de cielo raso, divisiones, molduras y acabados técnicos de máxima durabilidad.
           </p>
-          <a className="pointer-events-auto inline-block bg-[#F5821F] text-white px-8 py-4 text-sm uppercase tracking-widest font-semibold hover:bg-black transition-colors duration-300" href="#projects">
-            Ver Nuestros Proyectos
-          </a>
+          <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-3">
+            <a 
+              href="#cotizar" 
+              className="inline-flex items-center gap-2 bg-brand-orange text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-brand-orange/90 transition-all shadow-md hover:shadow-lg"
+            >
+              Cotizar Instalación
+              <ArrowRight className="size-4" strokeWidth={1.75} />
+            </a>
+            <a 
+              href="#proyectos" 
+              className="inline-flex items-center gap-2 bg-slate-900/80 text-white border border-slate-700 px-6 py-3 rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors backdrop-blur-xs"
+            >
+              Ver Galería de Trabajos
+            </a>
+          </div>
         </div>
       </header>
 
       {/* Intro / Philosophy */}
-      <section className="py-24 px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
-        <div className="md:col-span-5 text-sm uppercase tracking-widest text-[#F5821F] font-semibold mb-4 md:mb-0">
-          Nuestra Experiencia
-        </div>
-        <div className="md:col-span-7">
-          <h2 className="text-3xl md:text-4xl font-serif leading-snug mb-8">
-            Creemos que la base de un espacio hermoso radica en una estructura sólida y acabados impecables.
-          </h2>
-          <p className="text-gray-600 leading-relaxed max-w-xl">
-            En TumbadosZumba, no solo levantamos paredes; creamos el lienzo para tu estilo de vida. Nuestra dedicación a la precisión, el uso de perfilería y placas de primera calidad, garantizan que cada proyecto —desde intrincados diseños en cielo raso y tumbados, hasta divisiones comerciales expansivas— cumpla con los más altos estándares de calidad y estética.
-          </p>
+      <section className="py-16 sm:py-20 px-4 border-b border-border/60 bg-muted/20">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
+          <div className="md:col-span-4 space-y-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-orange block">
+              Garantía y Experiencia
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Estructura sólida, nivelación exacta y acabado fino.
+            </h2>
+          </div>
+          <div className="md:col-span-8 text-sm sm:text-base text-muted-foreground leading-relaxed space-y-4">
+            <p>
+              En <strong className="text-foreground">TumbadosZumba</strong> no solo instalamos placas; garantizamos precisión milimétrica en modulación de perfilería, fijaciones estructurales y tratamiento de juntas sin fisuras.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div className="flex items-start gap-3 p-4 rounded-lg bg-card border border-border">
+                <ShieldCheck className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
+                <div>
+                  <h4 className="text-sm font-semibold text-foreground">Materiales Certificados</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">Perfilería de acero galvanizado y placas de primeras marcas.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-4 rounded-lg bg-card border border-border">
+                <Award className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
+                <div>
+                  <h4 className="text-sm font-semibold text-foreground">Personal Cualificado</h4>
+                  <p className="text-xs text-muted-foreground mt-0.5">Maestros con años de experiencia en acabados comerciales y residenciales.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Masonry Gallery */}
-      <section className="py-12 bg-white px-6" id="projects">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">
-            {/* Block 1: Text Left, Image Right */}
-            <article className="flex flex-col justify-center bg-[#FAF9F6] p-10 md:p-16 border border-[#D9D3C8]/30 h-full rounded-none">
-              <span className="text-xs uppercase tracking-widest text-gray-500 mb-4 block">Residencial</span>
-              <h3 className="text-3xl font-serif mb-4">Cielo Raso Decorativo</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                Diseño e instalación completa de cielo raso de gypsum con integración de iluminación LED indirecta para embellecer los ambientes de tu hogar.
+      {/* Gallery Section */}
+      <section className="py-16 sm:py-20 px-4 max-w-6xl mx-auto" id="proyectos">
+        <div className="text-center max-w-2xl mx-auto mb-12">
+          <span className="text-xs uppercase tracking-widest text-brand-orange font-bold mb-2 block">
+            Portafolio Real
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Nuestros Trabajos y Acabados
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Desliza para ver el antes y el después de nuestras obras recientes en viviendas y locales comerciales.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+          {/* Card 1 */}
+          <div className="rounded-xl border border-border bg-card p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+            <div>
+              <span className="text-xs uppercase tracking-wider font-semibold text-brand-orange block mb-2">Residencial</span>
+              <h3 className="text-xl font-bold text-foreground mb-3">Cielo Raso Decorativo e Iluminación</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                Diseño de falsos techos con cajones de luz indirecta LED, aislamiento térmico y molduras decorativas para salas y dormitorios.
               </p>
-              <Link className="text-xs uppercase tracking-widest font-semibold flex items-center border-b border-black w-max pb-1 group hover:text-[#F5821F] hover:border-[#F5821F] transition-colors" href="#">
-                Saber Más <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-              </Link>
-            </article>
-            <div className="h-full min-h-[400px]">
+            </div>
+            <div className="h-[280px] rounded-lg overflow-hidden border border-border">
                <BeforeAfterSlider 
                   afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuB8xyiR_zZAZcjnXzScxNhhQ1gElQgM_29PVUo8XO94sfw_3DWwdZ8LuQFlivfTMvMPc5e2GpQ_TJasuTUyteDUzg7wThpZmesJzOBG_IGaz5uNiC5w8OJ0NLD4C7I9qoPYp9A0Dy7ZWTT9mphTbAhzTLdDKAjRbvHltamFlxKaUZh79feafq61ROEbksAi71GAaOeQ3sstYtOh_fgHyg2k1NAHadLGQoc105rDzy50P8Ti_iBkO3o"
                />
             </div>
-            
-            {/* Block 2: Image Left, Text Right */}
-            <div className="h-full min-h-[400px] order-4 md:order-3">
+          </div>
+
+          {/* Card 2 */}
+          <div className="rounded-xl border border-border bg-card p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+            <div>
+              <span className="text-xs uppercase tracking-wider font-semibold text-brand-orange block mb-2">Comercial</span>
+              <h3 className="text-xl font-bold text-foreground mb-3">Paredes y Divisiones Acústicas</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                Montaje rápido y limpio de paredes divisorias de gypsum con lana de vidrio para control de ruido en oficinas, clínicas y locales.
+              </p>
+            </div>
+            <div className="h-[280px] rounded-lg overflow-hidden border border-border">
                <BeforeAfterSlider 
                   afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuARsWUXcv-lPSTpaWk6r-p_yghzuJKZAh6SSXG568v0ZZipp5WdjAGxhPG8jFQuVefPEpMUbP4turU2wY1AK8dLxn_roFsjfrlVwy6me7sdtP57ic4yl3vlp9YkebYSRjDTwx0eUfo-nEqOQVbooqJiMsVmj3czw76JqC4Coowc2VMSAwZTHjOrjeQ1SQQ-kv_cM0batnvXoi21aHj5RNvAKzp7JniCl9ydntuHYoU0nhrw-ILvExw"
                />
             </div>
-            <article className="flex flex-col justify-center bg-[#FAF9F6] p-10 md:p-16 border border-[#D9D3C8]/30 h-full order-3 md:order-4 rounded-none">
-              <span className="text-xs uppercase tracking-widest text-gray-500 mb-4 block">Comercial</span>
-              <h3 className="text-3xl font-serif mb-4">Paredes y Divisiones</h3>
-              <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                Soluciones en paredes de gypsum y divisiones acústicas diseñadas para un aislamiento óptimo de sonido, ideal para oficinas y locales comerciales.
-              </p>
-              <Link className="text-xs uppercase tracking-widest font-semibold flex items-center border-b border-black w-max pb-1 group hover:text-[#F5821F] hover:border-[#F5821F] transition-colors" href="#">
-                Saber Más <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-              </Link>
-            </article>
-          </div>
-
-          {/* Full Width Breakout */}
-          <div className="mt-12 w-full h-[60vh] relative group overflow-hidden">
-             <BeforeAfterSlider 
-                afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuAMCoiaBA68MMSyql2VvsXU093qu1QVfCmE2p_L_kT995zxfslha9JvGxW3Diyi_K0YwHgtTX6fb3QbR6L5agD0yUCWacRjtr4xk8-I8x5hZtaimfoZuFvV9M2wiSjzc6G7KZ4B7_xxVpYmknItIPOpt9H0S4qrfVn6r-j8jrPC-_L0q404_9nzVJA15APyWLh6Zo7xmqo-zu_WVKX7MmOv-o4P4k_MViy4ShNhz89qZdYiF8Rg51w"
-             />
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500 pointer-events-none"></div>
-            <div className="absolute bottom-10 left-10 text-white pointer-events-none">
-              <span className="text-xs uppercase tracking-widest mb-2 block opacity-80">Proyecto Destacado</span>
-              <h3 className="text-4xl font-serif">Remodelación de Locales Comerciales</h3>
-            </div>
           </div>
         </div>
-      </section>
 
-      {/* Before / After Comparison */}
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-serif mb-4">Del Armazón al Acabado Final</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">Observa la transformación, desde la perfilería metálica estructural hasta la pared de gypsum terminada, empastada y lista.</p>
-        </div>
-        <div className="max-w-5xl mx-auto bg-[#D9D3C8] h-[500px]">
-           <BeforeAfterSlider 
+        {/* Full width comparison */}
+        <div className="mt-12 rounded-xl border border-border bg-card p-6 sm:p-8 shadow-xs">
+          <div className="mb-6 text-center max-w-xl mx-auto">
+            <h3 className="text-lg sm:text-xl font-bold text-foreground">Del Armazón Estructural al Acabado Final</h3>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">Estructura metálica alineada con láser y superficie perfectamente empastada lista para pintura.</p>
+          </div>
+          <div className="h-[360px] sm:h-[440px] rounded-lg overflow-hidden border border-border">
+            <BeforeAfterSlider 
               beforeSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuDayY2zm0KacWHyLLaQjtBwje3fj9UVioG-GcNrpRnyqoMuWYrYRB5YCzUg5dJG2A9dRNMItW_oUOqYIYYVWqUTxNpiYlRB-nE4UzEKRJUcaOJAu9054HPInry8kN_y77EbD8pMnNTOKym91dQdQODpOUMrcI474RBdWymPP9NIUCPEmzNqRj5oSTs3ENQiu2lASYZiQK3L_EzfyJEVkVq5NIgh-fEg-mkmXwid4d_nGgHvUkn5ZQQ"
               afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuC8GSR46gtdA7Ux-WA_THPeWjJO4oNYPQ58Jo0veYte2G5MYTkMzQ921slQHeV0kNVv5UELmvyCIDTtx_A32gPRmBSpdAUEIwNb4iv-8OJvsEpz_g2NinLqab7q_EZJ82KU13_M2SWFvKAcCoRzdpMg4EK78RMqhNpxCe9Bt1SYrYxkqh4wwQUX303omTfZRNlerUfStf5t-GWnowrWn-HrxkZMFj6bAcnfFz-DkGLGUddK-_dOVDw"
-           />
-        </div>
-      </section>
-
-      {/* Partner Logos */}
-      <section className="border-y border-[#D9D3C8] bg-[#F9F8F6] py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <p className="text-center text-xs uppercase tracking-widest text-gray-500 mb-8">Nuestros Aliados y Marcas de Confianza</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Partner Logo 1" className="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5NZ3WqrDOPiJ9XIhOoelhnK-_vApnEoF9CzGb9SIJjK2I6EgTlpNKTVF6DAudP-87BZ6hRld2c2SoqGqI0sot0joIkAbb5RyudEBeHKyqJIGCv_T41FyZRCLiKCaifQZzM5njs8JmhQjYkMojlI_EIZWNDBuev919CunrVEQn50KHK-iGwbl7JyP-F4AdtZ13ekTCCeWeQiNmo1SauSQ7v7jLyvpVLrmgTvK39drRjXK3Fwh1eeQ"/>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Partner Logo 2" className="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH9dq9clDnFpDACSjR89V8eo_bfrinopXdbvQWiEiC8LkQjgKvEOLpdsABRhxX1T3c6z3GgQz90Oof-tX9EQMe59AmbSgBjqHDIs7SohqFfLKhL5ENdaUpR_8nRP9d6vgjyZJwd-nbyiXEBJsHpUU6FWKdqa2UgZUzlH0H7nrQQlTEr6-Tlh9Bfv-rA4gRrE5jWRrmbRGulxTGflUw6q_gLu-lHCX1i_YFSWauiLEetyVyYeV1YsA"/>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Partner Logo 3" className="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBchsWRxJyNJb_ywZMR-ZtoFgP42S-aOQ3u9N3jXZm5KeO1NdGAolL6CBmFCLlHOVgCOBzRvfZBRQ07pYDTaWJGN0xWIqrZIqdwyukxJ226mXbrIKfQZVMOGW9vMYP0exF9-iJFm3wd_AtHS2v3xL3FSV6tw-W5crvDuezhu1pfbISDkUK2Ji61jp20lQiHbMXhjPe69IjLZ0j3_uJ99PQEmMoCXg_Ng30W-VTSUCkjTbCsBMP3ilw"/>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Partner Logo 4" className="h-8 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQAJMJ5cAiYjsvt2Ay6E_oY0X1HmQbuVbJ8F8AH5eU5XLyd-_jy-NziQV7I8EBQq5bu5HgzrCJA5rRwRdCVHoCtCjd3akprcWGpgxcnFQti3izKZ_UI_dsUC5WcjTUpfhGHdp0BZgGSixNHOBVglPGybQEawqCiQ4KyrW2XuIc2Nnhv_dLhvCKGfly76y3J4LjA05vjiatskUURp8-M4AXdeOlsDd4OPMHeaRcdugrbiYwficpQls"/>
+            />
           </div>
         </div>
       </section>
 
-      {/* Formulario de Cotización y Contratación */}
-      <section id="cotizar" className="py-20 bg-[#FAF9F6] border-t border-[#D9D3C8] px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <span className="text-xs uppercase tracking-widest text-[#F5821F] font-semibold mb-2 block">
+      {/* Formulario Section - Diseño idéntico a Centro de Contacto */}
+      <section id="cotizar" className="py-16 sm:py-20 border-t border-border bg-muted/30 dark:bg-background">
+        <div className="container mx-auto px-4 max-w-5xl">
+          {/* Header */}
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+            <span className="text-xs uppercase tracking-widest text-brand-orange font-bold mb-2 block">
               Cotiza Tu Trabajo
             </span>
-            <h2 className="text-3xl md:text-5xl font-serif mb-4">
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               Solicita tu Cotización o Contrata un Proyecto
             </h2>
-            <p className="text-gray-600 max-w-xl mx-auto">
+            <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
               Déjanos tus datos y las características de tu espacio. Te contactaremos inmediatamente para brindarte una asesoría personalizada y un presupuesto detallado.
             </p>
           </div>
 
-          {submitted ? (
-            <div className="bg-white p-8 md:p-12 border border-[#D9D3C8]/60 shadow-sm text-center space-y-4">
-              <div className="mx-auto size-14 rounded-full bg-green-500/10 text-green-600 flex items-center justify-center">
-                <CheckCircle2 className="size-8" strokeWidth={1.75} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            {/* Info Card */}
+            <div className="lg:col-span-1 space-y-6">
+              <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">
+                  Información de Contacto
+                </h3>
+
+                <div className="space-y-4 text-sm">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
+                    <div>
+                      <p className="font-medium text-slate-900 dark:text-white">Dirección</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm">
+                        Av. 25 de agosto y galapagos
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Phone className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
+                    <div>
+                      <p className="font-medium text-slate-900 dark:text-white">Teléfono / WhatsApp</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm">0997119881</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Mail className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
+                    <div>
+                      <p className="font-medium text-slate-900 dark:text-white">Correo Electrónico</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm break-all">
+                        tumbadoszumba2508@gmail.com
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Clock className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
+                    <div>
+                      <p className="font-medium text-slate-900 dark:text-white">Horario de Atención</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm">
+                        Lunes a Sábado: 8:00 AM - 6:00 PM
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl font-serif text-slate-900">
-                ¡Solicitud de Cotización Recibida!
-              </h3>
-              <p className="text-gray-600 text-sm max-w-md mx-auto">
-                Gracias por comunicarte con TumbadosZumba. Nuestro equipo revisará los detalles de tu proyecto y se pondrá en contacto contigo muy pronto.
-              </p>
-              <button
-                type="button"
-                onClick={() => setSubmitted(false)}
-                className="inline-block bg-[#F5821F] text-white px-8 py-3 text-xs uppercase tracking-widest font-semibold hover:bg-black transition-colors"
-              >
-                Enviar otra solicitud
-              </button>
+
+              {/* Banner de asesoría inmediata */}
+              <div className="rounded-xl border border-brand-orange/20 bg-brand-orange/5 p-5">
+                <h4 className="text-sm font-semibold text-brand-orange mb-1">
+                  ¿Necesitas respuesta inmediata?
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Completa tu nombre y teléfono y puedes pulsar el botón de WhatsApp para contactar directamente a uno de nuestros asesores técnicos de obra.
+                </p>
+              </div>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 border border-[#D9D3C8]/60 shadow-sm space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                    Nombre Completo *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Ej. Juan Pérez"
-                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-                  />
-                </div>
 
-                <div>
-                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                    Teléfono / WhatsApp *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="Ej. 0997119881"
-                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-                  />
-                </div>
+            {/* Formulario */}
+            <div className="lg:col-span-2">
+              <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-xs">
+                {submitted ? (
+                  <div className="py-12 text-center space-y-4">
+                    <div className="mx-auto size-14 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 flex items-center justify-center">
+                      <CheckCircle2 className="size-8" strokeWidth={1.75} />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                      ¡Solicitud de Cotización Enviada con Éxito!
+                    </h3>
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                      Gracias por comunicarte con TumbadosZumba. Hemos registrado tu proyecto y te responderemos a la brevedad con tu cotización detallada.
+                    </p>
+                    <Button
+                      onClick={() => setSubmitted(false)}
+                      variant="outline"
+                      className="mt-4"
+                    >
+                      Enviar otra cotización
+                    </Button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Nombre completo *</Label>
+                        <Input
+                          id="name"
+                          placeholder="Ej. Juan Pérez"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Teléfono / WhatsApp *</Label>
+                        <Input
+                          id="phone"
+                          placeholder="0997119881"
+                          required
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Correo electrónico (opcional)</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="ejemplo@correo.com"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="tipoProyecto">Tipo de Proyecto *</Label>
+                        <Select
+                          value={formData.tipoProyecto}
+                          onValueChange={(val) => setFormData({ ...formData, tipoProyecto: val })}
+                          required
+                        >
+                          <SelectTrigger id="tipoProyecto">
+                            <SelectValue placeholder="Selecciona el tipo de trabajo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Cielo Raso / Tumbados">Instalación de Cielo Raso / Tumbados</SelectItem>
+                            <SelectItem value="Paredes o Divisiones de Gypsum">Paredes o Divisiones de Gypsum</SelectItem>
+                            <SelectItem value="Remodelación Comercial Integral">Remodelación Comercial Integral</SelectItem>
+                            <SelectItem value="Diseño con Luces Indirectas / Falso Techo">Diseño con Luces Indirectas / Falso Techo</SelectItem>
+                            <SelectItem value="Otro Proyecto">Otro Proyecto</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="detalles">Detalles del Proyecto o Medidas Aproximadas</Label>
+                      <Textarea
+                        id="detalles"
+                        rows={4}
+                        placeholder="Cuéntanos brevemente sobre los metros cuadrados aproximados, ciudad, tipo de inmueble o especificaciones relevantes..."
+                        value={formData.detalles}
+                        onChange={(e) => setFormData({ ...formData, detalles: e.target.value })}
+                      />
+                    </div>
+
+                    {error && (
+                      <div className="p-3 text-xs sm:text-sm text-red-600 bg-red-50 dark:bg-red-950/40 rounded-lg border border-red-200 dark:border-red-900">
+                        {error}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                      <Button
+                        type="submit"
+                        disabled={loading || !formData.tipoProyecto}
+                        className="w-full sm:w-auto bg-brand-orange hover:bg-brand-orange/90 text-white font-medium flex items-center justify-center gap-2"
+                      >
+                        <Send className="size-4" strokeWidth={1.75} />
+                        {loading ? "Enviando solicitud..." : "Enviar mensaje"}
+                      </Button>
+
+                      <Button
+                        type="button"
+                        onClick={handleWhatsAppClick}
+                        className="w-full sm:w-auto bg-[#25D366] hover:bg-[#1EBE5D] text-white font-medium flex items-center justify-center gap-2"
+                      >
+                        <WhatsAppIcon className="size-4" />
+                        Cotizar por WhatsApp
+                      </Button>
+                    </div>
+                  </form>
+                )}
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                    Correo Electrónico
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="ejemplo@correo.com"
-                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                    Tipo de Proyecto *
-                  </label>
-                  <select
-                    required
-                    value={formData.tipoProyecto}
-                    onChange={(e) => setFormData({ ...formData, tipoProyecto: e.target.value })}
-                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors text-gray-700"
-                  >
-                    <option value="">Selecciona el tipo de trabajo</option>
-                    <option value="Cielo Raso / Tumbados">Instalación de Cielo Raso / Tumbados</option>
-                    <option value="Paredes o Divisiones de Gypsum">Paredes o Divisiones de Gypsum</option>
-                    <option value="Remodelación Comercial Integral">Remodelación Comercial Integral</option>
-                    <option value="Diseño con Luces Indirectas / Falso Techo">Diseño con Luces Indirectas / Falso Techo</option>
-                    <option value="Otro Proyecto">Otro Proyecto</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                  Detalles del Proyecto o Medidas Aproximadas
-                </label>
-                <textarea
-                  rows={4}
-                  value={formData.detalles}
-                  onChange={(e) => setFormData({ ...formData, detalles: e.target.value })}
-                  placeholder="Cuéntanos brevemente sobre los metros cuadrados aproximados, ciudad, tipo de inmueble o cualquier especificación relevante..."
-                  className="w-full bg-[#FAF9F6] border border-[#D9D3C8] p-4 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-                ></textarea>
-              </div>
-
-              {error && (
-                <div className="p-3 text-xs sm:text-sm text-red-600 bg-red-50 rounded border border-red-200">
-                  {error}
-                </div>
-              )}
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full sm:w-auto inline-block bg-[#F5821F] text-white px-10 py-4 text-sm uppercase tracking-widest font-semibold hover:bg-black transition-colors duration-300 disabled:opacity-50"
-                >
-                  {loading ? "Enviando..." : "Enviar Solicitud de Cotización"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleWhatsAppClick}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-8 py-4 text-sm uppercase tracking-widest font-semibold hover:bg-[#1EBE5D] transition-colors duration-300"
-                >
-                  <MessageCircle className="h-4 w-4" strokeWidth={1.75} />
-                  Cotizar por WhatsApp
-                </button>
-              </div>
-            </form>
-          )}
+            </div>
+          </div>
         </div>
       </section>
-
-      {/* Footer / Contact CTA */}
-      <footer className="bg-[#1A1A1A] text-[#EFECE5] py-24">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-serif mb-6 text-white">Comienza tu proyecto hoy.</h2>
-            <p className="text-gray-400 mb-10 max-w-md leading-relaxed">
-              Confía en TumbadosZumba para la mejor mano de obra en instalaciones de gypsum, paredes y cielo raso. Contáctanos para cotizar tus requerimientos.
-            </p>
-            <a className="text-[#F5821F] text-2xl font-serif hover:text-white transition-colors block mb-4" href="mailto:tumbadoszumba2508@gmail.com">
-              tumbadoszumba2508@gmail.com
-            </a>
-            <p className="text-gray-400">0997119881</p>
-          </div>
-          <div className="grid grid-cols-2 gap-8 text-sm">
-            <div>
-              <h4 className="uppercase tracking-widest text-gray-500 mb-4 font-semibold">Ubicación</h4>
-              <p className="text-gray-300 leading-relaxed">
-                Av. 25 de agosto y galapagos<br/>
-                Ecuador
-              </p>
-            </div>
-            <div>
-              <h4 className="uppercase tracking-widest text-gray-500 mb-4 font-semibold">Horario de Atención</h4>
-              <p className="text-gray-300 leading-relaxed">
-                Lunes a Sábado:<br/>
-                8:00 AM - 6:00 PM
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 mt-24 pt-8 border-t border-gray-800 text-xs text-gray-500 flex justify-between items-center">
-          <p>© {new Date().getFullYear()} TumbadosZumba. Todos los derechos reservados.</p>
-          <div className="space-x-4">
-            <Link className="hover:text-gray-300" href="/contacto">Contacto</Link>
-            <Link className="hover:text-gray-300" href="/products">Productos</Link>
-          </div>
-        </div>
-      </footer>
     </div>
-  )
+  );
 }
