@@ -1,61 +1,94 @@
 "use client";
 
+import { useState } from "react";
 import BeforeAfterSlider from "@/components/ui/BeforeAfterSlider";
 import Link from "next/link";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
-import { MessageCircle } from "lucide-react";
-
-interface FormData {
-  nombre: string;
-  telefono: string;
-  email?: string;
-  tipoProyecto: string;
-  detalles?: string;
-}
+import { MessageCircle, CheckCircle2 } from "lucide-react";
 
 export default function InstalacionesPage() {
-  const { register, handleSubmit, formState: { errors }, getValues } = useForm<FormData>();
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    tipoProyecto: "",
+    detalles: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = (data: FormData) => {
-    // Aquí puedes agregar la lógica para enviar el formulario tradicional
-    console.log("Formulario enviado:", data);
-    alert("Solicitud de cotización enviada correctamente. ¡Pronto nos pondremos en contacto!");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const fullMessage = `Tipo de Proyecto: ${formData.tipoProyecto}\n\nDetalles / Medidas:\n${formData.detalles || "No especificado"}`;
+
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email || "cotizaciones@tumbadoszumba.com",
+          phone: formData.phone,
+          subject: `Cotización de Obra: ${formData.tipoProyecto}`,
+          message: fullMessage,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "No se pudo enviar la solicitud");
+      }
+
+      setSubmitted(true);
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        tipoProyecto: "",
+        detalles: "",
+      });
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Error al enviar la solicitud. Intente de nuevo.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleWhatsAppClick = () => {
-    const data = getValues();
-    
     // Validar campos requeridos manualmente
-    if (!data.nombre || !data.telefono || !data.tipoProyecto) {
-      alert("Por favor completa todos los campos requeridos (*)");
+    if (!formData.name || !formData.phone || !formData.tipoProyecto) {
+      alert("Por favor completa los campos requeridos (Nombre, Teléfono y Tipo de Proyecto)");
       return;
     }
 
-    // Número de WhatsApp de la empresa (cambia este número)
-    const whatsappNumber = "593991234567"; // Formato: código país + número sin +
+    const whatsappNumber = "593997119881";
     
     // Crear mensaje formateado
     const mensaje = `
 🏗️ *Solicitud de Cotización - TumbadosZumba*
 
-👤 *Nombre:* ${data.nombre}
-📱 *Teléfono:* ${data.telefono}
-${data.email ? `📧 *Email:* ${data.email}` : ''}
+👤 *Nombre:* ${formData.name}
+📱 *Teléfono:* ${formData.phone}
+${formData.email ? `📧 *Email:* ${formData.email}` : ''}
 
 📋 *Tipo de Proyecto:*
-${data.tipoProyecto}
+${formData.tipoProyecto}
 
-${data.detalles ? `📝 *Detalles del Proyecto:*\n${data.detalles}` : ''}
+${formData.detalles ? `📝 *Detalles del Proyecto:*\n${formData.detalles}` : ''}
 
 ---
 _Mensaje generado desde tumbadoszumba.com/instalaciones_
     `.trim();
 
-    // Crear URL de WhatsApp
     const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensaje)}`;
-    
-    // Abrir WhatsApp en nueva ventana
     window.open(whatsappURL, '_blank');
   };
   return (
@@ -219,83 +252,130 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
             </p>
           </div>
 
-          <form className="bg-white p-8 md:p-12 border border-[#D9D3C8]/60 shadow-sm space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                  Nombre Completo *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej. Juan Pérez"
-                  className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-                />
+          {submitted ? (
+            <div className="bg-white p-8 md:p-12 border border-[#D9D3C8]/60 shadow-sm text-center space-y-4">
+              <div className="mx-auto size-14 rounded-full bg-green-500/10 text-green-600 flex items-center justify-center">
+                <CheckCircle2 className="size-8" strokeWidth={1.75} />
               </div>
-
-              <div>
-                <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                  Teléfono / WhatsApp *
-                </label>
-                <input
-                  type="tel"
-                  required
-                  placeholder="Ej. 099 123 4567"
-                  className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                  Correo Electrónico
-                </label>
-                <input
-                  type="email"
-                  placeholder="ejemplo@correo.com"
-                  className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                  Tipo de Proyecto *
-                </label>
-                <select
-                  required
-                  className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors text-gray-700"
-                >
-                  <option value="">Selecciona el tipo de trabajo</option>
-                  <option value="cielo-raso">Instalación de Cielo Raso / Tumbados</option>
-                  <option value="paredes-divisiones">Paredes o Divisiones de Gypsum</option>
-                  <option value="remodelacion-comercial">Remodelación Comercial Integral</option>
-                  <option value="acabados-luces">Diseño con Luces Indirectas / Falso Techo</option>
-                  <option value="otro">Otro Proyecto</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
-                Detalles del Proyecto o Medidas Aproximadas
-              </label>
-              <textarea
-                rows={4}
-                placeholder="Cuéntanos brevemente sobre los metros cuadrados aproximados, ciudad, tipo de inmueble o cualquier especificación relevante..."
-                className="w-full bg-[#FAF9F6] border border-[#D9D3C8] p-4 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
-              ></textarea>
-            </div>
-
-            <div className="text-center pt-4">
+              <h3 className="text-xl font-serif text-slate-900">
+                ¡Solicitud de Cotización Recibida!
+              </h3>
+              <p className="text-gray-600 text-sm max-w-md mx-auto">
+                Gracias por comunicarte con TumbadosZumba. Nuestro equipo revisará los detalles de tu proyecto y se pondrá en contacto contigo muy pronto.
+              </p>
               <button
-                type="submit"
-                className="w-full md:w-auto inline-block bg-[#F5821F] text-white px-10 py-4 text-sm uppercase tracking-widest font-semibold hover:bg-black transition-colors duration-300"
+                type="button"
+                onClick={() => setSubmitted(false)}
+                className="inline-block bg-[#F5821F] text-white px-8 py-3 text-xs uppercase tracking-widest font-semibold hover:bg-black transition-colors"
               >
-                Enviar Solicitud de Cotización
+                Enviar otra solicitud
               </button>
             </div>
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="bg-white p-8 md:p-12 border border-[#D9D3C8]/60 shadow-sm space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Ej. Juan Pérez"
+                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
+                    Teléfono / WhatsApp *
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="Ej. 0997119881"
+                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
+                    Correo Electrónico
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="ejemplo@correo.com"
+                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
+                    Tipo de Proyecto *
+                  </label>
+                  <select
+                    required
+                    value={formData.tipoProyecto}
+                    onChange={(e) => setFormData({ ...formData, tipoProyecto: e.target.value })}
+                    className="w-full bg-[#FAF9F6] border border-[#D9D3C8] px-4 py-3 text-sm focus:outline-none focus:border-[#F5821F] transition-colors text-gray-700"
+                  >
+                    <option value="">Selecciona el tipo de trabajo</option>
+                    <option value="Cielo Raso / Tumbados">Instalación de Cielo Raso / Tumbados</option>
+                    <option value="Paredes o Divisiones de Gypsum">Paredes o Divisiones de Gypsum</option>
+                    <option value="Remodelación Comercial Integral">Remodelación Comercial Integral</option>
+                    <option value="Diseño con Luces Indirectas / Falso Techo">Diseño con Luces Indirectas / Falso Techo</option>
+                    <option value="Otro Proyecto">Otro Proyecto</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-widest font-semibold text-gray-700 mb-2">
+                  Detalles del Proyecto o Medidas Aproximadas
+                </label>
+                <textarea
+                  rows={4}
+                  value={formData.detalles}
+                  onChange={(e) => setFormData({ ...formData, detalles: e.target.value })}
+                  placeholder="Cuéntanos brevemente sobre los metros cuadrados aproximados, ciudad, tipo de inmueble o cualquier especificación relevante..."
+                  className="w-full bg-[#FAF9F6] border border-[#D9D3C8] p-4 text-sm focus:outline-none focus:border-[#F5821F] transition-colors"
+                ></textarea>
+              </div>
+
+              {error && (
+                <div className="p-3 text-xs sm:text-sm text-red-600 bg-red-50 rounded border border-red-200">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full sm:w-auto inline-block bg-[#F5821F] text-white px-10 py-4 text-sm uppercase tracking-widest font-semibold hover:bg-black transition-colors duration-300 disabled:opacity-50"
+                >
+                  {loading ? "Enviando..." : "Enviar Solicitud de Cotización"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleWhatsAppClick}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-8 py-4 text-sm uppercase tracking-widest font-semibold hover:bg-[#1EBE5D] transition-colors duration-300"
+                >
+                  <MessageCircle className="h-4 w-4" strokeWidth={1.75} />
+                  Cotizar por WhatsApp
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </section>
 
@@ -307,35 +387,33 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
             <p className="text-gray-400 mb-10 max-w-md leading-relaxed">
               Confía en TumbadosZumba para la mejor mano de obra en instalaciones de gypsum, paredes y cielo raso. Contáctanos para cotizar tus requerimientos.
             </p>
-            <a className="text-[#F5821F] text-2xl font-serif hover:text-white transition-colors block mb-4" href="mailto:info@tumbadoszumba.com">
-              info@tumbadoszumba.com
+            <a className="text-[#F5821F] text-2xl font-serif hover:text-white transition-colors block mb-4" href="mailto:tumbadoszumba2508@gmail.com">
+              tumbadoszumba2508@gmail.com
             </a>
-            <p className="text-gray-400">+593 99 123 4567</p>
+            <p className="text-gray-400">0997119881</p>
           </div>
           <div className="grid grid-cols-2 gap-8 text-sm">
             <div>
               <h4 className="uppercase tracking-widest text-gray-500 mb-4 font-semibold">Ubicación</h4>
               <p className="text-gray-300 leading-relaxed">
-                Av. de los Shyris<br/>
-                Edificio Zura, Of 401<br/>
-                Quito, Ecuador
+                Av. 25 de agosto y galapagos<br/>
+                Ecuador
               </p>
             </div>
             <div>
-              <h4 className="uppercase tracking-widest text-gray-500 mb-4 font-semibold">Social</h4>
-              <ul className="space-y-2">
-                <li><Link className="text-gray-300 hover:text-[#F5821F] transition-colors" href="#">Instagram</Link></li>
-                <li><Link className="text-gray-300 hover:text-[#F5821F] transition-colors" href="#">LinkedIn</Link></li>
-                <li><Link className="text-gray-300 hover:text-[#F5821F] transition-colors" href="#">Facebook</Link></li>
-              </ul>
+              <h4 className="uppercase tracking-widest text-gray-500 mb-4 font-semibold">Horario de Atención</h4>
+              <p className="text-gray-300 leading-relaxed">
+                Lunes a Sábado:<br/>
+                8:00 AM - 6:00 PM
+              </p>
             </div>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-24 pt-8 border-t border-gray-800 text-xs text-gray-500 flex justify-between items-center">
-          <p>© 2023 TumbadosZumba. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} TumbadosZumba. Todos los derechos reservados.</p>
           <div className="space-x-4">
-            <Link className="hover:text-gray-300" href="#">Políticas de Privacidad</Link>
-            <Link className="hover:text-gray-300" href="#">Términos de Servicio</Link>
+            <Link className="hover:text-gray-300" href="/contacto">Contacto</Link>
+            <Link className="hover:text-gray-300" href="/products">Productos</Link>
           </div>
         </div>
       </footer>
