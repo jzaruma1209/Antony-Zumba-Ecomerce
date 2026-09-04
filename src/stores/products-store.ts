@@ -71,6 +71,9 @@ export const useProductsStore = create<ProductsState>((set, get) => ({
       if (filters.offersOnly) {
         params.set("offers", "true")
       }
+      if (filters.search) {
+        params.set("search", filters.search)
+      }
 
       const response = await fetch(`/api/products?${params.toString()}`, { signal })
       if (!response.ok) throw new Error("Failed to fetch products")

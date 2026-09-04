@@ -13,12 +13,15 @@ import {
   CreditCard,
   Store,
   Tag,
+  MessageSquare,
 } from "lucide-react"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Mensajes", href: "/admin/messages", icon: MessageSquare, badgeKey: "messages" },
   { name: "Productos", href: "/admin/products", icon: Package },
   { name: "Categorias", href: "/admin/categories", icon: FolderTree },
   { name: "Marcas", href: "/admin/brands", icon: Tag },
@@ -30,6 +33,22 @@ const navigation = [
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    async function loadUnreadCount() {
+      try {
+        const res = await fetch("/api/messages?unread=true")
+        if (res.ok) {
+          const data = await res.json()
+          setUnreadCount(data.unreadCount || 0)
+        }
+      } catch (e) {
+        console.error("Error al cargar mensajes no leídos:", e)
+      }
+    }
+    loadUnreadCount()
+  }, [pathname])
 
   return (
     <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 border-r bg-card">
@@ -54,14 +73,21 @@ export function AdminSidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
-              <item.icon className="h-4 w-4" />
-              {item.name}
+              <div className="flex items-center gap-3">
+                <item.icon className="h-4 w-4" strokeWidth={1.75} />
+                <span>{item.name}</span>
+              </div>
+              {item.badgeKey === "messages" && unreadCount > 0 && (
+                <span className="inline-flex items-center justify-center size-5 text-[11px] font-bold rounded-full bg-brand-orange text-white">
+                  {unreadCount}
+                </span>
+              )}
             </Link>
           )
         })}

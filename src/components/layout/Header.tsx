@@ -3,8 +3,9 @@
 import { useEffect, useState, useRef, useCallback } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
-import { Search, ShoppingCart, Heart, User, LogOut, Settings, Package, ChevronDown } from "lucide-react"
+import { Search, ShoppingCart, Heart, User, LogOut, Settings, Package, ChevronDown, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -20,14 +21,58 @@ import { ThemeToggle } from "./ThemeToggle"
 import { MobileNav } from "./MobileNav"
 import { useCartStore } from "@/stores/cart-store"
 import { useFavoritesStore } from "@/stores/favorites-store"
+import { useProductsStore } from "@/stores/products-store"
 
 export function Header() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const [searchQuery, setSearchQuery] = useState("")
   const [mounted, setMounted] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+  const mobileInputRef = useRef<HTMLInputElement>(null)
   const lastScrollY = useRef(0)
   const itemCount = useCartStore((state) => state.getItemCount())
   const favoriteCount = useFavoritesStore((state) => state.getItemCount())
+  const { categories, fetchCategories } = useProductsStore()
   const { data: session, status } = useSession()
+
+  // Sincronizar el input si ya hay un query en la URL
+  useEffect(() => {
+    const q = searchParams.get("search")
+    if (q) {
+      setSearchQuery(q)
+    } else {
+      setSearchQuery("")
+    }
+  }, [searchParams])
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const trimmed = searchQuery.trim()
+    if (trimmed) {
+      router.push(`/products?search=${encodeURIComponent(trimmed)}`)
+    } else {
+      router.push("/products")
+    }
+  }
+
+  const handleClearSearch = () => {
+    setSearchQuery("")
+    if (searchParams.get("search")) {
+      router.push("/products")
+    }
+  }
+
+  const toggleMobileSearch = () => {
+    setIsMobileSearchOpen((prev) => {
+      const next = !prev
+      if (next) {
+        setTimeout(() => mobileInputRef.current?.focus(), 100)
+      }
+      return next
+    })
+  }
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY
@@ -42,9 +87,10 @@ export function Header() {
 
   useEffect(() => {
     setMounted(true)
+    fetchCategories()
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [handleScroll])
+  }, [handleScroll, fetchCategories])
 
   return (
     <header
@@ -67,22 +113,40 @@ export function Header() {
           </Link>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden flex-1 max-w-2xl md:flex">
+          <form onSubmit={handleSearchSubmit} className="hidden flex-1 max-w-2xl md:flex">
             <div className="relative w-full">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
               <Input
                 type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar productos, materiales, acabados..."
-                className="w-full pl-10 pr-4 h-10 bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
+                className="w-full pl-10 pr-9 h-10 bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Limpiar búsqueda"
+                >
+                  <X className="h-4 w-4" strokeWidth={1.75} />
+                </button>
+              )}
             </div>
-          </div>
+          </form>
 
           {/* Actions */}
           <div className="flex items-center gap-1">
-            {/* Search - Mobile */}
-            <Button variant="ghost" size="icon" className="h-9 w-9 md:hidden">
-              <Search className="h-4 w-4" />
+            {/* Search - Mobile Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 md:hidden"
+              onClick={toggleMobileSearch}
+              aria-label="Alternar barra de búsqueda"
+            >
+              <Search className="h-4 w-4" strokeWidth={1.75} />
               <span className="sr-only">Buscar</span>
             </Button>
 
@@ -210,73 +274,75 @@ export function Header() {
         </div>
 
         {/* Search Bar - Mobile */}
-        <div className="pb-3 md:hidden">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className={`pb-3 md:hidden transition-all duration-200 ${isMobileSearchOpen ? "block" : "hidden"}`}>
+          <form onSubmit={handleSearchSubmit} className="relative w-full">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
             <Input
+              ref={mobileInputRef}
               type="search"
-              placeholder="Buscar productos..."
-              className="w-full pl-10 pr-4"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar productos, materiales..."
+              className="w-full pl-10 pr-9"
             />
-          </div>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Limpiar búsqueda"
+              >
+                <X className="h-4 w-4" strokeWidth={1.75} />
+              </button>
+            )}
+          </form>
         </div>
 
         {/* Sub-header Navigation Bar (Estilo Lowe's) */}
         <div className="hidden border-t border-border/40 py-2 md:flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300 overflow-x-auto gap-4 scrollbar-none">
           <div className="flex items-center gap-4 shrink-0">
-            {/* Ver Todo Dropdown */}
+            {/* Ver Categorías Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="inline-flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white hover:text-primary transition-colors py-0.5 px-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
-                  <Package className="h-4 w-4 text-primary" />
-
-                  <span>Ver todo</span>
-                  <ChevronDown className="h-3 w-3 text-slate-500" />
+                  <Package className="h-4 w-4 text-primary" strokeWidth={1.75} />
+                  <span>Ver categorías</span>
+                  <ChevronDown className="h-3 w-3 text-slate-500" strokeWidth={1.75} />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuContent align="start" className="w-60 max-h-[420px] overflow-y-auto">
                 <DropdownMenuLabel className="text-xs font-bold text-slate-500">
-                  Departamentos
+                  Categorías
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                {categories.length === 0 ? (
+                  <div className="py-3 px-3 text-xs text-muted-foreground text-center">
+                    Cargando categorías...
+                  </div>
+                ) : (
+                  categories.map((category) => (
+                    <DropdownMenuItem key={category.id || category.slug} asChild>
+                      <Link
+                        href={`/products?category=${category.slug}`}
+                        className="cursor-pointer font-medium flex items-center justify-between"
+                      >
+                        <span className="truncate">{category.name}</span>
+                        {category.productCount !== undefined && category.productCount > 0 && (
+                          <span className="text-[10px] text-muted-foreground ml-2 font-mono">
+                            {category.productCount}
+                          </span>
+                        )}
+                      </Link>
+                    </DropdownMenuItem>
+                  ))
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/products?category=gypsum" className="cursor-pointer font-medium">
-                    Gypsum & Planchas
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/products?category=wpc" className="cursor-pointer font-medium">
-                    Paneles WPC Decorativos
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/products?category=marmol-pvc" className="cursor-pointer font-medium">
-                    Láminas Mármol PVC
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/products?category=duelas-pvc" className="cursor-pointer font-medium">
-                    Duelas de PVC
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/products?category=cielo-raso" className="cursor-pointer font-medium">
-                    Cielos Rasos
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/products?category=iluminacion-led" className="cursor-pointer font-medium">
-                    Iluminación LED
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/products?category=molduras" className="cursor-pointer font-medium">
-                    Molduras & Acabados
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/products?category=insumos" className="cursor-pointer font-medium">
-                    Insumos & Perfilería
+                  <Link
+                    href="/products"
+                    className="cursor-pointer font-semibold text-primary justify-center text-xs"
+                  >
+                    Ver todos los productos
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -284,39 +350,21 @@ export function Header() {
 
             {/* Links con iconos */}
             <Link href="/instalaciones" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
-              <Settings className="h-3.5 w-3.5 text-slate-500" />
+              <Settings className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
               <span>Instalaciones</span>
             </Link>
 
             <Link href="/ofertas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
-              <Heart className="h-3.5 w-3.5 text-slate-500" />
+              <Heart className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
               <span>Ofertas</span>
             </Link>
 
             <Link href="/diseno-e-ideas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
-              <User className="h-3.5 w-3.5 text-slate-500" />
+              <User className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
               <span className="font-semibold text-slate-900 dark:text-white">Diseño e ideas+</span>
               <span className="rounded-full bg-red-600 px-1.5 py-0.2 text-[10px] font-bold text-white uppercase">
                 Nuevo
               </span>
-            </Link>
-
-            <div className="h-3.5 w-px bg-border/60 mx-1" />
-          </div>
-
-          {/* Categorías secundarias */}
-          <div className="flex items-center gap-4 shrink-0 text-slate-600 dark:text-slate-400">
-            <Link href="/products?category=insumos" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Accesorios
-            </Link>
-            <Link href="/products?category=duelas-pvc" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Baño
-            </Link>
-            <Link href="/products?category=gypsum" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Materiales de construcción
-            </Link>
-            <Link href="/products?category=molduras" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Puertas y ventanas
             </Link>
           </div>
         </div>

@@ -1,7 +1,8 @@
 "use client"
 
 import { Suspense, useEffect, useState, useCallback, useRef } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { X } from "lucide-react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,6 +20,7 @@ import { useProductsStore } from "@/stores/products-store"
 import { FilterState } from "@/types"
 
 function ProductsContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const { products, loading, filters, setFilters, fetchProducts, fetchCategories, fetchBrands } = useProductsStore()
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -29,10 +31,19 @@ function ProductsContent() {
   useEffect(() => {
     isMounted.current = true  // Marcar como montado PRIMERO
     const category = searchParams.get("category")
+    const search = searchParams.get("search")
 
+    const initialFilters: Partial<FilterState> = {}
     if (category) {
-      // Si hay filtro de URL, lo seteamos → el segundo efecto dispara fetchProducts
-      setFilters({ categories: [category] })
+      initialFilters.categories = [category]
+    }
+    if (search) {
+      initialFilters.search = search
+    }
+
+    if (category || search) {
+      // Si hay filtros en la URL, los seteamos y fetchProducts los usará
+      setFilters(initialFilters)
     } else {
       // Sin filtros de URL, hacemos el fetch directamente
       fetchProducts()
@@ -42,6 +53,18 @@ function ProductsContent() {
     fetchBrands()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // Solo al montar — las funciones del store son estables
+
+  // Efecto cuando cambia la URL (por ejemplo, al buscar desde el Header en la misma página)
+  useEffect(() => {
+    if (!isMounted.current) return
+    const category = searchParams.get("category")
+    const search = searchParams.get("search")
+
+    setFilters({
+      categories: category ? [category] : [],
+      search: search || undefined,
+    })
+  }, [searchParams, setFilters])
 
   // Efecto reactivo: se ejecuta cuando cambian los filtros DESPUÉS del montaje
   useEffect(() => {
@@ -78,7 +101,25 @@ function ProductsContent() {
       {/* Results count and controls */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Todos los Productos</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2 flex-wrap">
+            {filters.search ? (
+              <>
+                <span>
+                  Resultados para: <span className="text-primary font-mono">&ldquo;{filters.search}&rdquo;</span>
+                </span>
+                <button
+                  onClick={() => router.push("/products")}
+                  className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  title="Quitar búsqueda"
+                >
+                  Limpiar búsqueda
+                  <X className="h-3 w-3" />
+                </button>
+              </>
+            ) : (
+              "Todos los Productos"
+            )}
+          </h1>
           <p className="text-sm text-muted-foreground">
             {loading ? "Cargando..." : `${products.length} productos encontrados`}
           </p>

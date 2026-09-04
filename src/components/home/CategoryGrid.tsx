@@ -1,66 +1,86 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Monitor, Keyboard, Mouse, Headphones, HardDrive, Cpu, Gamepad2, Package, ChevronRight } from "lucide-react"
-import { useProductsStore } from "@/stores/products-store"
+import { ChevronRight, Search, TrendingUp } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Monitor: Monitor,
-  Keyboard: Keyboard,
-  Mouse: Mouse,
-  Headphones: Headphones,
-  HardDrive: HardDrive,
-  Cpu: Cpu,
-  Gamepad2: Gamepad2,
-  Package: Package,
+interface PopularProduct {
+  id: string
+  name: string
+  slug: string
+  price: number
 }
 
 export function CategoryGrid() {
-  const { categories, fetchCategories } = useProductsStore()
+  const [products, setProducts] = useState<PopularProduct[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchCategories()
-  }, [fetchCategories])
+    async function loadPopularProducts() {
+      try {
+        const res = await fetch("/api/products?sortBy=best-selling&limit=10")
+        if (res.ok) {
+          const data = await res.json()
+          if (data.products && Array.isArray(data.products)) {
+            setProducts(data.products)
+          }
+        }
+      } catch (err) {
+        console.error("Error cargando productos más buscados:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadPopularProducts()
+  }, [])
 
   return (
     <section className="pt-3 pb-1 sm:pt-4 sm:pb-2">
       <div className="container mx-auto px-4">
         {/* Title row */}
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Búsquedas recomendadas para ti
-          </h2>
+          <div className="flex items-center gap-1.5">
+            <TrendingUp className="size-4 text-brand-orange" strokeWidth={1.75} />
+            <h2 className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Productos más buscados
+            </h2>
+          </div>
           <Link
             href="/products"
             className="text-xs font-medium text-primary hover:underline flex items-center gap-0.5"
           >
-            Más sugerencias <ChevronRight className="size-3" />
+            Ver más <ChevronRight className="size-3" strokeWidth={1.75} />
           </Link>
         </div>
 
-        {/* Pills */}
+        {/* Pills de productos más buscados */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-          {categories.length === 0
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="h-8 w-28 shrink-0 rounded-full" />
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-8 w-32 shrink-0 rounded-full" />
               ))
-            : categories.map((category) => {
-                const Icon = iconMap[category.icon] || Package
-                return (
-                  <Link
-                    key={category.id}
-                    href={`/products?category=${category.slug}`}
-                    className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition-all hover:border-primary hover:text-primary"
-                  >
-                    <span>{category.name}</span>
-                    <span className="text-slate-400 dark:text-slate-500 text-[10px] group-hover:text-primary/70">
-                      {category.productCount}
+            : products.length === 0
+            ? (
+                <div className="text-xs text-muted-foreground py-1">
+                  No hay productos disponibles actualmente
+                </div>
+              )
+            : products.map((product) => (
+                <Link
+                  key={product.id}
+                  href={`/products/${product.slug}`}
+                  className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 transition-all hover:border-brand-orange hover:text-brand-orange shadow-xs"
+                >
+                  <Search className="size-3 text-slate-400 group-hover:text-brand-orange transition-colors" strokeWidth={1.75} />
+                  <span>{product.name}</span>
+                  {product.price > 0 && (
+                    <span className="text-[10px] font-mono font-semibold text-brand-navy dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-full">
+                      ${Number(product.price).toFixed(2)}
                     </span>
-                  </Link>
-                )
-              })}
+                  )}
+                </Link>
+              ))}
         </div>
       </div>
     </section>

@@ -45,4 +45,5 @@ export interface FilterState {
   priceRange: [number, number]
   sortBy: 'popular' | 'price-asc' | 'price-desc' | 'newest' | 'rating'
   offersOnly?: boolean
+  search?: string
 }

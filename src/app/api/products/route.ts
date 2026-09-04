@@ -70,7 +70,8 @@ export async function GET(request: NextRequest) {
         orderBy = { createdAt: "desc" }
         break
       case "popular":
-        orderBy = { stock: "desc" } // Placeholder - would use sales count
+      case "best-selling":
+        orderBy = { createdAt: "desc" } // default order if no sales table query yet
         break
     }
 
