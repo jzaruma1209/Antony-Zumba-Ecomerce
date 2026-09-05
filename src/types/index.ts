@@ -16,6 +16,11 @@ export interface Product {
   isNew: boolean
   isFeatured: boolean
   rating: number
+  freeShipping?: boolean
+  returnPolicy?: boolean
+  returnDays?: number | null
+  warranty?: boolean
+  warrantyPeriod?: string | null
 }
 
 export interface Category {

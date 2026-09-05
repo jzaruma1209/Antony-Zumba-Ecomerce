@@ -96,6 +96,11 @@ model Product {
   isNew        Boolean  @default(false)
   isFeatured   Boolean  @default(false)
   isActive     Boolean  @default(true)
+  freeShipping Boolean  @default(false)
+  returnPolicy Boolean  @default(false)
+  returnDays   Int?
+  warranty     Boolean  @default(false)
+  warrantyPeriod String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

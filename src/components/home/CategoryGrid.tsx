@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ChevronRight, Search, TrendingUp } from "lucide-react"
+import { Search, TrendingUp } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 interface PopularProduct {
@@ -19,11 +19,11 @@ export function CategoryGrid() {
   useEffect(() => {
     async function loadPopularProducts() {
       try {
-        const res = await fetch("/api/products?sortBy=best-selling&limit=10")
+        const res = await fetch("/api/products?sortBy=best-selling&limit=4")
         if (res.ok) {
           const data = await res.json()
           if (data.products && Array.isArray(data.products)) {
-            setProducts(data.products)
+            setProducts(data.products.slice(0, 4))
           }
         }
       } catch (err) {
@@ -39,25 +39,17 @@ export function CategoryGrid() {
     <section className="pt-3 pb-1 sm:pt-4 sm:pb-2">
       <div className="container mx-auto px-4">
         {/* Title row */}
-        <div className="mb-2 flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <TrendingUp className="size-4 text-brand-orange" strokeWidth={1.75} />
-            <h2 className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Productos más buscados
-            </h2>
-          </div>
-          <Link
-            href="/products"
-            className="text-xs font-medium text-primary hover:underline flex items-center gap-0.5"
-          >
-            Ver más <ChevronRight className="size-3" strokeWidth={1.75} />
-          </Link>
+        <div className="mb-2 flex items-center gap-1.5">
+          <TrendingUp className="size-4 text-brand-orange" strokeWidth={1.75} />
+          <h2 className="text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Productos más buscados
+          </h2>
         </div>
 
-        {/* Pills de productos más buscados */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+        {/* Pills de productos más buscados (primeros 4, sin scrollbar) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {loading
-            ? Array.from({ length: 6 }).map((_, i) => (
+            ? Array.from({ length: 4 }).map((_, i) => (
                 <Skeleton key={i} className="h-8 w-32 shrink-0 rounded-full" />
               ))
             : products.length === 0

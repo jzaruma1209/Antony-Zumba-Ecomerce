@@ -47,6 +47,11 @@ const productSchema = z.object({
   brandId: z.string().min(1, "La marca es requerida"),
   isNew: z.boolean(),
   isFeatured: z.boolean(),
+  freeShipping: z.boolean().default(false),
+  returnPolicy: z.boolean().default(false),
+  returnDays: z.number().nullable().optional(),
+  warranty: z.boolean().default(false),
+  warrantyPeriod: z.string().nullable().optional(),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
@@ -72,6 +77,8 @@ export default function NewProductPage() {
   const [images, setImages] = useState<UploadedImage[]>([])
   const [isOffer, setIsOffer] = useState(false)
   const [showOfferAlert, setShowOfferAlert] = useState(false)
+  const [warrantyOption, setWarrantyOption] = useState<string>("1-mes")
+  const [customWarranty, setCustomWarranty] = useState<string>("")
 
   const {
     register,
@@ -84,6 +91,11 @@ export default function NewProductPage() {
     defaultValues: {
       isNew: false,
       isFeatured: false,
+      freeShipping: false,
+      returnPolicy: false,
+      returnDays: 30,
+      warranty: false,
+      warrantyPeriod: "1 mes",
       stock: 0,
     },
   })
@@ -144,6 +156,9 @@ export default function NewProductPage() {
       return
     }
 
+    const returnPolicy = watch("returnPolicy")
+    const warranty = watch("warranty")
+
     setSaving(true)
     try {
       const response = await fetch("/api/products", {
@@ -151,6 +166,23 @@ export default function NewProductPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
+          freeShipping: !!data.freeShipping,
+          returnPolicy: !!returnPolicy,
+          returnDays: returnPolicy ? Number(data.returnDays) || 30 : null,
+          warranty: !!warranty,
+          warrantyPeriod: warranty
+            ? warrantyOption === "custom"
+              ? customWarranty
+              : warrantyOption === "1-mes"
+              ? "1 mes"
+              : warrantyOption === "3-meses"
+              ? "3 meses"
+              : warrantyOption === "6-meses"
+              ? "6 meses"
+              : warrantyOption === "12-meses"
+              ? "1 año"
+              : customWarranty || "1 mes"
+            : null,
           comparePrice: isOffer && data.comparePrice ? data.comparePrice : null,
           images: images.map((img) => img.url),
         }),
@@ -385,6 +417,98 @@ export default function NewProductPage() {
               <Label htmlFor="isOffer" className="font-normal cursor-pointer">
                 Marcar producto en oferta
               </Label>
+            </div>
+
+            <div className="border-t pt-4 space-y-4">
+              <h4 className="text-sm font-semibold text-foreground">Envíos, Devoluciones y Garantía</h4>
+
+              {/* Envío Gratis */}
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="freeShipping"
+                  checked={watch("freeShipping")}
+                  onCheckedChange={(checked) => setValue("freeShipping", !!checked)}
+                />
+                <Label htmlFor="freeShipping" className="font-normal cursor-pointer">
+                  Aplica Envío Gratis
+                </Label>
+              </div>
+
+              {/* Devoluciones */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="returnPolicy"
+                    checked={watch("returnPolicy")}
+                    onCheckedChange={(checked) => setValue("returnPolicy", !!checked)}
+                  />
+                  <Label htmlFor="returnPolicy" className="font-normal cursor-pointer">
+                    Aplica Devoluciones
+                  </Label>
+                </div>
+                {watch("returnPolicy") && (
+                  <div className="ml-6 flex items-center gap-2 max-w-xs">
+                    <Input
+                      id="returnDays"
+                      type="number"
+                      min={1}
+                      placeholder="Días"
+                      className="w-24"
+                      {...register("returnDays", { valueAsNumber: true })}
+                    />
+                    <span className="text-sm text-muted-foreground">días para devolver</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Garantía */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="warranty"
+                    checked={watch("warranty")}
+                    onCheckedChange={(checked) => setValue("warranty", !!checked)}
+                  />
+                  <Label htmlFor="warranty" className="font-normal cursor-pointer">
+                    Aplica Garantía
+                  </Label>
+                </div>
+                {watch("warranty") && (
+                  <div className="ml-6 space-y-2 max-w-sm">
+                    <Select
+                      value={warrantyOption}
+                      onValueChange={(val) => {
+                        setWarrantyOption(val)
+                        if (val === "1-mes") setValue("warrantyPeriod", "1 mes")
+                        else if (val === "3-meses") setValue("warrantyPeriod", "3 meses")
+                        else if (val === "6-meses") setValue("warrantyPeriod", "6 meses")
+                        else if (val === "12-meses") setValue("warrantyPeriod", "1 año")
+                      }}
+                    >
+                      <SelectTrigger id="warrantyPeriodSelect">
+                        <SelectValue placeholder="Seleccionar tiempo de garantía" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1-mes">1 mes</SelectItem>
+                        <SelectItem value="3-meses">3 meses</SelectItem>
+                        <SelectItem value="6-meses">6 meses</SelectItem>
+                        <SelectItem value="12-meses">1 año (12 meses)</SelectItem>
+                        <SelectItem value="custom">Personalizado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {warrantyOption === "custom" && (
+                      <Input
+                        placeholder="Ej. 2 años, 18 meses, 5 años..."
+                        value={customWarranty}
+                        onChange={(e) => {
+                          setCustomWarranty(e.target.value)
+                          setValue("warrantyPeriod", e.target.value)
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

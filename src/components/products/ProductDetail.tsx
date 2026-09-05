@@ -165,32 +165,45 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </div>
       </div>
 
-      <Separator />
-
       {/* Benefits */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div className="flex items-center gap-3 text-sm">
-          <Truck className="h-5 w-5 text-muted-foreground" />
-          <div>
-            <p className="font-medium">Envio gratis</p>
-            <p className="text-xs text-muted-foreground">En pedidos +$200</p>
+      {(product.freeShipping || product.returnPolicy || product.warranty) && (
+        <>
+          <Separator />
+          <div className="grid gap-4 sm:grid-cols-3">
+            {product.freeShipping && (
+              <div className="flex items-center gap-3 text-sm">
+                <Truck className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="font-medium">Envío gratis</p>
+                  <p className="text-xs text-muted-foreground">Aplica en este producto</p>
+                </div>
+              </div>
+            )}
+            {product.returnPolicy && (
+              <div className="flex items-center gap-3 text-sm">
+                <RotateCcw className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="font-medium">Devoluciones</p>
+                  <p className="text-xs text-muted-foreground">
+                    {product.returnDays ? `${product.returnDays} días para devolver` : "Aplica devolución"}
+                  </p>
+                </div>
+              </div>
+            )}
+            {product.warranty && (
+              <div className="flex items-center gap-3 text-sm">
+                <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="font-medium">Garantía</p>
+                  <p className="text-xs text-muted-foreground">
+                    {product.warrantyPeriod ? `${product.warrantyPeriod} de garantía` : "Garantía incluida"}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-        <div className="flex items-center gap-3 text-sm">
-          <RotateCcw className="h-5 w-5 text-muted-foreground" />
-          <div>
-            <p className="font-medium">Devoluciones</p>
-            <p className="text-xs text-muted-foreground">30 dias para devolver</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 text-sm">
-          <ShieldCheck className="h-5 w-5 text-muted-foreground" />
-          <div>
-            <p className="font-medium">Garantia</p>
-            <p className="text-xs text-muted-foreground">1 ano de garantia</p>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
       {/* Specs */}
       {Object.keys(product.specs).length > 0 && (

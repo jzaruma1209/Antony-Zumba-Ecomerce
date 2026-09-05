@@ -151,3 +151,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Ocultar barra de desplazamiento manteniendo el scroll */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

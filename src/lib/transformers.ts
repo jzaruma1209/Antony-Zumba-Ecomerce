@@ -37,6 +37,11 @@ export function transformProduct(product: ProductWithRelations): Product {
     isNew: product.isNew,
     isFeatured: product.isFeatured,
     rating: 4.5, // Default rating - could be calculated from reviews in the future
+    freeShipping: product.freeShipping ?? false,
+    returnPolicy: product.returnPolicy ?? false,
+    returnDays: product.returnDays ?? null,
+    warranty: product.warranty ?? false,
+    warrantyPeriod: product.warrantyPeriod ?? null,
   }
 }
 
