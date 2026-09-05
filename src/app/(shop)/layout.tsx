@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { TopBar } from "@/components/layout/TopBar"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
@@ -10,7 +11,9 @@ export default function ShopLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <TopBar />
-      <Header />
+      <Suspense fallback={null}>
+        <Header />
+      </Suspense>
       <main className="flex-1">{children}</main>
       <Footer />
     </div>
