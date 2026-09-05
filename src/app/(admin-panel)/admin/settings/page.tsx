@@ -91,10 +91,7 @@ export default function AdminSettingsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="america-guayaquil">America/Guayaquil (GMT-5)</SelectItem>
-                      <SelectItem value="america-bogota">America/Bogota (GMT-5)</SelectItem>
-                      <SelectItem value="america-lima">America/Lima (GMT-5)</SelectItem>
-                      <SelectItem value="america-mexico">America/Mexico_City (GMT-6)</SelectItem>
+                      <SelectItem value="america-guayaquil">America/Guayaquil (GMT-5) - Ecuador</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -257,7 +254,7 @@ export default function AdminSettingsPage() {
                 <div>
                   <p className="font-medium">Transferencia bancaria</p>
                   <p className="text-sm text-muted-foreground">
-                    BCP, BBVA, Interbank, Scotiabank
+                    Bancos ecuatorianos (Pichincha, Guayaquil, Produbanco)
                   </p>
                 </div>
                 <Switch defaultChecked />
@@ -267,7 +264,7 @@ export default function AdminSettingsPage() {
                 <div>
                   <p className="font-medium">Billeteras digitales</p>
                   <p className="text-sm text-muted-foreground">
-                    Yape, Plin, PayPal
+                    PayPal, Google Pay, Apple Pay
                   </p>
                 </div>
                 <Switch defaultChecked />

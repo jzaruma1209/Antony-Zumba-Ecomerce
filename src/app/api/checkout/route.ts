@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
       shipping_options: shippingOptions,
       billing_address_collection: "required",
       shipping_address_collection: {
-        allowed_countries: ["PE"],
+        allowed_countries: ["EC"],
       },
     })
 

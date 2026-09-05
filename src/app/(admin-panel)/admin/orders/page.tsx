@@ -98,7 +98,7 @@ export default function AdminOrdersPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold font-mono">
-              S/ {totalRevenue.toFixed(2)}
+              $ {totalRevenue.toFixed(2)}
             </p>
           </CardContent>
         </Card>
@@ -203,10 +203,10 @@ export default function AdminOrdersPage() {
                       </TableCell>
                       <TableCell className="font-mono text-sm">{order.itemCount}</TableCell>
                       <TableCell className="text-right font-mono font-semibold text-sm">
-                        S/ {order.total.toFixed(2)}
+                        $ {order.total.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(order.createdAt).toLocaleDateString("es-PE", {
+                        {new Date(order.createdAt).toLocaleDateString("es-EC", {
                           day: "2-digit",
                           month: "short",
                           year: "numeric",
