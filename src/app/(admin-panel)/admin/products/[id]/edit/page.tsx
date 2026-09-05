@@ -46,12 +46,12 @@ const productSchema = z.object({
   stock: z.number({ error: "El stock es requerido" }).min(0, "El stock debe ser mayor o igual a 0"),
   categoryId: z.string().min(1, "La categoria es requerida"),
   brandId: z.string().min(1, "La marca es requerida"),
-  isNew: z.boolean().default(false),
-  isFeatured: z.boolean().default(false),
-  freeShipping: z.boolean().default(false),
-  returnPolicy: z.boolean().default(false),
+  isNew: z.boolean(),
+  isFeatured: z.boolean(),
+  freeShipping: z.boolean(),
+  returnPolicy: z.boolean(),
   returnDays: z.number().nullable().optional(),
-  warranty: z.boolean().default(false),
+  warranty: z.boolean(),
   warrantyPeriod: z.string().nullable().optional(),
 })
 

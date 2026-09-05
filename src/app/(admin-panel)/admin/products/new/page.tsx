@@ -47,10 +47,10 @@ const productSchema = z.object({
   brandId: z.string().min(1, "La marca es requerida"),
   isNew: z.boolean(),
   isFeatured: z.boolean(),
-  freeShipping: z.boolean().default(false),
-  returnPolicy: z.boolean().default(false),
+  freeShipping: z.boolean(),
+  returnPolicy: z.boolean(),
   returnDays: z.number().nullable().optional(),
-  warranty: z.boolean().default(false),
+  warranty: z.boolean(),
   warrantyPeriod: z.string().nullable().optional(),
 })
 
