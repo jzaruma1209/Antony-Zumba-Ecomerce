@@ -13,7 +13,8 @@ E-commerce especializado en gypsum, cielo raso, iluminación y acabados arquitec
 - 👤 **Panel de usuario**: Perfil, gestión de direcciones de entrega e historial de pedidos.
 - 🔐 **Autenticación segura**: NextAuth.js v5 con control de acceso basado en roles (ADMIN, USER).
 - 🛡️ **Enrutamiento y Seguridad**: Proxy de Next.js 16 (`src/proxy.ts`) para protección de rutas.
-- ⚙️ **Panel de administración**: Gestión completa de productos, usuarios y pedidos.
+- ⚙️ **Panel de administración**: Gestión completa de productos, usuarios, pedidos y calculadoras.
+- 🧮 **Calculadoras dinámicas**: Sistema configurable de calculadoras de materiales. Los admins crean/editan sistemas desde el panel, y los usuarios calculan materiales ingresando el área en m².
 
 ---
 
@@ -81,6 +82,27 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la 
 
 ---
 
+## 🧮 Sistema de Calculadoras Dinámicas
+
+TumbadosZumba incluye un **sistema completo de calculadoras de materiales** totalmente configurable:
+
+**Para Usuarios:**
+- Accesible en la página principal
+- Selecciona un sistema constructivo (Gypsum, Cielo Raso, etc.)
+- Ingresa el área en metros cuadrados
+- Obtiene lista de materiales necesarios calculados automáticamente
+- Envía proforma por WhatsApp
+
+**Para Administradores:**
+- Panel: `/admin/calculators`
+- Crear nuevas calculadoras con múltiples materiales
+- Definir rendimiento de cada material (cantidad por m²)
+- Editar y eliminar calculadoras en cualquier momento
+
+👉 **[Ver documentación completa: CALCULATORS.md](./CALCULATORS.md)**
+
+---
+
 ## 📜 Scripts Disponibles
 
 | Script | Comando | Descripción |
@@ -91,6 +113,16 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver la 
 | `npm run lint` | `eslint` | Ejecuta el linter para comprobar errores de código |
 | `npm run db:seed` | `npx tsx prisma/seed.ts` | Inserta datos de prueba en la base de datos |
 | `npm run postinstall` | `prisma generate` | Genera los tipos del cliente Prisma tras instalar dependencias |
+
+---
+
+## 📚 Documentación
+
+| Documento | Contenido |
+|-----------|-----------|
+| **[ARQUITECTURA.md](./ARQUITECTURA.md)** | Documentación técnica completa: stack, modelos de datos, endpoints, reglas de diseño, roadmap |
+| **[CALCULATORS.md](./CALCULATORS.md)** | Sistema de calculadoras: guía de uso, API endpoints, ejemplos, configuración |
+| **[CLAUDE.md](./CLAUDE.md)** | Guía para desarrollo con Claude Code, reglas del proyecto |
 
 ---
 

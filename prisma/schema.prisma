@@ -196,3 +196,34 @@ model Message {
   @@map("messages")
 }
 
+model Calculator {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  area        Decimal  @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  materials   CalculatorMaterial[]
+
+  @@map("calculators")
+}
+
+model CalculatorMaterial {
+  id          String   @id @default(cuid())
+  name        String
+  unit        String
+  yield       Decimal  @db.Decimal(10, 4)
+  position    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  calculatorId String
+  calculator   Calculator @relation(fields: [calculatorId], references: [id], onDelete: Cascade)
+
+  @@index([calculatorId])
+  @@map("calculator_materials")
+}
+

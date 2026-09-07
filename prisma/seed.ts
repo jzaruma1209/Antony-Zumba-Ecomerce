@@ -547,6 +547,120 @@ async function main() {
   })
   console.log("Created address for customer")
 
+  // Create Calculators
+  await prisma.calculator.deleteMany({})
+
+  await prisma.calculator.create({
+    data: {
+      name: "Gypsum (Pared/Tumbado)",
+      slug: "gypsum-pared-tumbado",
+      description: "Plancha, estructura y masilla",
+      area: 32,
+      isActive: true,
+      materials: {
+        create: [
+          { name: "Planchas", unit: "plancha", yield: 0.35, position: 0 },
+          { name: "Ángulos", unit: "und", yield: 0.6, position: 1 },
+          { name: "Primarios", unit: "und", yield: 0.24, position: 2 },
+          { name: "Omegas", unit: "und", yield: 0.45, position: 3 },
+          { name: "Clavos", unit: "und", yield: 8, position: 4 },
+          { name: "Autoperforantes", unit: "und", yield: 6, position: 5 },
+          { name: "Tornillo Plancha", unit: "und", yield: 15, position: 6 },
+          { name: "Masilla", unit: "caneca", yield: 0.03, position: 7 },
+          { name: "Cinta Fibra Malla", unit: "und", yield: 0.02, position: 8 },
+          { name: "Cinta Papel", unit: "und", yield: 0.02, position: 9 },
+          { name: "Lija 150", unit: "und", yield: 0.05, position: 10 },
+          { name: "Wesco Caneca", unit: "caneca", yield: 0.01, position: 11 },
+          { name: "Wesco Galón", unit: "galón", yield: 0.02, position: 12 },
+        ]
+      }
+    }
+  })
+
+  await prisma.calculator.create({
+    data: {
+      name: "Cielo Raso 1.20×0.60",
+      slug: "cielo-raso-120x60",
+      description: "Planchas y perfilería",
+      area: 32,
+      isActive: true,
+      materials: {
+        create: [
+          { name: "Planchas Cielo", unit: "plancha", yield: 1.4, position: 0 },
+          { name: "Ángulos", unit: "und", yield: 0.3, position: 1 },
+          { name: "Tee 12", unit: "und", yield: 0.23, position: 2 },
+          { name: "Tee 4", unit: "und", yield: 1.35, position: 3 },
+          { name: "Clavos", unit: "und", yield: 8, position: 4 },
+          { name: "Alambre 18", unit: "rollo", yield: 0.04, position: 5 },
+        ]
+      }
+    }
+  })
+
+  await prisma.calculator.create({
+    data: {
+      name: "Cielo Raso 60×60",
+      slug: "cielo-raso-60x60",
+      description: "Planchas y perfilería",
+      area: 32,
+      isActive: true,
+      materials: {
+        create: [
+          { name: "Planchas Cielo", unit: "plancha", yield: 1.4, position: 0 },
+          { name: "Ángulos", unit: "und", yield: 0.3, position: 1 },
+          { name: "Tee 12", unit: "und", yield: 0.23, position: 2 },
+          { name: "Tee 4", unit: "und", yield: 1.35, position: 3 },
+          { name: "Tee 2", unit: "und", yield: 1.35, position: 4 },
+          { name: "Clavos", unit: "und", yield: 8, position: 5 },
+          { name: "Alambre 18", unit: "rollo", yield: 0.04, position: 6 },
+        ]
+      }
+    }
+  })
+
+  await prisma.calculator.create({
+    data: {
+      name: "Duela PVC 5.95×0.25m",
+      slug: "duela-pvc-595",
+      description: "Duelas y estructura",
+      area: 32,
+      isActive: true,
+      materials: {
+        create: [
+          { name: "Duelas", unit: "und", yield: 0.72, position: 0 },
+          { name: "Cornisa", unit: "und", yield: 0.12, position: 1 },
+          { name: "Ángulos", unit: "und", yield: 0.6, position: 2 },
+          { name: "Primarios", unit: "und", yield: 0.24, position: 3 },
+          { name: "Omegas", unit: "und", yield: 0.45, position: 4 },
+          { name: "Clavos", unit: "und", yield: 8, position: 5 },
+          { name: "Autoperforantes", unit: "und", yield: 6, position: 6 },
+          { name: "Autoperforante Punta Aguja", unit: "und", yield: 10, position: 7 },
+        ]
+      }
+    }
+  })
+
+  await prisma.calculator.create({
+    data: {
+      name: "Empaste",
+      slug: "empaste",
+      description: "Empaste, pintura y sellador",
+      area: 32,
+      isActive: true,
+      materials: {
+        create: [
+          { name: "Empaste", unit: "und", yield: 0.05, position: 0 },
+          { name: "Pintura", unit: "caneca", yield: 0.01, position: 1 },
+          { name: "Sellador", unit: "galón", yield: 0.02, position: 2 },
+          { name: "Lija 36", unit: "und", yield: 0.03, position: 3 },
+          { name: "Lija 150 180", unit: "und", yield: 0.05, position: 4 },
+        ]
+      }
+    }
+  })
+
+  console.log("Created calculators")
+
   console.log("Seed completed!")
 }
 

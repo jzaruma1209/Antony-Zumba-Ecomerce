@@ -1,5 +1,5 @@
 import { HeroBanner } from "@/components/home/HeroBanner"
-import { PromoSplitSection } from "@/components/home/PromoSplitSection"
+import { DynamicCalculatorSection } from "@/components/home/DynamicCalculatorSection"
 import { CategoryGrid } from "@/components/home/CategoryGrid"
 import { FeaturedProducts } from "@/components/home/FeaturedProducts"
 import { BrandSection } from "@/components/home/BrandSection"
@@ -15,7 +15,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-stretch">
           {/* Calculadora */}
           <div className="lg:col-span-3 h-[320px] lg:h-auto">
-            <PromoSplitSection />
+            <DynamicCalculatorSection />
           </div>
 
           {/* Banner Principal */}

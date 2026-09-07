@@ -14,6 +14,7 @@ import {
   Store,
   Tag,
   MessageSquare,
+  Calculator,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
@@ -25,6 +26,7 @@ const navigation = [
   { name: "Productos", href: "/admin/products", icon: Package },
   { name: "Categorias", href: "/admin/categories", icon: FolderTree },
   { name: "Marcas", href: "/admin/brands", icon: Tag },
+  { name: "Calculadoras", href: "/admin/calculators", icon: Calculator },
   { name: "Ordenes", href: "/admin/orders", icon: ShoppingCart },
   { name: "Pagos", href: "/admin/payments", icon: CreditCard },
   { name: "Usuarios", href: "/admin/users", icon: Users },

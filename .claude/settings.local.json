@@ -7,7 +7,17 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git commit -m 'fix: corregir tipos en schema de producto - permitir campos booleanos opcionales *)",
-      "Bash(git commit -m 'fix: cambiar campos booleanos a no-opcional con default en schema de producto *)"
+      "Bash(git commit -m 'fix: cambiar campos booleanos a no-opcional con default en schema de producto *)",
+      "Bash(npx prisma *)",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "Bash(npm run *)",
+      "Bash(timeout 180 npx prisma db push)",
+      "Bash(timeout 180 npx prisma migrate dev --name add_calculators)",
+      "Bash(cp \"C:\\\\Users\\\\jzaru\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jzaru-OneDrive-Desktop-paul\\\\cauralis\\\\Antony Zumba ecomerce\\\\Antony Ecomerce\\\\scratchpad\\\\create_calculators.sql\" \"C:\\\\Users\\\\jzaru\\\\OneDrive\\\\Desktop\\\\paul\\\\cauralis\\\\Antony Zumba ecomerce\\\\Antony Ecomerce\\\\\" 2>&1)",
+      "Bash(timeout 60 npm run dev)",
+      "Bash(curl -s http://localhost:3000/api/calculators)",
+      "Bash(tail -50 /tmp/server.log 2>/dev/null || echo \"Log no disponible\")"
     ]
   }
 }

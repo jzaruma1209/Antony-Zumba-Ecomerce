@@ -52,3 +52,21 @@ export interface FilterState {
   offersOnly?: boolean
   search?: string
 }
+
+export interface CalculatorMaterial {
+  id: string
+  name: string
+  unit: string
+  yield: number
+  position: number
+}
+
+export interface Calculator {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  area: number
+  isActive: boolean
+  materials: CalculatorMaterial[]
+}

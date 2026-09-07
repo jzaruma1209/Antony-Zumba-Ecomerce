@@ -52,6 +52,18 @@ src/components/
 Consulta [ARQUITECTURA.md](./ARQUITECTURA.md) para el roadmap y fases de implementación.
 
 
+## Sistema de Calculadoras Dinámicas
+
+Las calculadoras de materiales son **completamente configurables desde el admin**:
+
+- **Admin Panel**: `/admin/calculators` - crear, editar y eliminar calculadoras
+- **Frontend Dinámico**: `src/components/home/DynamicCalculatorSection.tsx` carga calculadoras de la BD
+- **BD**: Modelos `Calculator` y `CalculatorMaterial` en Prisma
+- **API**: Endpoints REST en `/api/calculators/*` para CRUD completo
+- **Seed**: `prisma/seed.ts` incluye 5 calculadoras de ejemplo
+
+Ver [CALCULATORS.md](./CALCULATORS.md) para documentación detallada.
+
 ## Rules
 
 - Al momento de crear datos nuevos no uses Modales, usa paginas dedicadas para los formularios 
