@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
+import { Mail, Phone, MapPin } from "lucide-react"
+import { socialLinks } from "@/lib/social"
 import { Separator } from "@/components/ui/separator"
 
 interface FooterProduct {
@@ -71,19 +72,22 @@ export function Footer() {
             <p className="mt-4 text-sm text-muted-foreground">
               Tu tienda de tumbados de gypsum de confianza. Los mejores productos y acabados para tu hogar a los mejores precios.
             </p>
-            <div className="mt-4 flex gap-3">
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Facebook className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Twitter className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Instagram className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-foreground">
-                <Youtube className="h-5 w-5" strokeWidth={1.75} />
-              </Link>
+            <div className="mt-4 flex gap-4">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.href}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  title={social.label}
+                  className={`text-muted-foreground transition-colors ${social.hoverClassName}`}
+                >
+                  <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden>
+                    {social.icon}
+                  </svg>
+                </a>
+              ))}
             </div>
           </div>
 

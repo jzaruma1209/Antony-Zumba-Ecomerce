@@ -99,7 +99,7 @@ export function Header() {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
+        <div className="flex h-12 items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0" aria-label="TumbadosZumba">
             <Image
@@ -107,7 +107,7 @@ export function Header() {
               alt="TumbadosZumba"
               width={40}
               height={40}
-              className="h-10 w-10 rounded-lg object-contain transition-transform hover:scale-105"
+              className="h-8 w-8 rounded-lg object-contain transition-transform hover:scale-105"
               priority
             />
           </Link>
@@ -121,7 +121,7 @@ export function Header() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Buscar productos, materiales, acabados..."
-                className="w-full pl-10 pr-9 h-10 bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
+                className="w-full pl-10 pr-9 h-8 text-sm bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
               />
               {searchQuery && (
                 <button
@@ -142,7 +142,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9 md:hidden"
+              className="h-8 w-8 md:hidden"
               onClick={toggleMobileSearch}
               aria-label="Alternar barra de búsqueda"
             >
@@ -160,7 +160,7 @@ export function Header() {
             <ThemeToggle />
 
             <Link href="/profile/favorites">
-              <Button variant="ghost" size="icon" className="relative h-9 w-9">
+              <Button variant="ghost" size="icon" className="relative h-8 w-8">
                 <Heart className="h-4 w-4" />
                 {mounted && favoriteCount > 0 && (
                   <Badge
@@ -174,7 +174,7 @@ export function Header() {
             </Link>
 
             <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative h-9 w-9">
+              <Button variant="ghost" size="icon" className="relative h-8 w-8">
                 <ShoppingCart className="h-4 w-4" />
                 {mounted && itemCount > 0 && (
                   <Badge
@@ -194,7 +194,7 @@ export function Header() {
                 {session ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="hidden h-9 gap-1 px-2 sm:flex">
+                      <Button variant="ghost" className="hidden h-8 gap-1 px-2 sm:flex">
                         <User className="h-4 w-4" />
                         <span className="max-w-24 truncate text-sm">
                           {session.user?.name?.split(" ")[0]}
