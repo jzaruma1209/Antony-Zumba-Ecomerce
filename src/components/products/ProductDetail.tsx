@@ -206,7 +206,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
       )}
 
       {/* Specs */}
-      {Object.keys(product.specs).length > 0 && (
+      {product.specs && Object.keys(product.specs).length > 0 && (
         <>
           <Separator />
           <div>

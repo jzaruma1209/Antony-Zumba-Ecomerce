@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2, Plus, Trash2, ListChecks } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -34,6 +34,11 @@ import { ImageUpload } from "@/components/admin/ImageUpload"
 interface UploadedImage {
   url: string
   publicId: string
+}
+
+interface SpecItem {
+  key: string
+  value: string
 }
 
 const productSchema = z.object({
@@ -79,6 +84,23 @@ export default function NewProductPage() {
   const [showOfferAlert, setShowOfferAlert] = useState(false)
   const [warrantyOption, setWarrantyOption] = useState<string>("1-mes")
   const [customWarranty, setCustomWarranty] = useState<string>("")
+  const [specs, setSpecs] = useState<SpecItem[]>([])
+
+  const addSpec = (defaultKey = "") => {
+    setSpecs((prev) => [...prev, { key: defaultKey, value: "" }])
+  }
+
+  const updateSpec = (index: number, field: "key" | "value", val: string) => {
+    setSpecs((prev) => {
+      const next = [...prev]
+      next[index] = { ...next[index], [field]: val }
+      return next
+    })
+  }
+
+  const removeSpec = (index: number) => {
+    setSpecs((prev) => prev.filter((_, i) => i !== index))
+  }
 
   const {
     register,
@@ -159,6 +181,16 @@ export default function NewProductPage() {
     const returnPolicy = watch("returnPolicy")
     const warranty = watch("warranty")
 
+    // Construir objeto de especificaciones tecnicas
+    const specsObject: Record<string, string> = {}
+    specs.forEach((item) => {
+      const k = item.key.trim()
+      const v = item.value.trim()
+      if (k && v) {
+        specsObject[k] = v
+      }
+    })
+
     setSaving(true)
     try {
       const response = await fetch("/api/products", {
@@ -185,6 +217,7 @@ export default function NewProductPage() {
             : null,
           comparePrice: isOffer && data.comparePrice ? data.comparePrice : null,
           images: images.map((img) => img.url),
+          specs: specsObject,
         }),
       })
 
@@ -311,6 +344,82 @@ export default function NewProductPage() {
                 )}
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <ListChecks className="h-5 w-5 text-primary" strokeWidth={1.75} />
+                Especificaciones Técnicas
+              </CardTitle>
+              <CardDescription className="mt-1">
+                Añade características detalladas del producto (ej: Medidas, Material, Uso, Espesor...)
+              </CardDescription>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => addSpec()}
+              className="shrink-0"
+            >
+              <Plus className="h-4 w-4 mr-1.5" strokeWidth={1.75} />
+              Añadir especificación
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Sugerencias rápidas */}
+            <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground pb-1">
+              <span className="font-medium">Sugerencias:</span>
+              {["Medidas", "Uso", "Material", "Espesor", "Presentación", "Área", "Color", "Tipo"].map((sug) => (
+                <button
+                  key={sug}
+                  type="button"
+                  onClick={() => addSpec(sug)}
+                  className="px-2 py-0.5 rounded-md border border-dashed border-border hover:border-primary hover:text-primary transition-colors text-[11px]"
+                >
+                  + {sug}
+                </button>
+              ))}
+            </div>
+
+            {specs.length === 0 ? (
+              <div className="text-center py-6 border border-dashed rounded-lg text-sm text-muted-foreground bg-muted/20">
+                No hay especificaciones añadidas. Pulsa <strong>Añadir especificación</strong> o una de las sugerencias para comenzar.
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {specs.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="w-1/3 min-w-[120px]">
+                      <Input
+                        placeholder="Característica (ej: Medidas)"
+                        value={item.key}
+                        onChange={(e) => updateSpec(index, "key", e.target.value)}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Input
+                        placeholder="Valor (ej: 1.22 x 2.44 m)"
+                        value={item.value}
+                        onChange={(e) => updateSpec(index, "value", e.target.value)}
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-destructive shrink-0"
+                      onClick={() => removeSpec(index)}
+                    >
+                      <Trash2 className="h-4 w-4" strokeWidth={1.75} />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 

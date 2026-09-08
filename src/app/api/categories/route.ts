@@ -27,11 +27,32 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
+    if (!body.name?.trim() || !body.slug?.trim()) {
+      return NextResponse.json(
+        { error: "El nombre y el slug son obligatorios" },
+        { status: 400 }
+      )
+    }
+
+    const cleanSlug = body.slug.trim().toLowerCase()
+
+    // Verificar si ya existe una categoría con este slug
+    const existing = await prisma.category.findUnique({
+      where: { slug: cleanSlug },
+    })
+
+    if (existing) {
+      return NextResponse.json(
+        { error: `Ya existe una categoría con el slug "${cleanSlug}". Por favor elige otro slug.` },
+        { status: 409 }
+      )
+    }
+
     const category = await prisma.category.create({
       data: {
-        name: body.name,
-        slug: body.slug,
-        icon: body.icon,
+        name: body.name.trim(),
+        slug: cleanSlug,
+        icon: body.icon?.trim() || "Package",
       },
       include: {
         _count: {
@@ -41,11 +62,18 @@ export async function POST(request: NextRequest) {
     })
 
     return NextResponse.json(transformCategory(category), { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error creating category:", error)
+    if (error?.code === "P2002") {
+      return NextResponse.json(
+        { error: "Ya existe una categoría con este slug." },
+        { status: 409 }
+      )
+    }
     return NextResponse.json(
-      { error: "Error creating category" },
+      { error: "Error al crear la categoría" },
       { status: 500 }
     )
   }
 }
+

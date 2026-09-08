@@ -24,6 +24,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import { GoogleSignInButton } from "@/components/auth/GoogleSignInButton"
 
 const registerSchema = z.object({
   name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
@@ -103,6 +104,19 @@ export function RegisterForm() {
               {error}
             </div>
           )}
+          <div className="mb-6">
+            <GoogleSignInButton />
+          </div>
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                O regístrate con email
+              </span>
+            </div>
+          </div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <Field>

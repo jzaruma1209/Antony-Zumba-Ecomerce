@@ -64,7 +64,7 @@ export function ProductCard({ product }: ProductCardProps) {
           size="icon"
           onClick={handleToggleFavorite}
           className={`absolute right-2 top-2 z-10 h-8 w-8 rounded-full bg-background/80 transition-opacity ${
-            isFavorite ? 'opacity-100 text-red-500' : 'opacity-0 group-hover:opacity-100'
+            isFavorite ? 'opacity-100 text-red-500' : 'opacity-100 lg:opacity-0 lg:group-hover:opacity-100'
           }`}
         >
           <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
@@ -85,7 +85,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </Link>
 
         {/* Quick Add Button */}
-        <div className="absolute bottom-2 left-2 right-2 z-20 pointer-events-none translate-y-full opacity-0 transition-all group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="absolute bottom-2 left-2 right-2 z-20 flex opacity-100 pointer-events-auto transition-all lg:translate-y-full lg:opacity-0 lg:pointer-events-none lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-hover:pointer-events-auto">
           <Button
             className="w-full"
             size="sm"

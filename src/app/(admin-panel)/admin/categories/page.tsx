@@ -1,7 +1,25 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, FolderTree, RefreshCcw, Plus, Pencil, Trash2, AlertTriangle } from "lucide-react"
+import {
+  Search,
+  FolderTree,
+  RefreshCcw,
+  Plus,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+  Grid3x3,
+  RectangleHorizontal,
+  Building2,
+  Lightbulb,
+  Wrench,
+  Layers,
+  PanelTop,
+  Frame,
+  LayoutDashboard,
+  Package,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -24,6 +42,19 @@ import {
 import { Label } from "@/components/ui/label"
 import type { Category } from "@/types"
 
+const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+  Grid3x3,
+  RectangleHorizontal,
+  Building2,
+  Lightbulb,
+  Wrench,
+  Layers,
+  PanelTop,
+  Frame,
+  LayoutDashboard,
+  Package,
+}
+
 interface SimpleProduct {
   id: string
   name: string
@@ -39,6 +70,7 @@ export default function AdminCategoriesPage() {
   const [createOpen, setCreateOpen] = useState(false)
   const [form, setForm] = useState({ name: "", slug: "", icon: "" })
   const [saving, setSaving] = useState(false)
+  const [createError, setCreateError] = useState<string | null>(null)
 
   // Delete dialog
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -99,21 +131,34 @@ export default function AdminCategoriesPage() {
     }
   }
 
+  const openCreateDialog = () => {
+    setCreateError(null)
+    setForm({ name: "", slug: "", icon: "" })
+    setCreateOpen(true)
+  }
+
   const handleCreate = async () => {
-    if (!form.name || !form.slug) return
+    if (!form.name.trim() || !form.slug.trim()) return
     setSaving(true)
+    setCreateError(null)
     try {
       const res = await fetch("/api/categories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       })
-      if (!res.ok) throw new Error()
+      const data = await res.json().catch(() => null)
+
+      if (!res.ok) {
+        setCreateError(data?.error || "Error al crear la categoría")
+        return
+      }
+
       await fetchCategories()
       setCreateOpen(false)
       setForm({ name: "", slug: "", icon: "" })
     } catch {
-      // silent
+      setCreateError("No se pudo conectar con el servidor. Intenta nuevamente.")
     } finally {
       setSaving(false)
     }
@@ -141,7 +186,7 @@ export default function AdminCategoriesPage() {
             <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} strokeWidth={1.75} />
             Actualizar
           </Button>
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
+          <Button size="sm" onClick={openCreateDialog}>
             <Plus className="h-4 w-4 mr-2" strokeWidth={1.75} />
             Nueva categoría
           </Button>
@@ -209,29 +254,36 @@ export default function AdminCategoriesPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filtered.map((cat) => (
-                  <TableRow key={cat.id}>
-                    <TableCell className="text-xl">{cat.icon || "📁"}</TableCell>
-                    <TableCell className="font-medium">{cat.name}</TableCell>
-                    <TableCell className="font-mono text-sm text-muted-foreground">{cat.slug}</TableCell>
-                    <TableCell className="text-right font-mono font-semibold">{cat.productCount}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1 justify-end">
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled>
-                          <Pencil className="h-4 w-4" strokeWidth={1.75} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                          onClick={() => handleDeleteClick(cat)}
-                        >
-                          <Trash2 className="h-4 w-4" strokeWidth={1.75} />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                filtered.map((cat) => {
+                  const IconComp = (cat.icon && CATEGORY_ICON_MAP[cat.icon]) || Package
+                  return (
+                    <TableRow key={cat.id}>
+                      <TableCell>
+                        <div className="flex items-center justify-center w-8 h-8 rounded-md bg-muted/60 text-muted-foreground">
+                          <IconComp className="h-4 w-4" strokeWidth={1.75} />
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{cat.name}</TableCell>
+                      <TableCell className="font-mono text-sm text-muted-foreground">{cat.slug}</TableCell>
+                      <TableCell className="text-right font-mono font-semibold">{cat.productCount}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 justify-end">
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled>
+                            <Pencil className="h-4 w-4" strokeWidth={1.75} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                            onClick={() => handleDeleteClick(cat)}
+                          >
+                            <Trash2 className="h-4 w-4" strokeWidth={1.75} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
               )}
             </TableBody>
           </Table>
@@ -283,11 +335,28 @@ export default function AdminCategoriesPage() {
       </Dialog>
 
       {/* Create dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+      <Dialog
+        open={createOpen}
+        onOpenChange={(open) => {
+          setCreateOpen(open)
+          if (!open) setCreateError(null)
+        }}
+      >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Nueva categoría</DialogTitle>
+            <DialogDescription>
+              Ingresa los datos para registrar una nueva categoría de productos en la tienda.
+            </DialogDescription>
           </DialogHeader>
+
+          {createError && (
+            <div className="flex items-start gap-2 p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
+              <AlertTriangle className="h-4 w-4 mt-0.5 shrink-0" strokeWidth={1.75} />
+              <span>{createError}</span>
+            </div>
+          )}
+
           <div className="space-y-4 py-2">
             <div className="space-y-2">
               <Label htmlFor="cat-name">Nombre</Label>
@@ -297,6 +366,7 @@ export default function AdminCategoriesPage() {
                 value={form.name}
                 onChange={(e) => {
                   const name = e.target.value
+                  setCreateError(null)
                   setForm((f) => ({ ...f, name, slug: autoSlug(name) }))
                 }}
               />
@@ -307,22 +377,33 @@ export default function AdminCategoriesPage() {
                 id="cat-slug"
                 placeholder="Ej: gypsum"
                 value={form.slug}
-                onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                onChange={(e) => {
+                  setCreateError(null)
+                  setForm((f) => ({ ...f, slug: e.target.value }))
+                }}
                 className="font-mono"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="cat-icon">Icono (emoji o texto)</Label>
+              <Label htmlFor="cat-icon">Icono (Nombre de icono Lucide)</Label>
               <Input
                 id="cat-icon"
-                placeholder="Ej: 🏗️"
+                placeholder="Ej: Building2, Layers, Package, Frame..."
                 value={form.icon}
                 onChange={(e) => setForm((f) => ({ ...f, icon: e.target.value }))}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancelar</Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCreateOpen(false)
+                setCreateError(null)
+              }}
+            >
+              Cancelar
+            </Button>
             <Button onClick={handleCreate} disabled={saving || !form.name || !form.slug}>
               {saving ? "Guardando..." : "Crear categoría"}
             </Button>

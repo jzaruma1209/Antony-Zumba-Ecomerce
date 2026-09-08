@@ -42,7 +42,7 @@ enum PaymentMethod {
 model User {
   id        String     @id @default(cuid())
   email     String     @unique
-  password  String
+  password  String?
   name      String
   phone     String?
   avatar    String?
@@ -225,5 +225,20 @@ model CalculatorMaterial {
 
   @@index([calculatorId])
   @@map("calculator_materials")
+}
+
+model MediaItem {
+  id        String   @id @default(cuid())
+  name      String
+  url       String
+  publicId  String   @unique
+  width     Int?
+  height    Int?
+  size      Int?
+  folder    String   @default("general")
+  createdAt DateTime @default(now())
+
+  @@index([folder])
+  @@map("media_items")
 }
 

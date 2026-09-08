@@ -17,7 +17,21 @@
       "Bash(cp \"C:\\\\Users\\\\jzaru\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-jzaru-OneDrive-Desktop-paul\\\\cauralis\\\\Antony Zumba ecomerce\\\\Antony Ecomerce\\\\scratchpad\\\\create_calculators.sql\" \"C:\\\\Users\\\\jzaru\\\\OneDrive\\\\Desktop\\\\paul\\\\cauralis\\\\Antony Zumba ecomerce\\\\Antony Ecomerce\\\\\" 2>&1)",
       "Bash(timeout 60 npm run dev)",
       "Bash(curl -s http://localhost:3000/api/calculators)",
-      "Bash(tail -50 /tmp/server.log 2>/dev/null || echo \"Log no disponible\")"
+      "Bash(tail -50 /tmp/server.log 2>/dev/null || echo \"Log no disponible\")",
+      "Bash(git checkout *)",
+      "Bash(tasklist)",
+      "Bash(timeout 60 npx prisma db push --skip-generate)",
+      "Bash(timeout 90 npx prisma db push)",
+      "Bash(timeout 60 npx prisma generate)",
+      "Bash(netstat -ano)",
+      "Bash(git check-ignore *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(timeout 10 bash -c \"cat < /dev/tcp/aws-0-us-west-2.pooler.supabase.com/6543\")",
+      "Bash(timeout 10 bash -c \"cat < /dev/tcp/aws-0-us-west-2.pooler.supabase.com/5432\")",
+      "PowerShell(Test-NetConnection -ComputerName aws-0-us-west-2.pooler.supabase.com -Port 6543)",
+      "PowerShell(Test-NetConnection -ComputerName aws-0-us-west-2.pooler.supabase.com -Port 5432)",
+      "Bash(git fetch *)",
+      "Bash(git rev-list *)"
     ]
   }
 }

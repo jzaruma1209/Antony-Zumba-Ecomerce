@@ -30,6 +30,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { payments } from "@/data/mock-admin"
+import { CreditCard } from "lucide-react"
+
+// Pasarela de pago desactivada a pedido del cliente. La lógica y los datos
+// de pagos se mantienen intactos; solo se oculta la vista. Cambiar a `true`
+// para reactivarla.
+const PAYMENT_GATEWAY_ENABLED = false
 
 const statusConfig = {
   completed: { label: "Completado", variant: "default" as const, className: "bg-green-600" },
@@ -68,6 +74,28 @@ export default function AdminPaymentsPage() {
   const refundedAmount = payments
     .filter((p) => p.status === "refunded")
     .reduce((sum, p) => sum + p.amount, 0)
+
+  if (!PAYMENT_GATEWAY_ENABLED) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold">Pagos</h1>
+          <p className="text-muted-foreground">
+            Administra los pagos y transacciones
+          </p>
+        </div>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+            <CreditCard className="h-10 w-10 text-muted-foreground" />
+            <p className="text-lg font-semibold">Pasarela de pagos desactivada</p>
+            <p className="max-w-md text-sm text-muted-foreground">
+              Comunícate con soporte si deseas activarla.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
