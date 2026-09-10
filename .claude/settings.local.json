@@ -39,7 +39,12 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
       "Bash(node -e \"console.log\\(require\\('./node_modules/prisma/package.json'\\).version\\)\")",
       "Bash(npx next *)",
-      "Bash(git commit -m '@ *)"
+      "Bash(git commit -m '@ *)",
+      "Bash(xargs wc -l)",
+      "Bash(xargs grep -ln \"@/lib/prisma\\\\|generated/prisma\")",
+      "Bash(npx tsx *)",
+      "Bash(cp \"C:/Users/jzaru/AppData/Local/Temp/claude/C--Users-jzaru-OneDrive-Desktop-paul-cauralis-Antony-Zumba-ecomerce-Antony-Ecomerce/cb425a2e-d48a-4b27-9da1-7fd5c3bf69f7/scratchpad/dbtime.ts\" ./perf-check-tmp.ts)",
+      "Bash(npx eslint *)"
     ]
   }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, ShoppingCart, Star, Check } from "lucide-react"
@@ -20,9 +20,17 @@ const PLACEHOLDER_IMAGE = "https://images.unsplash.com/photo-1629429408209-1f912
 export function ProductCard({ product }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem)
   const [added, setAdded] = useState(false)
-  
+
+  // La lista de favoritos vive en localStorage (Zustand persist), que no
+  // existe durante el render en el servidor. Hasta que el componente monte
+  // en el cliente tratamos todo como "no favorito" para que coincida con el
+  // HTML que llegó del servidor y evitar un hydration mismatch.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const toggleFavorite = useFavoritesStore((state) => state.toggleItem)
-  const isFavorite = useFavoritesStore((state) => state.isFavorite(product.id))
+  const isFavoriteInStore = useFavoritesStore((state) => state.isFavorite(product.id))
+  const isFavorite = mounted && isFavoriteInStore
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault()

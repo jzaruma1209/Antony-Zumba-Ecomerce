@@ -58,8 +58,16 @@ function CountdownBox({ value }: { value: string }) {
 }
 
 function OfferCard({ product }: { product: Product }) {
+  // La lista de favoritos vive en localStorage (Zustand persist), que no
+  // existe durante el render en el servidor. Hasta que el componente monte
+  // en el cliente tratamos todo como "no favorito" para que coincida con el
+  // HTML que llegó del servidor y evitar un hydration mismatch.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const toggleFavorite = useFavoritesStore((state) => state.toggleItem)
-  const isFavorite = useFavoritesStore((state) => state.isFavorite(product.id))
+  const isFavoriteInStore = useFavoritesStore((state) => state.isFavorite(product.id))
+  const isFavorite = mounted && isFavoriteInStore
 
   const hasDiscount = !!product.originalPrice && product.originalPrice > product.price
   const discount = hasDiscount
@@ -143,30 +151,11 @@ function OfferCard({ product }: { product: Product }) {
   )
 }
 
-export function FlashOffers() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+export function FlashOffers({ products }: { products: Product[] }) {
   const left = useCountdown()
 
-  useEffect(() => {
-    async function loadOffers() {
-      try {
-        const res = await fetch("/api/products?offers=true&limit=12")
-        if (res.ok) {
-          const data = await res.json()
-          if (Array.isArray(data.products)) setProducts(data.products)
-        }
-      } catch (err) {
-        console.error("Error cargando ofertas flash:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadOffers()
-  }, [])
-
   // Sin ofertas cargadas: no ocupamos espacio en la home
-  if (!loading && products.length === 0) return null
+  if (products.length === 0) return null
 
   const maxDiscount = products.reduce((max, p) => {
     if (!p.originalPrice || p.originalPrice <= p.price) return max
@@ -213,13 +202,19 @@ export function FlashOffers() {
                   "radial-gradient(circle at 50% 125%, #5b1220 0%, #191c26 55%, #0b0d14 100%)",
               }}
             >
-              <span className="text-[11px] font-bold tracking-[0.2em] text-[#F04438]">
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#F04438] uppercase">
                 APRESÚRATE
               </span>
-              <span className="mt-1 text-5xl font-extrabold leading-none text-white lg:text-6xl">
-                {maxDiscount || 15}%
+              <span className="mt-1.5 text-[11px] font-medium leading-tight text-white/80">
+                Puedes conseguir hasta
               </span>
-              <span className="mt-1.5 text-[9px] font-medium tracking-[0.22em] text-white/45">
+              <span className="mt-0.5 text-5xl font-extrabold leading-none text-white lg:text-6xl">
+                {maxDiscount || 30}%
+              </span>
+              <span className="mt-1 text-[11px] font-bold tracking-wider text-white/90 uppercase">
+                DE DESCUENTO
+              </span>
+              <span className="mt-1 text-[9px] font-medium tracking-[0.2em] text-white/45">
                 POR TIEMPO LIMITADO
               </span>
               <span
@@ -238,17 +233,9 @@ export function FlashOffers() {
 
             <div className="min-w-0 flex-1 overflow-x-auto p-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               <div className="flex gap-3">
-                {loading
-                  ? Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="w-[152px] shrink-0 space-y-2 sm:w-[180px]">
-                        <Skeleton className="aspect-square rounded-xl" />
-                        <Skeleton className="h-3 w-3/4" />
-                        <Skeleton className="h-3 w-1/2" />
-                      </div>
-                    ))
-                  : products.map((product) => (
-                      <OfferCard key={product.id} product={product} />
-                    ))}
+                {products.map((product) => (
+                  <OfferCard key={product.id} product={product} />
+                ))}
               </div>
             </div>
           </div>

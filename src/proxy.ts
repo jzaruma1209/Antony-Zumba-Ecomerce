@@ -60,8 +60,9 @@ export const proxy = proxyHandler
 export default proxyHandler
 
 export const config = {
-  matcher: [
-    // Match all routes except static files and API routes
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
+  // Antes corría en TODAS las páginas (incluida la home pública), lo que
+  // significaba descifrar el JWT de sesión en cada visita sin necesitarlo.
+  // Ahora solo entra en las rutas que de verdad chequean algo arriba:
+  // protectedRoutes, adminRoutes y guestRoutes.
+  matcher: ["/profile/:path*", "/checkout/:path*", "/admin/:path*", "/login", "/register"],
 }

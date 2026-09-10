@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { transformCategory } from "@/lib/transformers"
+import { invalidateCategories } from "@/lib/cache-tags"
 
 export async function GET() {
   try {
@@ -60,6 +61,8 @@ export async function POST(request: NextRequest) {
         },
       },
     })
+
+    invalidateCategories()
 
     return NextResponse.json(transformCategory(category), { status: 201 })
   } catch (error: any) {

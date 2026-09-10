@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { transformBrand } from "@/lib/transformers"
+import { invalidateBrands } from "@/lib/cache-tags"
 
 export async function GET() {
   try {
@@ -39,6 +40,8 @@ export async function POST(request: NextRequest) {
         },
       },
     })
+
+    invalidateBrands()
 
     return NextResponse.json(transformBrand(brand), { status: 201 })
   } catch (error) {

@@ -12,8 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
-
-import { useProductsStore } from "@/stores/products-store"
+import type { Category } from "@/types"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
   Building2,
@@ -28,9 +27,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; strokeWi
   Package,
 }
 
-export function MobileNav() {
+export function MobileNav({ categories = [] }: { categories?: Category[] }) {
   const [open, setOpen] = React.useState(false)
-  const { categories } = useProductsStore()
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

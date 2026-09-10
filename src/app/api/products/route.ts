@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { transformProduct } from "@/lib/transformers"
+import { invalidateProducts } from "@/lib/cache-tags"
+import { getSoldQuantityByProduct } from "@/lib/sales"
 
 export async function GET(request: NextRequest) {
   try {
@@ -57,42 +59,68 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    // Build orderBy
-    let orderBy: Record<string, string> = { createdAt: "desc" }
-    switch (sortBy) {
-      case "price-asc":
-        orderBy = { price: "asc" }
-        break
-      case "price-desc":
-        orderBy = { price: "desc" }
-        break
-      case "newest":
-        orderBy = { createdAt: "desc" }
-        break
-      case "popular":
-      case "best-selling":
-        orderBy = { createdAt: "desc" } // default order if no sales table query yet
-        break
+    const takeNum = limit ? Number(limit) : undefined
+    const skipNum = offset ? Number(offset) : 0
+
+    let products
+    let total
+
+    if (sortBy === "popular" || sortBy === "best-selling") {
+      // Ordenar por ventas reales no es un simple orderBy de columna: hay
+      // que traer los productos que cumplen los filtros, sumar sus unidades
+      // vendidas (OrderItem de pedidos confirmados) y recién ahí ordenar y
+      // paginar en memoria. Para un catálogo de miles de productos sin
+      // filtrar esto puede pesar; si el catálogo crece mucho conviene pasar
+      // a un contador de ventas denormalizado en Product.
+      const matching = await prisma.product.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        include: { category: true, brand: true },
+      })
+
+      const soldByProduct = await getSoldQuantityByProduct(matching.map((p) => p.id))
+
+      const sorted = [...matching].sort(
+        (a, b) => (soldByProduct.get(b.id) ?? 0) - (soldByProduct.get(a.id) ?? 0)
+      )
+
+      total = sorted.length
+      products = takeNum ? sorted.slice(skipNum, skipNum + takeNum) : sorted.slice(skipNum)
+    } else {
+      let orderBy: Record<string, string> = { createdAt: "desc" }
+      switch (sortBy) {
+        case "price-asc":
+          orderBy = { price: "asc" }
+          break
+        case "price-desc":
+          orderBy = { price: "desc" }
+          break
+        case "newest":
+          orderBy = { createdAt: "desc" }
+          break
+      }
+
+      // findMany y count salen a la vez en vez de uno detrás del otro
+      ;[products, total] = await Promise.all([
+        prisma.product.findMany({
+          where,
+          orderBy,
+          include: {
+            category: true,
+            brand: true,
+          },
+          take: takeNum,
+          skip: skipNum,
+        }),
+        prisma.product.count({ where }),
+      ])
     }
-
-    const products = await prisma.product.findMany({
-      where,
-      orderBy,
-      include: {
-        category: true,
-        brand: true,
-      },
-      take: limit ? Number(limit) : undefined,
-      skip: offset ? Number(offset) : undefined,
-    })
-
-    const total = await prisma.product.count({ where })
 
     return NextResponse.json({
       products: products.map(transformProduct),
       total,
-      limit: limit ? Number(limit) : null,
-      offset: offset ? Number(offset) : 0,
+      limit: takeNum ?? null,
+      offset: skipNum,
     })
   } catch (error) {
     console.error("Error fetching products:", error)
@@ -132,6 +160,8 @@ export async function POST(request: NextRequest) {
         brand: true,
       },
     })
+
+    invalidateProducts()
 
     return NextResponse.json(transformProduct(product), { status: 201 })
   } catch (error) {

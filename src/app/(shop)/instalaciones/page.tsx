@@ -130,7 +130,8 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
       <header className="relative w-full h-[70vh] min-h-[520px] flex items-center justify-center overflow-hidden bg-slate-950">
         <div className="absolute inset-0 w-full h-full opacity-60">
            <BeforeAfterSlider 
-              afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuCBtLyq3q98JPg10hXKNlGoIIHLQuhfiPCoNKVanJTYYoZSQASNLT4R2tGC57qjTQhuItLl9S0IRiaAJRKfm136ZWR5sbGaHKouv1tCRslasvXZco8xDNLvA6SgzwGYVpguim8UsLlxyYxLRyVpjP5K8i2EhULNuO4N2BdujpWtNF0OJjrswSluUQWQBYH5U4WGSpof70rzuY_0CAEW2CqwB2IcfIwMG-YHssizJiLGB-b1lgPMKzY"
+              beforeSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982326/basictech/media/general/jnyg7eq9rcbkzunfppsx.jpg"
+              afterSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982325/basictech/media/general/tksklq7in04borafhf5x.jpg"
            />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background via-slate-950/60 to-slate-950/70 pointer-events-none"></div>
@@ -223,9 +224,10 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
               </p>
             </div>
             <div className="h-[280px] rounded-lg overflow-hidden border border-border">
-               <BeforeAfterSlider 
-                  afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuB8xyiR_zZAZcjnXzScxNhhQ1gElQgM_29PVUo8XO94sfw_3DWwdZ8LuQFlivfTMvMPc5e2GpQ_TJasuTUyteDUzg7wThpZmesJzOBG_IGaz5uNiC5w8OJ0NLD4C7I9qoPYp9A0Dy7ZWTT9mphTbAhzTLdDKAjRbvHltamFlxKaUZh79feafq61ROEbksAi71GAaOeQ3sstYtOh_fgHyg2k1NAHadLGQoc105rDzy50P8Ti_iBkO3o"
-               />
+                <BeforeAfterSlider 
+                   beforeSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982323/basictech/media/general/qik0bo9yrsw798dh9hd4.jpg"
+                   afterSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982324/basictech/media/general/elqoid41yxefr4wa7nuo.jpg"
+                />
             </div>
           </div>
 
@@ -239,9 +241,10 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
               </p>
             </div>
             <div className="h-[280px] rounded-lg overflow-hidden border border-border">
-               <BeforeAfterSlider 
-                  afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuARsWUXcv-lPSTpaWk6r-p_yghzuJKZAh6SSXG568v0ZZipp5WdjAGxhPG8jFQuVefPEpMUbP4turU2wY1AK8dLxn_roFsjfrlVwy6me7sdtP57ic4yl3vlp9YkebYSRjDTwx0eUfo-nEqOQVbooqJiMsVmj3czw76JqC4Coowc2VMSAwZTHjOrjeQ1SQQ-kv_cM0batnvXoi21aHj5RNvAKzp7JniCl9ydntuHYoU0nhrw-ILvExw"
-               />
+                <BeforeAfterSlider 
+                   beforeSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982322/basictech/media/general/davnlmtzv17nb06nrbhc.jpg"
+                   afterSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982321/basictech/media/general/v32b1eq2ctyp8jaodvyh.jpg"
+                />
             </div>
           </div>
         </div>
@@ -254,8 +257,8 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
           </div>
           <div className="h-[360px] sm:h-[440px] rounded-lg overflow-hidden border border-border">
             <BeforeAfterSlider 
-              beforeSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuDayY2zm0KacWHyLLaQjtBwje3fj9UVioG-GcNrpRnyqoMuWYrYRB5YCzUg5dJG2A9dRNMItW_oUOqYIYYVWqUTxNpiYlRB-nE4UzEKRJUcaOJAu9054HPInry8kN_y77EbD8pMnNTOKym91dQdQODpOUMrcI474RBdWymPP9NIUCPEmzNqRj5oSTs3ENQiu2lASYZiQK3L_EzfyJEVkVq5NIgh-fEg-mkmXwid4d_nGgHvUkn5ZQQ"
-              afterSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuC8GSR46gtdA7Ux-WA_THPeWjJO4oNYPQ58Jo0veYte2G5MYTkMzQ921slQHeV0kNVv5UELmvyCIDTtx_A32gPRmBSpdAUEIwNb4iv-8OJvsEpz_g2NinLqab7q_EZJ82KU13_M2SWFvKAcCoRzdpMg4EK78RMqhNpxCe9Bt1SYrYxkqh4wwQUX303omTfZRNlerUfStf5t-GWnowrWn-HrxkZMFj6bAcnfFz-DkGLGUddK-_dOVDw"
+              beforeSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982319/basictech/media/general/rpbt9o1jrjmtuq3cvf3k.jpg"
+              afterSrc="https://res.cloudinary.com/dxkmtbde/image/upload/v1788982318/basictech/media/general/teeg4tbo7zkdhodkrahk.jpg"
             />
           </div>
         </div>

@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
 
 interface BrandItem {
   id: string
@@ -13,27 +12,24 @@ interface BrandItem {
   productCount?: number
 }
 
-export function BrandSection() {
-  const [brands, setBrands] = useState<BrandItem[]>([])
-  const [loading, setLoading] = useState(true)
+export function BrandSection({ brands: allBrands }: { brands: BrandItem[] }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    async function loadBrands() {
-      try {
-        const res = await fetch("/api/brands")
-        if (res.ok) {
-          const data = await res.json()
-          setBrands(data)
-        }
-      } catch (err) {
-        console.error("Error al cargar marcas:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadBrands()
-  }, [])
+  // Excluir "SIN MARCA", "GENERICO" u homólogos de la sección "Marcas que Confiamos"
+  const brands = useMemo(
+    () =>
+      allBrands.filter((brand) => {
+        const cleanName = brand.name.trim().toLowerCase()
+        const cleanSlug = brand.slug.trim().toLowerCase()
+        return (
+          cleanName !== "sin marca" &&
+          cleanSlug !== "sin-marca" &&
+          cleanName !== "generico" &&
+          cleanName !== "genérico"
+        )
+      }),
+    [allBrands]
+  )
 
   const [canScroll, setCanScroll] = useState(false)
 
@@ -60,7 +56,7 @@ export function BrandSection() {
     }
   }
 
-  if (!loading && brands.length === 0) {
+  if (brands.length === 0) {
     return null
   }
 
@@ -93,21 +89,17 @@ export function BrandSection() {
             ref={scrollContainerRef}
             className="flex items-center justify-center gap-3 sm:gap-4 overflow-x-auto scroll-smooth py-2 px-4 no-scrollbar w-full"
           >
-            {loading
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="h-11 w-32 shrink-0 rounded-lg" />
-                ))
-              : brands.map((brand) => (
-                  <Link
-                    key={brand.id}
-                    href={`/products?brand=${brand.slug}`}
-                    className="flex shrink-0 items-center justify-center px-5 py-2.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-brand-orange hover:shadow-sm transition-all group/card"
-                  >
-                    <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 group-hover/card:text-brand-orange transition-colors">
-                      {brand.name}
-                    </span>
-                  </Link>
-                ))}
+            {brands.map((brand) => (
+              <Link
+                key={brand.id}
+                href={`/products?brand=${brand.slug}`}
+                className="flex shrink-0 items-center justify-center px-5 py-2.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-brand-orange hover:shadow-sm transition-all group/card"
+              >
+                <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 group-hover/card:text-brand-orange transition-colors">
+                  {brand.name}
+                </span>
+              </Link>
+            ))}
           </div>
 
           {/* Botón scroll derecha (sólo si hay scroll) */}

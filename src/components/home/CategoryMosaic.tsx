@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Calculator as CalculatorIcon, X } from "lucide-react"
+import { X } from "lucide-react"
 import { DynamicCalculatorSection } from "@/components/home/DynamicCalculatorSection"
 
 interface MosaicCard {
@@ -18,6 +18,8 @@ interface MosaicCard {
   wide?: boolean
   /** paleta de la tarjeta */
   tone: "dark" | "light" | "brand"
+  /** ajuste de imagen: cover o contain para verla completa */
+  imageFit?: "cover" | "contain"
 }
 
 const cards: MosaicCard[] = [
@@ -26,7 +28,7 @@ const cards: MosaicCard[] = [
     title: "Placas y",
     accent: "GYPSUM",
     href: "/products?category=gypsum",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
+    image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1788980567/basictech/media/general/p4exapcgkhtif2341fgb.png",
     span: "col-span-1 lg:col-span-3",
     tone: "light",
   },
@@ -35,38 +37,33 @@ const cards: MosaicCard[] = [
     title: "Insumos y",
     accent: "HERRAMIENTAS",
     href: "/products?category=insumos",
-    image: "https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=800",
+    image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1789012695/basictech/media/general/nqr6ugugotz6ipyz4rk9.png",
     span: "col-span-2 lg:col-span-6",
     wide: true,
     tone: "brand",
+    imageFit: "contain",
   },
   {
     overline: "En Casa",
     title: "Cielo raso e",
     accent: "ILUMINACIÓN",
     href: "/products?category=iluminacion-led",
-    image: "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=800",
+    image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1788980572/basictech/media/general/dynhcky2ymxt5q1c1hd7.png",
     span: "col-span-2 lg:col-span-6",
     wide: true,
     tone: "dark",
-  },
-  {
-    overline: "Lo Mejor",
-    title: "Paneles y",
-    accent: "PVC / WPC",
-    href: "/products?category=duelas-pvc",
-    image: "https://images.unsplash.com/photo-1586864387789-628af9feed72?w=800",
-    span: "col-span-1 lg:col-span-3",
-    tone: "light",
+    imageFit: "contain",
   },
   {
     overline: "Diseño & Lujo",
-    title: "Láminas PVC",
-    accent: "MÁRMOL",
-    href: "/products?category=marmol-pvc",
-    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800",
-    span: "col-span-1 lg:col-span-3",
+    title: "Paneles y",
+    accent: "PVC / WPC",
+    href: "/products?category=wpc",
+    image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1788980574/basictech/media/general/miedwrwakgdybexemmb4.png",
+    span: "col-span-2 lg:col-span-6",
+    wide: true,
     tone: "light",
+    imageFit: "contain",
   },
 ]
 
@@ -107,17 +104,22 @@ export function CategoryMosaic() {
         <button
           type="button"
           onClick={() => setOpenCalc(true)}
-          className="col-span-1 lg:col-span-3 group relative overflow-hidden rounded-2xl text-left h-[150px] sm:h-[178px] transition-transform active:scale-[0.99] hover:-translate-y-0.5"
+          className="col-span-1 lg:col-span-3 group relative overflow-hidden rounded-md text-left h-[150px] sm:h-[178px] transition-transform active:scale-[0.99] hover:-translate-y-0.5"
           style={{ background: "linear-gradient(160deg, #2E6BFF 0%, #1E4FD6 55%, #0a1a3a 100%)" }}
         >
           <div
             className="absolute -right-10 -top-10 size-36 rounded-full pointer-events-none"
             style={{ background: "rgba(255,255,255,0.18)", filter: "blur(28px)" }}
           />
-          <CalculatorIcon
-            className="absolute -right-5 -bottom-5 size-32 text-white/15 group-hover:text-white/25 transition-colors"
-            strokeWidth={1.25}
-          />
+          <div className="absolute -right-3 -bottom-5 sm:-right-2 sm:-bottom-4 w-28 sm:w-36 h-36 sm:h-44 pointer-events-none transition-transform duration-300 group-hover:scale-105">
+            <Image
+              src="https://res.cloudinary.com/dxkmtbde/image/upload/v1789012176/basictech/media/general/nfxz6pdjr7z9uiyuihda.png"
+              alt="Calculadora de Materiales"
+              fill
+              sizes="(max-width: 1024px) 140px, 160px"
+              className="object-contain drop-shadow-2xl"
+            />
+          </div>
           <div className="relative z-10 flex h-full flex-col p-4 sm:p-5">
             <span className="text-[11px] font-medium text-white/60">Cotiza al instante</span>
             <h3 className="text-base sm:text-lg font-bold leading-tight text-white">Calculadora de</h3>
@@ -136,24 +138,36 @@ export function CategoryMosaic() {
             <Link
               key={card.accent}
               href={card.href}
-              className={`${card.span} group relative overflow-hidden rounded-2xl h-[150px] sm:h-[178px] ${t.bg} transition-transform hover:-translate-y-0.5`}
+              className={`${card.span} group relative overflow-hidden rounded-md h-[150px] sm:h-[178px] ${t.bg} transition-transform hover:-translate-y-0.5`}
             >
               {/* Panel de imagen a la derecha, nítido y visible */}
               <div
-                className={`absolute right-3 top-3 bottom-3 overflow-hidden rounded-xl ${
-                  card.wide ? "w-[32%] sm:w-[28%]" : "w-[42%] sm:w-[42%]"
+                className={`absolute right-2 sm:right-3 top-2 sm:top-3 bottom-2 sm:bottom-3 overflow-hidden rounded-sm ${
+                  card.imageFit === "contain"
+                    ? "w-[54%] sm:w-[50%] lg:w-[48%]"
+                    : card.wide
+                    ? "w-[32%] sm:w-[28%]"
+                    : "w-[42%] sm:w-[42%]"
                 }`}
               >
                 <Image
                   src={card.image}
                   alt={card.accent}
                   fill
-                  sizes="(max-width: 1024px) 45vw, 300px"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 50vw, 360px"
+                  className={`${
+                    card.imageFit === "contain" ? "object-contain" : "object-cover"
+                  } transition-transform duration-300 group-hover:scale-105`}
                 />
               </div>
 
-              <div className="relative z-10 flex h-full w-[58%] sm:w-[56%] flex-col p-4 sm:p-5">
+              <div
+                className={`relative z-10 flex h-full ${
+                  card.imageFit === "contain"
+                    ? "w-[46%] sm:w-[50%] lg:w-[52%]"
+                    : "w-[58%] sm:w-[56%]"
+                } flex-col p-4 sm:p-5`}
+              >
                 <span className={`text-[11px] font-medium ${t.overline}`}>{card.overline}</span>
                 <h3 className={`text-base sm:text-lg font-bold leading-tight ${t.title}`}>{card.title}</h3>
                 <p

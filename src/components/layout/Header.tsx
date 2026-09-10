@@ -21,9 +21,9 @@ import { ThemeToggle } from "./ThemeToggle"
 import { MobileNav } from "./MobileNav"
 import { useCartStore } from "@/stores/cart-store"
 import { useFavoritesStore } from "@/stores/favorites-store"
-import { useProductsStore } from "@/stores/products-store"
+import type { Category } from "@/types"
 
-export function Header() {
+export function Header({ categories = [] }: { categories?: Category[] }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [searchQuery, setSearchQuery] = useState("")
@@ -34,7 +34,6 @@ export function Header() {
   const lastScrollY = useRef(0)
   const itemCount = useCartStore((state) => state.getItemCount())
   const favoriteCount = useFavoritesStore((state) => state.getItemCount())
-  const { categories, fetchCategories } = useProductsStore()
   const { data: session, status } = useSession()
 
   // Sincronizar el input si ya hay un query en la URL
@@ -87,10 +86,9 @@ export function Header() {
 
   useEffect(() => {
     setMounted(true)
-    fetchCategories()
     window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [handleScroll, fetchCategories])
+  }, [handleScroll])
 
   return (
     <header
@@ -269,7 +267,7 @@ export function Header() {
             )}
 
             {/* Mobile Menu */}
-            <MobileNav />
+            <MobileNav categories={categories} />
           </div>
         </div>
 

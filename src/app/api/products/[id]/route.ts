@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { transformProduct } from "@/lib/transformers"
 import { cloudinary } from "@/lib/cloudinary"
+import { invalidateProducts } from "@/lib/cache-tags"
 
 type Params = Promise<{ id: string }>
 
@@ -76,6 +77,8 @@ export async function PUT(
       },
     })
 
+    invalidateProducts()
+
     return NextResponse.json(transformProduct(product))
   } catch (error) {
     console.error("Error updating product:", error)
@@ -130,6 +133,8 @@ export async function DELETE(
     await prisma.product.delete({
       where: { id },
     })
+
+    invalidateProducts()
 
     return NextResponse.json({ success: true })
   } catch (error) {

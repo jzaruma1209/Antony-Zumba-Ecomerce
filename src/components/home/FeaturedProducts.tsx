@@ -1,18 +1,11 @@
-"use client"
-
-import { useEffect } from "react"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { ProductCard } from "@/components/products/ProductCard"
-import { useProductsStore } from "@/stores/products-store"
-import { Skeleton } from "@/components/ui/skeleton"
+import type { Product } from "@/types"
 
-export function FeaturedProducts() {
-  const { featuredProducts, fetchFeaturedProducts } = useProductsStore()
-
-  useEffect(() => {
-    fetchFeaturedProducts()
-  }, [fetchFeaturedProducts])
+export function FeaturedProducts({ products }: { products: Product[] }) {
+  // Sin destacados no ocupamos espacio en la home
+  if (products.length === 0) return null
 
   return (
     <section className="py-3 sm:py-4">
@@ -31,17 +24,9 @@ export function FeaturedProducts() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3">
-          {featuredProducts.length === 0
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="aspect-square rounded-lg" />
-                  <Skeleton className="h-3 w-3/4" />
-                  <Skeleton className="h-3 w-1/2" />
-                </div>
-              ))
-            : featuredProducts.slice(0, 8).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+          {products.slice(0, 8).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
       </div>
     </section>

@@ -1,9 +1,5 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Search, TrendingUp } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
 
 interface PopularProduct {
   id: string
@@ -12,28 +8,8 @@ interface PopularProduct {
   price: number
 }
 
-export function CategoryGrid() {
-  const [products, setProducts] = useState<PopularProduct[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadPopularProducts() {
-      try {
-        const res = await fetch("/api/products?sortBy=best-selling&limit=4")
-        if (res.ok) {
-          const data = await res.json()
-          if (data.products && Array.isArray(data.products)) {
-            setProducts(data.products.slice(0, 4))
-          }
-        }
-      } catch (err) {
-        console.error("Error cargando productos más buscados:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadPopularProducts()
-  }, [])
+export function CategoryGrid({ products }: { products: PopularProduct[] }) {
+  const topProducts = products.slice(0, 4)
 
   return (
     <section className="pt-2 pb-0.5 sm:pt-2.5 sm:pb-1">
@@ -48,17 +24,13 @@ export function CategoryGrid() {
 
         {/* Pills de productos más buscados (primeros 4, sin scrollbar) */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          {loading
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-7 w-28 shrink-0 rounded-full" />
-              ))
-            : products.length === 0
+          {topProducts.length === 0
             ? (
                 <div className="text-xs text-muted-foreground py-1">
                   No hay productos disponibles actualmente
                 </div>
               )
-            : products.map((product) => (
+            : topProducts.map((product) => (
                 <Link
                   key={product.id}
                   href={`/products/${product.slug}`}

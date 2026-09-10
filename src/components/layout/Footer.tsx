@@ -1,6 +1,3 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Mail, Phone, MapPin } from "lucide-react"
@@ -33,25 +30,8 @@ const footerLinks = {
   ],
 }
 
-export function Footer() {
-  const [products, setProducts] = useState<FooterProduct[]>([])
-
-  useEffect(() => {
-    async function loadBestSellers() {
-      try {
-        const res = await fetch("/api/products?sortBy=best-selling&limit=6")
-        if (res.ok) {
-          const data = await res.json()
-          if (data.products && Array.isArray(data.products)) {
-            setProducts(data.products.slice(0, 6))
-          }
-        }
-      } catch (err) {
-        console.error("Error al cargar productos del footer:", err)
-      }
-    }
-    loadBestSellers()
-  }, [])
+export function Footer({ products = [] }: { products?: FooterProduct[] }) {
+  const bestSellers = products.slice(0, 6)
 
   return (
     <footer className="border-t bg-muted/30">
@@ -95,7 +75,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-slate-900 dark:text-white">Los más vendidos</h3>
             <ul className="mt-4 space-y-2">
-              {products.length === 0 ? (
+              {bestSellers.length === 0 ? (
                 <>
                   <li className="text-sm text-muted-foreground">Gypsum Estándar</li>
                   <li className="text-sm text-muted-foreground">Panel WPC Acanalado</li>
@@ -105,7 +85,7 @@ export function Footer() {
                   <li className="text-sm text-muted-foreground">Masilla Drywall</li>
                 </>
               ) : (
-                products.map((prod) => (
+                bestSellers.map((prod) => (
                   <li key={prod.id}>
                     <Link
                       href={`/products/${prod.slug}`}
