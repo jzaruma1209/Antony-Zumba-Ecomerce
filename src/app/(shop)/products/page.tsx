@@ -27,44 +27,29 @@ function ProductsContent() {
   // Ref para saber si ya se hizo el montaje inicial
   const isMounted = useRef(false)
 
-  // Efecto de inicialización: se ejecuta UNA VEZ al montar
+  // Efecto único: se ejecuta al montar y cada vez que cambia la URL
+  // (ej. al navegar desde el Header o al hacer click en una categoría).
+  // Reemplaza categories/brands/priceRange/search por completo en vez de
+  // hacer merge parcial, para no arrastrar filtros de marca/precio que
+  // quedaron seteados en el store de una navegación anterior.
   useEffect(() => {
-    isMounted.current = true  // Marcar como montado PRIMERO
-    const category = searchParams.get("category")
-    const search = searchParams.get("search")
-
-    const initialFilters: Partial<FilterState> = {}
-    if (category) {
-      initialFilters.categories = [category]
-    }
-    if (search) {
-      initialFilters.search = search
-    }
-
-    if (category || search) {
-      // Si hay filtros en la URL, los seteamos y fetchProducts los usará
-      setFilters(initialFilters)
-    } else {
-      // Sin filtros de URL, hacemos el fetch directamente
-      fetchProducts()
-    }
-
-    fetchCategories()
-    fetchBrands()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // Solo al montar — las funciones del store son estables
-
-  // Efecto cuando cambia la URL (por ejemplo, al buscar desde el Header en la misma página)
-  useEffect(() => {
-    if (!isMounted.current) return
     const category = searchParams.get("category")
     const search = searchParams.get("search")
 
     setFilters({
       categories: category ? [category] : [],
+      brands: [],
+      priceRange: [0, 10000],
       search: search || undefined,
     })
-  }, [searchParams, setFilters])
+
+    if (!isMounted.current) {
+      isMounted.current = true
+      fetchCategories()
+      fetchBrands()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   // Efecto reactivo: se ejecuta cuando cambian los filtros DESPUÉS del montaje
   useEffect(() => {
