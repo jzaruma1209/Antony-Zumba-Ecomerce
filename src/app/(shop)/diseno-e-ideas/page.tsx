@@ -44,9 +44,9 @@ export default function DisenoEIdeasPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 max-w-6xl mx-auto items-start">
-        {visibleVideos.map((video, index) => (
+        {visibleVideos.map((video) => (
           <div key={video.id} className="flex justify-center w-full">
-            <TikTokEmbed videoId={video.id} citeUrl={video.cite} index={index} />
+            <TikTokEmbed videoId={video.id} citeUrl={video.cite} />
           </div>
         ))}
       </div>
