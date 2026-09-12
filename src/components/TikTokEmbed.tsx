@@ -1,70 +1,86 @@
 "use client"
 
-import { useState } from "react"
-import { Play, RotateCw } from "lucide-react"
+import { useEffect, useState } from "react"
+import Image from "next/image"
+import { Play } from "lucide-react"
 
 interface TikTokEmbedProps {
-  videoId: string
   citeUrl: string
 }
 
-// TikTok activa su "overload protection" (503 / "overload-protect triggered")
-// cuando recibe varios pedidos de embed casi al mismo tiempo desde la misma
-// sesion, incluso si se escalonan por unos cientos de ms. La unica forma
-// confiable de evitarlo es no pedir el iframe hasta que el usuario quiera
-// ver ese video puntual (patron "facade"): así nunca se disparan varias
-// peticiones simultaneas solo por entrar a la pagina.
-export function TikTokEmbed({ videoId, citeUrl }: TikTokEmbedProps) {
-  const [loadKey, setLoadKey] = useState<number | null>(null)
+interface TikTokPreview {
+  thumbnailUrl: string
+  title: string
+  authorName: string
+}
 
-  const play = () => setLoadKey((key) => (key ?? 0) + 1)
+// En vez de reproducir el video dentro de la pagina (iframe directo o el
+// widget oficial), mostramos su portada real (obtenida via nuestra API de
+// oEmbed) con un boton de play que abre el video en TikTok en una pestana
+// nueva. Nunca se carga un reproductor de TikTok en nuestra pagina, asi que
+// es imposible que dispare su "overload protection".
+export function TikTokEmbed({ citeUrl }: TikTokEmbedProps) {
+  const [preview, setPreview] = useState<TikTokPreview | null>(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+
+    fetch(`/api/tiktok-oembed?url=${encodeURIComponent(citeUrl)}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data) => {
+        if (!cancelled) setPreview(data)
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [citeUrl])
 
   return (
-    <div
-      className="w-full flex justify-center items-center overflow-hidden rounded-xl bg-card border min-h-[730px] relative"
+    <a
+      href={citeUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative flex w-full min-h-[500px] items-center justify-center overflow-hidden rounded-xl border bg-card"
       style={{ maxWidth: "325px", minWidth: "280px" }}
     >
-      {loadKey === null ? (
-        <button
-          type="button"
-          onClick={play}
-          className="group flex h-full w-full min-h-[730px] flex-col items-center justify-center gap-3 bg-muted/40 hover:bg-muted/60 transition-colors"
-        >
-          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg group-hover:scale-105 transition-transform">
-            <Play className="h-6 w-6 fill-current ml-0.5" />
-          </span>
-          <span className="text-sm font-medium text-muted-foreground">Toca para reproducir</span>
-          <span className="text-xs text-muted-foreground/70">Video de TikTok</span>
-        </button>
+      {preview ? (
+        <Image
+          src={preview.thumbnailUrl}
+          alt={preview.title || `Video de TikTok de ${preview.authorName}`}
+          fill
+          sizes="325px"
+          className="object-cover"
+          unoptimized
+        />
       ) : (
-        <>
-          <iframe
-            key={loadKey}
-            src={`https://www.tiktok.com/embed/v2/${videoId}?lang=es-ES`}
-            className="w-full h-[730px] sm:h-[730px]"
-            style={{ maxWidth: "325px", minWidth: "280px", border: "none" }}
-            allowFullScreen
-            scrolling="no"
-            allow="encrypted-media;"
-          />
-          {/* Barra fija arriba del iframe: cubre justo donde TikTok muestra su
-              mensaje de error ("overload-protect triggered") cuando el embed
-              falla, y le da al usuario un boton claro para reintentar. */}
-          <div className="absolute top-0 inset-x-0 flex justify-center pt-2 pointer-events-none">
-            <button
-              type="button"
-              onClick={play}
-              className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1.5 text-xs font-medium text-foreground shadow hover:bg-background"
-            >
-              <RotateCw className="h-3.5 w-3.5" />
-              Recargar
-            </button>
-          </div>
-        </>
+        <div className="flex h-full min-h-[500px] w-full flex-col items-center justify-center gap-3 bg-muted/40">
+          {!failed && <span className="text-xs text-muted-foreground">Cargando video...</span>}
+          {failed && (
+            <>
+              <span className="text-sm font-medium text-muted-foreground">Video de TikTok</span>
+              <span className="text-xs text-muted-foreground/70">Toca para verlo en TikTok</span>
+            </>
+          )}
+        </div>
       )}
-      <a href={citeUrl} className="sr-only">
-        Ver video en TikTok
-      </a>
-    </div>
+
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/25 opacity-0 transition-opacity group-hover:opacity-100">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+          <Play className="h-6 w-6 fill-current ml-0.5" />
+        </span>
+        <span className="text-sm font-medium text-white">Ver en TikTok</span>
+      </div>
+
+      {preview && (
+        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3 pt-8">
+          <p className="line-clamp-2 text-xs text-white">{preview.title}</p>
+        </div>
+      )}
+    </a>
   )
 }
