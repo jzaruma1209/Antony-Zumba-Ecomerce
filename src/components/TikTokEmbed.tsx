@@ -47,14 +47,19 @@ export function TikTokEmbed({ videoId, citeUrl }: TikTokEmbedProps) {
             scrolling="no"
             allow="encrypted-media;"
           />
-          <button
-            type="button"
-            onClick={play}
-            title="Recargar video"
-            className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-foreground shadow hover:bg-background"
-          >
-            <RotateCw className="h-4 w-4" />
-          </button>
+          {/* Barra fija arriba del iframe: cubre justo donde TikTok muestra su
+              mensaje de error ("overload-protect triggered") cuando el embed
+              falla, y le da al usuario un boton claro para reintentar. */}
+          <div className="absolute top-0 inset-x-0 flex justify-center pt-2 pointer-events-none">
+            <button
+              type="button"
+              onClick={play}
+              className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1.5 text-xs font-medium text-foreground shadow hover:bg-background"
+            >
+              <RotateCw className="h-3.5 w-3.5" />
+              Recargar
+            </button>
+          </div>
         </>
       )}
       <a href={citeUrl} className="sr-only">
