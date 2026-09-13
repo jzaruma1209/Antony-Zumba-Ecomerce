@@ -58,6 +58,7 @@ const productSchema = z.object({
   returnDays: z.number().nullable().optional(),
   warranty: z.boolean(),
   warrantyPeriod: z.string().nullable().optional(),
+  showPrice: z.boolean(),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
@@ -126,6 +127,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
       warranty: false,
       warrantyPeriod: "1 mes",
       stock: 0,
+      showPrice: true,
     },
   })
 
@@ -186,6 +188,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
             returnDays: productData.returnDays ?? 30,
             warranty: productData.warranty ?? false,
             warrantyPeriod: productData.warrantyPeriod ?? "1 mes",
+            showPrice: productData.showPrice ?? true,
           })
 
           if (productData.originalPrice && productData.originalPrice > 0) {
@@ -214,7 +217,8 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const handleOfferToggle = (checked: boolean) => {
     if (checked) {
       const comparePrice = watch("comparePrice")
-      if (!comparePrice || Number(comparePrice) <= 0) {
+      const showPrice = watch("showPrice")
+      if (showPrice && (!comparePrice || Number(comparePrice) <= 0)) {
         setShowOfferAlert(true)
         return
       }
@@ -239,7 +243,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
       return
     }
 
-    if (isOffer && (!data.comparePrice || Number(data.comparePrice) <= 0)) {
+    if (isOffer && data.showPrice && (!data.comparePrice || Number(data.comparePrice) <= 0)) {
       setShowOfferAlert(true)
       return
     }
@@ -283,15 +287,19 @@ export default function EditProductPage({ params }: EditProductPageProps) {
           comparePrice: isOffer && data.comparePrice ? data.comparePrice : null,
           images: images.map((img) => img.url),
           specs: specsObject,
+          showPrice: data.showPrice,
         }),
       })
 
-      if (!response.ok) throw new Error("Error updating product")
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Error updating product")
+      }
 
       router.push("/admin/products")
     } catch (error) {
       console.error("Error updating product:", error)
-      alert("Error al actualizar el producto")
+      alert("Error al actualizar el producto: " + (error instanceof Error ? error.message : "Error desconocido"))
     } finally {
       setSaving(false)
     }
@@ -597,6 +605,16 @@ export default function EditProductPage({ params }: EditProductPageProps) {
               />
               <Label htmlFor="isOffer" className="font-normal cursor-pointer">
                 Marcar producto en oferta
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="showPrice"
+                checked={watch("showPrice")}
+                onCheckedChange={(checked) => setValue("showPrice", !!checked)}
+              />
+              <Label htmlFor="showPrice" className="font-normal cursor-pointer">
+                Mostrar precio (desmarcar para "A consultar")
               </Label>
             </div>
 

@@ -31,7 +31,7 @@ export const getFeaturedProducts = cache(
   unstable_cache(
     async (limit = 8): Promise<Product[]> => {
       const products = await prisma.product.findMany({
-        where: { isActive: true, isFeatured: true },
+        where: { isActive: true, isFeatured: true, stock: { gt: 0 } },
         orderBy: { createdAt: "desc" },
         include: withRelations,
         take: limit,
@@ -48,7 +48,7 @@ export const getOfferProducts = cache(
   unstable_cache(
     async (limit = 12): Promise<Product[]> => {
       const products = await prisma.product.findMany({
-        where: { isActive: true, comparePrice: { not: null, gt: 0 } },
+        where: { isActive: true, comparePrice: { not: null, gt: 0 }, stock: { gt: 0 } },
         orderBy: { createdAt: "desc" },
         include: withRelations,
         take: limit,
@@ -71,7 +71,7 @@ export const getBestSellingProducts = cache(
   unstable_cache(
     async (limit = 6): Promise<Product[]> => {
       const activeProducts = await prisma.product.findMany({
-        where: { isActive: true },
+        where: { isActive: true, stock: { gt: 0 } },
         include: withRelations,
         orderBy: { createdAt: "desc" },
       })
@@ -109,7 +109,7 @@ export const getCategories = cache(
     async (): Promise<Category[]> => {
       const categories = await prisma.category.findMany({
         include: {
-          _count: { select: { products: { where: { isActive: true } } } },
+          _count: { select: { products: { where: { isActive: true, stock: { gt: 0 } } } } },
         },
         orderBy: { name: "asc" },
       })
@@ -127,7 +127,7 @@ export const getBrands = cache(
     async (): Promise<Brand[]> => {
       const brands = await prisma.brand.findMany({
         include: {
-          _count: { select: { products: { where: { isActive: true } } } },
+          _count: { select: { products: { where: { isActive: true, stock: { gt: 0 } } } } },
         },
         orderBy: { name: "asc" },
       })

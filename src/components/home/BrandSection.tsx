@@ -65,10 +65,10 @@ export function BrandSection({ brands: allBrands }: { brands: BrandItem[] }) {
       <div className="container mx-auto px-4">
         <div className="text-center mb-6">
           <h2 className="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-            Marcas que Confiamos
+            MARCAS EN QUE CONFIAMOS
           </h2>
           <p className="mt-1 text-xs text-muted-foreground">
-            Trabajamos con las mejores marcas del mercado
+            TRABAJAMOS CON LAS MEJORES MARCAS DEL MERCADO
           </p>
         </div>
 
@@ -95,7 +95,7 @@ export function BrandSection({ brands: allBrands }: { brands: BrandItem[] }) {
                 href={`/products?brand=${brand.slug}`}
                 className="flex shrink-0 items-center justify-center px-5 py-2.5 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs hover:border-brand-orange hover:shadow-sm transition-all group/card"
               >
-                <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 group-hover/card:text-brand-orange transition-colors">
+                <span className="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 group-hover/card:text-brand-orange transition-colors uppercase tracking-wider">
                   {brand.name}
                 </span>
               </Link>

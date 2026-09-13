@@ -303,7 +303,7 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
                     <Phone className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
                     <div>
                       <p className="font-medium text-slate-900 dark:text-white">Teléfono / WhatsApp</p>
-                      <p className="text-muted-foreground text-xs sm:text-sm">0997119881</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm">+593969903466</p>
                     </div>
                   </div>
 
@@ -380,7 +380,7 @@ _Mensaje generado desde tumbadoszumba.com/instalaciones_
                         <Label htmlFor="phone">Teléfono / WhatsApp *</Label>
                         <Input
                           id="phone"
-                          placeholder="0997119881"
+                          placeholder="+593969903466"
                           required
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}

@@ -143,7 +143,7 @@ export function Footer({ products = [] }: { products?: FooterProduct[] }) {
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-                <span>0997119881</span>
+                <span>+593969903466</span>
               </li>
               <li className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 shrink-0" strokeWidth={1.75} />
@@ -157,9 +157,14 @@ export function Footer({ products = [] }: { products?: FooterProduct[] }) {
 
         {/* Bottom */}
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} TumbadosZumba. Todos los derechos reservados.
-          </p>
+          <div className="flex flex-col items-center sm:items-start gap-1">
+            <p className="text-sm text-muted-foreground">
+              &copy; {new Date().getFullYear()} TumbadosZumba. Todos los derechos reservados.
+            </p>
+            <p className="text-xs text-muted-foreground/80">
+              Desarrollado por <a href="https://www.cauralis.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Cauralis</a>
+            </p>
+          </div>
           <div className="flex gap-4">
             {footerLinks.legal.map((link) => (
               <Link

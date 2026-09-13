@@ -19,9 +19,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "./ThemeToggle"
 import { MobileNav } from "./MobileNav"
+import { SearchSuggestionsDropdown } from "./SearchSuggestionsDropdown"
 import { useCartStore } from "@/stores/cart-store"
 import { useFavoritesStore } from "@/stores/favorites-store"
-import type { Category } from "@/types"
+import { WHATSAPP_URL, socialLinks } from "@/lib/social"
+import type { Category, Product } from "@/types"
 
 export function Header({ categories = [] }: { categories?: Category[] }) {
   const router = useRouter()
@@ -30,11 +32,74 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
   const [mounted, setMounted] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false)
+  const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([])
+  const [suggestedCategories, setSuggestedCategories] = useState<Category[]>([])
+  const searchContainerRef = useRef<HTMLDivElement>(null)
+  const mobileSearchContainerRef = useRef<HTMLDivElement>(null)
   const mobileInputRef = useRef<HTMLInputElement>(null)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   const lastScrollY = useRef(0)
   const itemCount = useCartStore((state) => state.getItemCount())
   const favoriteCount = useFavoritesStore((state) => state.getItemCount())
   const { data: session, status } = useSession()
+
+  // Cerrar sugerencias al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(target) &&
+        mobileSearchContainerRef.current &&
+        !mobileSearchContainerRef.current.contains(target)
+      ) {
+        setIsSuggestionsOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  // Cargar sugerencias (populares o coincidentes)
+  const fetchSuggestions = useCallback(async (query: string) => {
+    setSuggestionsLoading(true)
+    try {
+      const url = query.trim()
+        ? `/api/search/suggestions?q=${encodeURIComponent(query.trim())}`
+        : "/api/search/suggestions"
+      const res = await fetch(url)
+      if (res.ok) {
+        const data = await res.json()
+        setSuggestedProducts(data.products || [])
+        setSuggestedCategories(data.categories || [])
+      }
+    } catch (err) {
+      console.error("Error fetching suggestions:", err)
+    } finally {
+      setSuggestionsLoading(false)
+    }
+  }, [])
+
+  // Buscar cuando el usuario escribe con debounce
+  const handleQueryChange = (val: string) => {
+    setSearchQuery(val)
+    setIsSuggestionsOpen(true)
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      fetchSuggestions(val)
+    }, 200)
+  }
+
+  const handleInputFocus = () => {
+    setIsSuggestionsOpen(true)
+    if (suggestedProducts.length === 0 && suggestedCategories.length === 0) {
+      fetchSuggestions(searchQuery)
+    }
+  }
 
   // Sincronizar el input si ya hay un query en la URL
   useEffect(() => {
@@ -48,6 +113,7 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSuggestionsOpen(false)
     const trimmed = searchQuery.trim()
     if (trimmed) {
       router.push(`/products?search=${encodeURIComponent(trimmed)}`)
@@ -58,6 +124,7 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
 
   const handleClearSearch = () => {
     setSearchQuery("")
+    setIsSuggestionsOpen(false)
     if (searchParams.get("search")) {
       router.push("/products")
     }
@@ -92,12 +159,11 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-transform duration-300 ease-in-out ${
-        isHidden ? "-translate-y-full" : "translate-y-0"
-      }`}
+      className={`sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-transform duration-300 ease-in-out ${isHidden ? "-translate-y-full" : "translate-y-0"
+        }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex h-12 items-center justify-between gap-4">
+        <div className="flex h-10 items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0" aria-label="TumbadosZumba">
             <Image
@@ -111,28 +177,40 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
           </Link>
 
           {/* Search Bar - Desktop */}
-          <form onSubmit={handleSearchSubmit} className="hidden flex-1 max-w-2xl md:flex">
-            <div className="relative w-full">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
-              <Input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar productos, materiales, acabados..."
-                className="w-full pl-10 pr-9 h-8 text-sm bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={handleClearSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Limpiar búsqueda"
-                >
-                  <X className="h-4 w-4" strokeWidth={1.75} />
-                </button>
-              )}
-            </div>
-          </form>
+          <div ref={searchContainerRef} className="hidden flex-1 max-w-2xl md:block relative">
+            <form onSubmit={handleSearchSubmit} className="w-full">
+              <div className="relative w-full">
+                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
+                <Input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => handleQueryChange(e.target.value)}
+                  onFocus={handleInputFocus}
+                  placeholder="Buscar productos, materiales, acabados..."
+                  className="w-full pl-10 pr-9 h-8 text-sm bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Limpiar búsqueda"
+                  >
+                    <X className="h-4 w-4" strokeWidth={1.75} />
+                  </button>
+                )}
+              </div>
+            </form>
+
+            <SearchSuggestionsDropdown
+              isOpen={isSuggestionsOpen}
+              isLoading={suggestionsLoading}
+              searchQuery={searchQuery}
+              products={suggestedProducts}
+              categories={suggestedCategories}
+              onSelectSuggestion={() => setIsSuggestionsOpen(false)}
+            />
+          </div>
 
           {/* Actions */}
           <div className="flex items-center gap-1">
@@ -272,14 +350,18 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
         </div>
 
         {/* Search Bar - Mobile */}
-        <div className={`pb-3 md:hidden transition-all duration-200 ${isMobileSearchOpen ? "block" : "hidden"}`}>
+        <div
+          ref={mobileSearchContainerRef}
+          className={`pb-3 md:hidden transition-all duration-200 relative ${isMobileSearchOpen ? "block" : "hidden"}`}
+        >
           <form onSubmit={handleSearchSubmit} className="relative w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
             <Input
               ref={mobileInputRef}
               type="search"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleQueryChange(e.target.value)}
+              onFocus={handleInputFocus}
               placeholder="Buscar productos, materiales..."
               className="w-full pl-10 pr-9"
             />
@@ -294,10 +376,19 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
               </button>
             )}
           </form>
+
+          <SearchSuggestionsDropdown
+            isOpen={isSuggestionsOpen}
+            isLoading={suggestionsLoading}
+            searchQuery={searchQuery}
+            products={suggestedProducts}
+            categories={suggestedCategories}
+            onSelectSuggestion={() => setIsSuggestionsOpen(false)}
+          />
         </div>
 
         {/* Sub-header Navigation Bar (Estilo Lowe's) */}
-        <div className="hidden border-t border-border/40 py-2 md:flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300 overflow-x-auto gap-4 scrollbar-none">
+        <div className="hidden border-t border-border/40 py-1 md:flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300 overflow-x-auto gap-4 scrollbar-none">
           <div className="flex items-center gap-4 shrink-0">
             {/* Ver Categorías Dropdown */}
             <DropdownMenu>
@@ -365,6 +456,19 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
               </span>
             </Link>
           </div>
+
+          {/* WhatsApp Cotizar (Derecha) */}
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex shrink-0 items-center gap-1.5 px-3 py-1 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors font-bold tracking-wide text-xs"
+          >
+            <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
+              {socialLinks[0].icon}
+            </svg>
+            COTIZAR
+          </a>
         </div>
       </div>
     </header>

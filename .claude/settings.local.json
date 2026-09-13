@@ -44,7 +44,14 @@
       "Bash(xargs grep -ln \"@/lib/prisma\\\\|generated/prisma\")",
       "Bash(npx tsx *)",
       "Bash(cp \"C:/Users/jzaru/AppData/Local/Temp/claude/C--Users-jzaru-OneDrive-Desktop-paul-cauralis-Antony-Zumba-ecomerce-Antony-Ecomerce/cb425a2e-d48a-4b27-9da1-7fd5c3bf69f7/scratchpad/dbtime.ts\" ./perf-check-tmp.ts)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(git ls-remote *)",
+      "WebSearch",
+      "PowerShell(New-Item *)",
+      "PowerShell(Remove-Item *)"
     ]
-  }
+  },
+  "disabledMcpjsonServers": [
+    "supabase"
+  ]
 }

@@ -42,6 +42,7 @@ export function transformProduct(product: ProductWithRelations): Product {
     returnDays: product.returnDays ?? null,
     warranty: product.warranty ?? false,
     warrantyPeriod: product.warrantyPeriod ?? null,
+    showPrice: product.showPrice ?? true,
   }
 }
 

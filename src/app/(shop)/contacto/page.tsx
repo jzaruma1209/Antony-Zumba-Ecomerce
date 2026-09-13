@@ -100,7 +100,7 @@ export default function ContactoPage() {
                   <Phone className="size-5 text-brand-orange mt-0.5 shrink-0" strokeWidth={1.75} />
                   <div>
                     <p className="font-medium text-slate-900 dark:text-white">Teléfono / WhatsApp</p>
-                    <p className="text-muted-foreground text-xs sm:text-sm">0997119881</p>
+                    <p className="text-muted-foreground text-xs sm:text-sm">+593969903466</p>
                   </div>
                 </div>
 

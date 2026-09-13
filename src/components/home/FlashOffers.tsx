@@ -122,7 +122,7 @@ function OfferCard({ product }: { product: Product }) {
         </h3>
 
         <div className="mt-1.5 flex min-h-4 items-center justify-between gap-1">
-          {hasDiscount ? (
+          {hasDiscount && product.showPrice !== false ? (
             <span className="text-[11px] text-muted-foreground line-through">
               ${product.originalPrice!.toFixed(2)}
             </span>
@@ -137,8 +137,14 @@ function OfferCard({ product }: { product: Product }) {
         </div>
 
         <p className="mt-0.5 font-bold text-slate-900 dark:text-white">
-          <span className="text-lg">${intPart}</span>
-          <sup className="text-[11px]">{decPart}</sup>
+          {product.showPrice !== false ? (
+            <>
+              <span className="text-lg">${intPart}</span>
+              <sup className="text-[11px]">{decPart}</sup>
+            </>
+          ) : (
+            <span className="text-[13px]">Oferta</span>
+          )}
         </p>
 
         {product.freeShipping && (

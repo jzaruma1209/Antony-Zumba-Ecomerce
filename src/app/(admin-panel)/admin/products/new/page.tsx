@@ -57,6 +57,7 @@ const productSchema = z.object({
   returnDays: z.number().nullable().optional(),
   warranty: z.boolean(),
   warrantyPeriod: z.string().nullable().optional(),
+  showPrice: z.boolean(),
 })
 
 type ProductFormData = z.infer<typeof productSchema>
@@ -119,6 +120,7 @@ export default function NewProductPage() {
       warranty: false,
       warrantyPeriod: "1 mes",
       stock: 0,
+      showPrice: true,
     },
   })
 
@@ -157,7 +159,8 @@ export default function NewProductPage() {
   const handleOfferToggle = (checked: boolean) => {
     if (checked) {
       const comparePrice = watch("comparePrice")
-      if (!comparePrice || Number(comparePrice) <= 0) {
+      const showPrice = watch("showPrice")
+      if (showPrice && (!comparePrice || Number(comparePrice) <= 0)) {
         setShowOfferAlert(true)
         return
       }
@@ -173,7 +176,7 @@ export default function NewProductPage() {
       return
     }
 
-    if (isOffer && (!data.comparePrice || Number(data.comparePrice) <= 0)) {
+    if (isOffer && data.showPrice && (!data.comparePrice || Number(data.comparePrice) <= 0)) {
       setShowOfferAlert(true)
       return
     }
@@ -218,6 +221,7 @@ export default function NewProductPage() {
           comparePrice: isOffer && data.comparePrice ? data.comparePrice : null,
           images: images.map((img) => img.url),
           specs: specsObject,
+          showPrice: data.showPrice,
         }),
       })
 
@@ -525,6 +529,16 @@ export default function NewProductPage() {
               />
               <Label htmlFor="isOffer" className="font-normal cursor-pointer">
                 Marcar producto en oferta
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="showPrice"
+                checked={watch("showPrice")}
+                onCheckedChange={(checked) => setValue("showPrice", !!checked)}
+              />
+              <Label htmlFor="showPrice" className="font-normal cursor-pointer">
+                Mostrar precio (desmarcar para "A consultar")
               </Label>
             </div>
 

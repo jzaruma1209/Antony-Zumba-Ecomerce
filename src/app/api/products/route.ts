@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const where: Record<string, unknown> = {
       isActive: true,
+      stock: { gt: 0 },
     }
 
     if (category) {
@@ -52,12 +53,28 @@ export async function GET(request: NextRequest) {
       where.comparePrice = { not: null, gt: 0 }
     }
 
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
-      ]
+    if (search && search.trim()) {
+      const sanitized = search.trim()
+      // Full-text search nativo en PostgreSQL usando searchVector y plainto_tsquery('spanish')
+      // Combinado con coincidencia en categoría, marca y specs para máxima cobertura
+      const matches = await prisma.$queryRaw<{ id: string }[]>`
+        SELECT p.id
+        FROM "products" p
+        LEFT JOIN "categories" c ON c.id = p."categoryId"
+        LEFT JOIN "brands" b ON b.id = p."brandId"
+        WHERE p."isActive" = true
+          AND (
+            p."searchVector" @@ plainto_tsquery('spanish', ${sanitized})
+            OR c.name ILIKE ${'%' + sanitized + '%'}
+            OR b.name ILIKE ${'%' + sanitized + '%'}
+            OR p.specs::text ILIKE ${'%' + sanitized + '%'}
+            OR p.name ILIKE ${'%' + sanitized + '%'}
+          )
+      `
+      where.id = { in: matches.map((m) => m.id) }
     }
+
+
 
     const takeNum = limit ? Number(limit) : undefined
     const skipNum = offset ? Number(offset) : 0
@@ -147,6 +164,7 @@ export async function POST(request: NextRequest) {
         specs: body.specs || {},
         isNew: body.isNew || false,
         isFeatured: body.isFeatured || false,
+        showPrice: body.showPrice ?? true,
         freeShipping: body.freeShipping ?? false,
         returnPolicy: body.returnPolicy ?? false,
         returnDays: body.returnPolicy && body.returnDays ? Number(body.returnDays) : null,

@@ -1,0 +1,18 @@
+# Contexto del Proyecto
+E-commerce construido con Next.js (App Router), Zustand (Store de estados), Prisma ORM y PostgreSQL.
+
+# Arquitectura de Búsqueda (4 Capas)
+1. UI (Header.tsx): Captura el input y empuja a la URL `/products?search=término`.
+2. Página (products/page.tsx): Lee la URL y pasa el parámetro al store.
+3. Zustand (products-store.ts): Construye los parámetros y hace fetch a `/api/products`.
+4. API Route (api/products/route.ts): Ejecuta la consulta a la base de datos usando Prisma.
+
+# Reglas de Base de Datos (PostgreSQL + Prisma)
+*   La búsqueda full-text utiliza el motor nativo de PostgreSQL (`tsvector` y un índice GIN en la columna `searchVector`). NO proponer integraciones externas como Meilisearch o Algolia.
+*   Al modificar `schema.prisma`, JAMÁS usar `prisma migrate reset` si hay datos importantes. 
+*   Si existe un *drift* (desincronización) en la base de datos, capturar primero los cambios pendientes en una migración de sincronización antes de agregar nuevas tablas o columnas.
+
+# Reglas de Testing
+*   Los tests funcionales y de UI (E2E) están construidos con Playwright y viven en el directorio `/e2e`.
+*   Las dependencias de Playwright se mantienen estrictamente como `devDependencies`.
+*   Antes de refactorizar la búsqueda o los filtros, se debe ejecutar `npm run test:e2e` para garantizar que no haya regresiones.

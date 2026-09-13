@@ -49,28 +49,35 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
 
+    // Log the incoming body for debugging
+    console.log("PUT /api/products/[id] - body:", JSON.stringify(body, null, 2))
+
+    // Build the data object with explicit type coercion
+    const updateData: Record<string, unknown> = {
+      name: String(body.name),
+      slug: String(body.slug),
+      description: body.description ? String(body.description) : null,
+      price: Number(body.price),
+      comparePrice: body.comparePrice ? Number(body.comparePrice) : null,
+      stock: Number(body.stock) || 0,
+      images: Array.isArray(body.images) ? body.images : [],
+      specs: body.specs || {},
+      isNew: Boolean(body.isNew),
+      isFeatured: Boolean(body.isFeatured),
+      showPrice: body.showPrice !== undefined ? Boolean(body.showPrice) : true,
+      freeShipping: Boolean(body.freeShipping),
+      returnPolicy: Boolean(body.returnPolicy),
+      returnDays: body.returnPolicy && body.returnDays ? Number(body.returnDays) : null,
+      warranty: Boolean(body.warranty),
+      warrantyPeriod: body.warranty && body.warrantyPeriod ? String(body.warrantyPeriod) : null,
+      isActive: body.isActive !== undefined ? Boolean(body.isActive) : true,
+      categoryId: String(body.categoryId),
+      brandId: String(body.brandId),
+    }
+
     const product = await prisma.product.update({
       where: { id },
-      data: {
-        name: body.name,
-        slug: body.slug,
-        description: body.description,
-        price: body.price,
-        comparePrice: body.comparePrice ? Number(body.comparePrice) : null,
-        stock: body.stock,
-        images: body.images,
-        specs: body.specs,
-        isNew: body.isNew,
-        isFeatured: body.isFeatured,
-        freeShipping: body.freeShipping !== undefined ? body.freeShipping : false,
-        returnPolicy: body.returnPolicy !== undefined ? body.returnPolicy : false,
-        returnDays: body.returnPolicy && body.returnDays ? Number(body.returnDays) : null,
-        warranty: body.warranty !== undefined ? body.warranty : false,
-        warrantyPeriod: body.warranty && body.warrantyPeriod ? String(body.warrantyPeriod) : null,
-        isActive: body.isActive !== undefined ? body.isActive : true,
-        categoryId: body.categoryId,
-        brandId: body.brandId,
-      },
+      data: updateData,
       include: {
         category: true,
         brand: true,
@@ -82,8 +89,9 @@ export async function PUT(
     return NextResponse.json(transformProduct(product))
   } catch (error) {
     console.error("Error updating product:", error)
+    const message = error instanceof Error ? error.message : "Error updating product"
     return NextResponse.json(
-      { error: "Error updating product" },
+      { error: message },
       { status: 500 }
     )
   }

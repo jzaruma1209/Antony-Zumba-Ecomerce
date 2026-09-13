@@ -21,6 +21,7 @@ export interface Product {
   returnDays?: number | null
   warranty?: boolean
   warrantyPeriod?: string | null
+  showPrice?: boolean
 }
 
 export interface Category {

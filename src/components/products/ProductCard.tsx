@@ -93,27 +93,29 @@ export function ProductCard({ product }: ProductCardProps) {
         </Link>
 
         {/* Quick Add Button */}
-        <div className="absolute bottom-2 left-2 right-2 z-20 flex opacity-100 pointer-events-auto transition-all lg:translate-y-full lg:opacity-0 lg:pointer-events-none lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-hover:pointer-events-auto">
-          <Button
-            className="w-full"
-            size="sm"
-            onClick={handleAddToCart}
-            disabled={product.stock === 0}
-            variant={added ? "secondary" : "default"}
-          >
-            {added ? (
-              <>
-                <Check className="mr-2 h-4 w-4" />
-                Agregado
-              </>
-            ) : (
-              <>
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Agregar
-              </>
-            )}
-          </Button>
-        </div>
+        {product.showPrice !== false && (
+          <div className="absolute bottom-2 left-2 right-2 z-20 flex opacity-100 pointer-events-auto transition-all lg:translate-y-full lg:opacity-0 lg:pointer-events-none lg:group-hover:translate-y-0 lg:group-hover:opacity-100 lg:group-hover:pointer-events-auto">
+            <Button
+              className="w-full"
+              size="sm"
+              onClick={handleAddToCart}
+              disabled={product.stock === 0}
+              variant={added ? "secondary" : "default"}
+            >
+              {added ? (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Agregado
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  Agregar
+                </>
+              )}
+            </Button>
+          </div>
+        )}
       </div>
 
       <CardContent className="p-2.5 sm:p-3">
@@ -135,13 +137,19 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Price */}
         <div className="mt-1 flex items-baseline gap-1.5">
-          <span className="text-base font-bold text-foreground">
-            ${product.price.toFixed(2)}
-          </span>
-          {hasDiscount && (
-            <span className="text-xs text-muted-foreground line-through">
-              ${product.originalPrice!.toFixed(2)}
-            </span>
+          {product.showPrice !== false ? (
+            <>
+              <span className="text-base font-bold text-foreground">
+                ${product.price.toFixed(2)}
+              </span>
+              {hasDiscount && (
+                <span className="text-xs text-muted-foreground line-through">
+                  ${product.originalPrice!.toFixed(2)}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className="text-base font-bold text-foreground">Unidades</span>
           )}
         </div>
 

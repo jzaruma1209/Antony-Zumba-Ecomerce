@@ -117,7 +117,7 @@ export default function TermsPage() {
             </p>
             <div className="text-sm text-muted-foreground space-y-1 ml-4">
               <p>📧 Email: tumbadoszumba2508@gmail.com</p>
-              <p>📱 WhatsApp / Teléfono: 0997119881</p>
+              <p>📱 WhatsApp / Teléfono: +593969903466</p>
               <p>📍 Dirección: Av. 25 de agosto y galapagos</p>
             </div>
           </section>
