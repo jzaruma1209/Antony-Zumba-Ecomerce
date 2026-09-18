@@ -76,12 +76,20 @@ export function CartItem({ item, onUpdateQuantity, onRemove }: CartItemProps) {
 
           {/* Price */}
           <div className="text-right">
-            <p className="font-semibold text-primary">
-              ${(product.price * quantity).toFixed(2)}
-            </p>
-            {quantity > 1 && (
-              <p className="text-xs text-muted-foreground">
-                ${product.price.toFixed(2)} c/u
+            {product.showPrice !== false ? (
+              <>
+                <p className="font-semibold text-primary">
+                  ${(product.price * quantity).toFixed(2)}
+                </p>
+                {quantity > 1 && (
+                  <p className="text-xs text-muted-foreground">
+                    ${product.price.toFixed(2)} c/u
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-xs font-semibold text-amber-600 dark:text-amber-500">
+                Precio por confirmar
               </p>
             )}
           </div>

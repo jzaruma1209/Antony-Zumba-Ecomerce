@@ -87,7 +87,9 @@ export function ProductDetail({ product }: ProductDetailProps) {
             )}
           </>
         ) : (
-          <span className="text-3xl font-bold text-primary">Unidades</span>
+          <span className="text-2xl font-bold text-amber-600 dark:text-amber-500">
+            Precio por confirmar
+          </span>
         )}
       </div>
 
@@ -114,68 +116,63 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
       {/* Quantity & Add to Cart */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        {product.showPrice !== false && (
-          <>
-            {/* Quantity Selector */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Cantidad:</span>
-              <div className="flex items-center rounded-md border">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-r-none"
-                  onClick={decreaseQuantity}
-                  disabled={quantity <= 1}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-                <span className="w-12 text-center text-sm font-medium">{quantity}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-l-none"
-                  onClick={increaseQuantity}
-                  disabled={quantity >= product.stock}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+        {/* Quantity Selector */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">Cantidad:</span>
+          <div className="flex items-center rounded-md border">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-r-none"
+              onClick={decreaseQuantity}
+              disabled={quantity <= 1}
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <span className="w-12 text-center text-sm font-medium">{quantity}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-l-none"
+              onClick={increaseQuantity}
+              disabled={quantity >= product.stock}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
 
-            {/* Add to Cart */}
-            <div className="flex flex-1 gap-2">
-              <Button
-                className="flex-1"
-                size="lg"
-                disabled={product.stock === 0 || added}
-                onClick={handleAddToCart}
-              >
-                {added ? (
-                  <>
-                    <Check className="mr-2 h-4 w-4" />
-                    Agregado
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Agregar al Carrito
-                  </>
-                )}
-              </Button>
-            </div>
-          </>
-        )}
-        
+        {/* Add to Cart */}
+        <div className="flex flex-1 gap-2">
+          <Button
+            className="flex-1"
+            size="lg"
+            disabled={product.stock === 0 || added}
+            onClick={handleAddToCart}
+          >
+            {added ? (
+              <>
+                <Check className="mr-2 h-4 w-4" />
+                Agregado
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                Agregar al Carrito
+              </>
+            )}
+          </Button>
+        </div>
+
         {/* Favorite */}
-        <div className={product.showPrice !== false ? "flex gap-2" : "flex gap-2 sm:flex-1"}>
-          <Button 
-            variant="outline" 
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
             size="lg"
             onClick={() => toggleFavorite(product)}
             className={isFavorite ? "text-red-500 hover:text-red-600" : ""}
           >
             <Heart className={`h-4 w-4 ${isFavorite ? "fill-current" : ""}`} />
-            {product.showPrice === false && <span className="ml-2">Guardar Favorito</span>}
           </Button>
         </div>
       </div>
