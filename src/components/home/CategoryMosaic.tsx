@@ -36,7 +36,7 @@ const cards: MosaicCard[] = [
     overline: "Tendencia",
     title: "Insumos y",
     accent: "HERRAMIENTAS",
-    href: "/products?category=insumos",
+    href: "/products?category=herramientas",
     image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1789012695/basictech/media/general/nqr6ugugotz6ipyz4rk9.png",
     span: "col-span-2 lg:col-span-6",
     wide: true,
@@ -47,7 +47,7 @@ const cards: MosaicCard[] = [
     overline: "En Casa",
     title: "Cielo raso e",
     accent: "ILUMINACIÓN",
-    href: "/products?category=iluminacion-led",
+    href: "/products?category=luces",
     image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1788980572/basictech/media/general/dynhcky2ymxt5q1c1hd7.png",
     span: "col-span-2 lg:col-span-6",
     wide: true,
@@ -58,7 +58,7 @@ const cards: MosaicCard[] = [
     overline: "Diseño & Lujo",
     title: "Paneles y",
     accent: "PVC / WPC",
-    href: "/products?category=wpc",
+    href: "/products?category=Cielo%20raso-%20vinil",
     image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1788980574/basictech/media/general/miedwrwakgdybexemmb4.png",
     span: "col-span-2 lg:col-span-6",
     wide: true,
@@ -208,7 +208,7 @@ export function CategoryMosaic() {
               <X size={16} strokeWidth={1.75} />
               Cerrar
             </button>
-            <div className="h-[340px]">
+            <div className="w-full">
               <DynamicCalculatorSection />
             </div>
           </div>

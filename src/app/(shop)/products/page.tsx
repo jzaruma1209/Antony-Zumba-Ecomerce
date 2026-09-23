@@ -24,44 +24,35 @@ function ProductsContent() {
   const searchParams = useSearchParams()
   const { products, loading, filters, setFilters, fetchProducts, fetchCategories, fetchBrands } = useProductsStore()
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  // Ref para saber si ya se hizo el montaje inicial
-  const isMounted = useRef(false)
 
-  // Efecto único: se ejecuta al montar y cada vez que cambia la URL
-  // (ej. al navegar desde el Header o al hacer click en una categoría).
-  // Reemplaza categories/brands/priceRange/search por completo en vez de
-  // hacer merge parcial, para no arrastrar filtros de marca/precio que
-  // quedaron seteados en el store de una navegación anterior.
+  // Sincronizar categorías y marcas una sola vez al montar
+  useEffect(() => {
+    fetchCategories()
+    fetchBrands()
+  }, [fetchCategories, fetchBrands])
+
+  // Efecto principal: sincronizar filtros desde la URL y disparar fetchProducts()
   useEffect(() => {
     const category = searchParams.get("category")
     const search = searchParams.get("search")
 
-    setFilters({
+    const newFilters: Partial<FilterState> = {
       categories: category ? [category] : [],
       brands: [],
       priceRange: [0, 10000],
       search: search || undefined,
-    })
-
-    if (!isMounted.current) {
-      isMounted.current = true
-      fetchCategories()
-      fetchBrands()
     }
+
+    setFilters(newFilters)
+    fetchProducts(newFilters)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
-
-  // Efecto reactivo: se ejecuta cuando cambian los filtros DESPUÉS del montaje
-  useEffect(() => {
-    if (!isMounted.current) return
-    fetchProducts()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters])
 
 
   const handleFiltersChange = useCallback((newFilters: FilterState) => {
     setFilters(newFilters)
-  }, [setFilters])
+    fetchProducts(newFilters)
+  }, [setFilters, fetchProducts])
 
   const activeFilterCount =
     filters.brands.length +

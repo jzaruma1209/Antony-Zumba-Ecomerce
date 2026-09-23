@@ -45,24 +45,31 @@ export function CategoryFilter({
           {categories.length === 0 ? (
             <p className="text-xs text-muted-foreground py-2">No hay categorías disponibles</p>
           ) : (
-            categories.map((category) => (
-              <div key={category.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`category-${category.id}`}
-                  checked={selectedCategories.includes(category.slug)}
-                  onCheckedChange={() => handleCategoryToggle(category.slug)}
-                />
-                <Label
-                  htmlFor={`category-${category.id}`}
-                  className="flex flex-1 cursor-pointer items-center justify-between text-sm"
-                >
-                  <span>{category.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {category.productCount}
-                  </span>
-                </Label>
-              </div>
-            ))
+            categories.map((category) => {
+              const isChecked = selectedCategories.some(
+                (c) =>
+                  c.toLowerCase() === category.slug.toLowerCase() ||
+                  c.toLowerCase() === category.name.toLowerCase()
+              )
+              return (
+                <div key={category.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`category-${category.id}`}
+                    checked={isChecked}
+                    onCheckedChange={() => handleCategoryToggle(category.slug)}
+                  />
+                  <Label
+                    htmlFor={`category-${category.id}`}
+                    className="flex flex-1 cursor-pointer items-center justify-between text-sm"
+                  >
+                    <span>{category.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {category.productCount}
+                    </span>
+                  </Label>
+                </div>
+              )
+            })
           )}
         </div>
       )}

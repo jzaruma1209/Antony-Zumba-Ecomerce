@@ -16,7 +16,7 @@ export function PriceFilter({
   priceRange,
   onPriceChange,
   minPrice = 0,
-  maxPrice = 5000,
+  maxPrice = 10000,
 }: PriceFilterProps) {
   const [isOpen, setIsOpen] = useState(true)
   const [localMin, setLocalMin] = useState(priceRange[0].toString())

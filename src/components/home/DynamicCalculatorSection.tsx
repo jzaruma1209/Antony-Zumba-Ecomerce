@@ -142,7 +142,7 @@ export function DynamicCalculatorSection() {
   return (
     <>
       <article
-        className="relative h-full w-full overflow-hidden rounded-xl text-white select-none p-4"
+        className="relative min-h-[360px] w-full overflow-hidden rounded-xl text-white select-none p-5"
         style={{
           background: "linear-gradient(160deg, #2E6BFF 0%, #1E4FD6 55%, #0a1a3a 100%)",
           boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
