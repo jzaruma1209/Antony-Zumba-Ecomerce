@@ -163,193 +163,295 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
         }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex h-10 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0" aria-label="TumbadosZumba">
+
+        {/* â”€â”€ MAIN HEADER ROW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="hidden md:flex items-stretch gap-4 py-2">
+
+          {/* Logo — full height, left column */}
+          <Link href="/" className="flex items-center shrink-0 self-center" aria-label="TumbadosZumba">
             <Image
-              src="/iconozumba.png"
+              src="/logo-light.png"
               alt="TumbadosZumba"
-              width={40}
-              height={40}
-              className="h-8 w-8 rounded-lg object-contain transition-transform hover:scale-105"
+              width={310}
+              height={100}
+              className="h-[70px] w-auto object-contain transition-transform hover:scale-105 dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo-dark.png"
+              alt="TumbadosZumba"
+              width={310}
+              height={100}
+              className="h-[70px] w-auto object-contain transition-transform hover:scale-105 hidden dark:block"
               priority
             />
           </Link>
 
-          {/* Search Bar - Desktop */}
-          <div ref={searchContainerRef} className="hidden flex-1 max-w-2xl md:block relative">
-            <form onSubmit={handleSearchSubmit} className="w-full">
-              <div className="relative w-full">
-                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
-                <Input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => handleQueryChange(e.target.value)}
-                  onFocus={handleInputFocus}
-                  placeholder="Buscar productos, materiales, acabados..."
-                  className="w-full pl-10 pr-9 h-8 text-sm bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
+          {/* Right side: two stacked rows */}
+          <div className="flex flex-col flex-1 gap-1 justify-center min-w-0">
+
+            {/* Top row: Search + Actions */}
+            <div className="flex items-center gap-2">
+              {/* Search Bar */}
+              <div ref={searchContainerRef} className="flex-1 relative min-w-0">
+                <form onSubmit={handleSearchSubmit} className="w-full">
+                  <div className="relative w-full">
+                    <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
+                    <Input
+                      type="search"
+                      value={searchQuery}
+                      onChange={(e) => handleQueryChange(e.target.value)}
+                      onFocus={handleInputFocus}
+                      placeholder="Buscar productos, materiales, acabados..."
+                      className="w-full pl-10 pr-9 h-9 text-sm bg-muted/40 hover:bg-muted/60 focus-visible:bg-background transition-colors"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={handleClearSearch}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label="Limpiar búsqueda"
+                      >
+                        <X className="h-4 w-4" strokeWidth={1.75} />
+                      </button>
+                    )}
+                  </div>
+                </form>
+                <SearchSuggestionsDropdown
+                  isOpen={isSuggestionsOpen}
+                  isLoading={suggestionsLoading}
+                  searchQuery={searchQuery}
+                  products={suggestedProducts}
+                  categories={suggestedCategories}
+                  onSelectSuggestion={() => setIsSuggestionsOpen(false)}
                 />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={handleClearSearch}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="Limpiar búsqueda"
-                  >
-                    <X className="h-4 w-4" strokeWidth={1.75} />
-                  </button>
-                )}
               </div>
-            </form>
 
-            <SearchSuggestionsDropdown
-              isOpen={isSuggestionsOpen}
-              isLoading={suggestionsLoading}
-              searchQuery={searchQuery}
-              products={suggestedProducts}
-              categories={suggestedCategories}
-              onSelectSuggestion={() => setIsSuggestionsOpen(false)}
-            />
+              {/* Actions: PRODUCTOS | icons | Admin | COTIZAR */}
+              <div className="flex items-center gap-1 shrink-0">
+                <Link href="/products">
+                  <Button variant="ghost" size="sm" className="font-semibold">
+                    PRODUCTOS
+                  </Button>
+                </Link>
+
+                <ThemeToggle />
+
+                <Link href="/profile/favorites">
+                  <Button variant="ghost" size="icon" className="relative h-8 w-8">
+                    <Heart className="h-4 w-4" strokeWidth={1.75} />
+                    {mounted && favoriteCount > 0 && (
+                      <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center bg-red-500 text-white">
+                        {favoriteCount > 99 ? "99+" : favoriteCount}
+                      </Badge>
+                    )}
+                    <span className="sr-only">Favoritos</span>
+                  </Button>
+                </Link>
+
+                <Link href="/cart">
+                  <Button variant="ghost" size="icon" className="relative h-8 w-8">
+                    <ShoppingCart className="h-4 w-4" strokeWidth={1.75} />
+                    {mounted && itemCount > 0 && (
+                      <Badge className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center" variant="destructive">
+                        {itemCount > 99 ? "99+" : itemCount}
+                      </Badge>
+                    )}
+                    <span className="sr-only">Carrito</span>
+                  </Button>
+                </Link>
+
+                {/* Auth Section */}
+                {mounted && status !== "loading" && (
+                  <>
+                    {session ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 gap-1.5 px-2.5">
+                            <User className="h-4 w-4" strokeWidth={1.75} />
+                            <span className="max-w-36 truncate text-sm font-medium" translate="no">
+                              {session.user?.name?.split(" ")[0]}
+                            </span>
+                            <ChevronDown className="h-3 w-3 text-muted-foreground" strokeWidth={1.75} />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                          <DropdownMenuLabel>
+                            <div className="flex flex-col" translate="no">
+                              <span className="font-medium">{session.user?.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {session.user?.email}
+                              </span>
+                            </div>
+                          </DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href="/profile" className="cursor-pointer">
+                              <User className="mr-2 h-4 w-4" strokeWidth={1.75} />
+                              Mi Perfil
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/profile/orders" className="cursor-pointer">
+                              <Package className="mr-2 h-4 w-4" strokeWidth={1.75} />
+                              Mis Pedidos
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href="/profile/settings" className="cursor-pointer">
+                              <Settings className="mr-2 h-4 w-4" strokeWidth={1.75} />
+                              Configuración
+                            </Link>
+                          </DropdownMenuItem>
+                          {session.user?.role === "ADMIN" && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem asChild>
+                                <Link href="/admin" className="cursor-pointer">
+                                  <Settings className="mr-2 h-4 w-4" strokeWidth={1.75} />
+                                  Panel de administración
+                                </Link>
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => signOut({ callbackUrl: "/" })}
+                            className="cursor-pointer text-destructive focus:text-destructive"
+                          >
+                            <LogOut className="mr-2 h-4 w-4" strokeWidth={1.75} />
+                            Cerrar Sesión
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Link href="/login">
+                          <Button variant="ghost" size="sm">Ingresar</Button>
+                        </Link>
+                        <Link href="/register">
+                          <Button size="sm">Registrarse</Button>
+                        </Link>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {/* COTIZAR CTA */}
+                <a
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm text-white transition-all hover:brightness-110 hover:shadow-lg active:scale-95 shrink-0"
+                  style={{ backgroundColor: "#F47B20" }}
+                >
+                  <svg className="h-4 w-4 fill-white" viewBox="0 0 24 24">
+                    {socialLinks[0].icon}
+                  </svg>
+                  COTIZAR
+                </a>
+              </div>
+            </div>
+
+            {/* Bottom row: Nav links */}
+            <div className="flex items-center gap-3 text-xs font-medium text-slate-700 dark:text-slate-300 overflow-x-auto scrollbar-none">
+              {/* Ver Categorías Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="inline-flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white hover:text-primary transition-colors py-0.5 px-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 shrink-0">
+                    <Package className="h-4 w-4 text-primary" strokeWidth={1.75} />
+                    <span>Ver categorías</span>
+                    <ChevronDown className="h-3 w-3 text-slate-500" strokeWidth={1.75} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-60 max-h-[420px] overflow-y-auto">
+                  <DropdownMenuLabel className="text-xs font-bold text-slate-500">Categorías</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {categories.length === 0 ? (
+                    <div className="py-3 px-3 text-xs text-muted-foreground text-center">Cargando categorías...</div>
+                  ) : (
+                    categories.map((category) => (
+                      <DropdownMenuItem key={category.id || category.slug} asChild>
+                        <Link
+                          href={`/products?category=${category.slug}`}
+                          className="cursor-pointer font-medium flex items-center justify-between"
+                        >
+                          <span className="truncate">{category.name}</span>
+                          {category.productCount !== undefined && category.productCount > 0 && (
+                            <span className="text-[10px] text-muted-foreground ml-2 font-mono">{category.productCount}</span>
+                          )}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/products" className="cursor-pointer font-semibold text-primary justify-center text-xs">
+                      Ver todos los productos
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Link href="/instalaciones" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors shrink-0">
+                <Settings className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
+                <span>Instalaciones</span>
+              </Link>
+
+              <Link href="/ofertas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors shrink-0">
+                <Heart className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
+                <span>Ofertas</span>
+              </Link>
+
+              <Link href="/diseno-e-ideas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors shrink-0">
+                <User className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
+                <span className="font-semibold text-slate-900 dark:text-white">Ideas de diseño+</span>
+                <span className="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white uppercase leading-none">
+                  Nuevo
+                </span>
+              </Link>
+            </div>
+
           </div>
+        </div>
 
-          {/* Actions */}
+        {/* ── MOBILE HEADER ────────────────────────────────────────── */}
+        <div className="flex md:hidden h-14 items-center justify-between gap-3">
+          <Link href="/" className="flex items-center shrink-0" aria-label="TumbadosZumba">
+            <Image
+              src="/logo-light.png"
+              alt="TumbadosZumba"
+              width={130}
+              height={44}
+              className="h-10 w-auto object-contain dark:hidden"
+              priority
+            />
+            <Image
+              src="/logo-dark.png"
+              alt="TumbadosZumba"
+              width={130}
+              height={44}
+              className="h-10 w-auto object-contain hidden dark:block"
+              priority
+            />
+          </Link>
+
           <div className="flex items-center gap-1">
-            {/* Search - Mobile Toggle */}
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 md:hidden"
+              className="h-8 w-8"
               onClick={toggleMobileSearch}
               aria-label="Alternar barra de búsqueda"
             >
               <Search className="h-4 w-4" strokeWidth={1.75} />
               <span className="sr-only">Buscar</span>
             </Button>
-
-            {/* Products Link */}
-            <Link href="/products" className="hidden md:block">
-              <Button variant="ghost" size="sm" className="font-semibold">
-                PRODUCTOS
-              </Button>
-            </Link>
-
-            <ThemeToggle />
-
-            <Link href="/profile/favorites">
-              <Button variant="ghost" size="icon" className="relative h-8 w-8">
-                <Heart className="h-4 w-4" />
-                {mounted && favoriteCount > 0 && (
-                  <Badge
-                    className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center bg-red-500 text-white"
-                  >
-                    {favoriteCount > 99 ? "99+" : favoriteCount}
-                  </Badge>
-                )}
-                <span className="sr-only">Favoritos</span>
-              </Button>
-            </Link>
-
-            <Link href="/cart">
-              <Button variant="ghost" size="icon" className="relative h-8 w-8">
-                <ShoppingCart className="h-4 w-4" />
-                {mounted && itemCount > 0 && (
-                  <Badge
-                    className="absolute -right-1 -top-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
-                    variant="destructive"
-                  >
-                    {itemCount > 99 ? "99+" : itemCount}
-                  </Badge>
-                )}
-                <span className="sr-only">Carrito</span>
-              </Button>
-            </Link>
-
-            {/* Auth Section */}
-            {mounted && status !== "loading" && (
-              <>
-                {session ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="hidden h-8 gap-1 px-2 sm:flex">
-                        <User className="h-4 w-4" />
-                        <span className="max-w-24 truncate text-sm">
-                          {session.user?.name?.split(" ")[0]}
-                        </span>
-                        <ChevronDown className="h-3 w-3" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{session.user?.name}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {session.user?.email}
-                          </span>
-                        </div>
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href="/profile" className="cursor-pointer">
-                          <User className="mr-2 h-4 w-4" />
-                          Mi Perfil
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/profile/orders" className="cursor-pointer">
-                          <Package className="mr-2 h-4 w-4" />
-                          Mis Pedidos
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/profile/settings" className="cursor-pointer">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Configuración
-                        </Link>
-                      </DropdownMenuItem>
-                      {session.user?.role === "ADMIN" && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link href="/admin" className="cursor-pointer">
-                              <Settings className="mr-2 h-4 w-4" />
-                              Panel Admin
-                            </Link>
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => signOut({ callbackUrl: "/" })}
-                        className="cursor-pointer text-destructive focus:text-destructive"
-                      >
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Cerrar Sesión
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <div className="hidden items-center gap-2 sm:flex">
-                    <Link href="/login">
-                      <Button variant="ghost" size="sm">
-                        Ingresar
-                      </Button>
-                    </Link>
-                    <Link href="/register">
-                      <Button size="sm">
-                        Registrarse
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Mobile Menu */}
             <MobileNav categories={categories} />
           </div>
         </div>
 
-        {/* Search Bar - Mobile */}
+        {/* Mobile Search Bar */}
         <div
           ref={mobileSearchContainerRef}
           className={`pb-3 md:hidden transition-all duration-200 relative ${isMobileSearchOpen ? "block" : "hidden"}`}
@@ -376,7 +478,6 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
               </button>
             )}
           </form>
-
           <SearchSuggestionsDropdown
             isOpen={isSuggestionsOpen}
             isLoading={suggestionsLoading}
@@ -387,91 +488,7 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
           />
         </div>
 
-        {/* Sub-header Navigation Bar (Estilo Lowe's) */}
-        <div className="hidden border-t border-border/40 py-1 md:flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300 overflow-x-auto gap-4 scrollbar-none">
-          <div className="flex items-center gap-4 shrink-0">
-            {/* Ver Categorías Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white hover:text-primary transition-colors py-0.5 px-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800">
-                  <Package className="h-4 w-4 text-primary" strokeWidth={1.75} />
-                  <span>Ver categorías</span>
-                  <ChevronDown className="h-3 w-3 text-slate-500" strokeWidth={1.75} />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-60 max-h-[420px] overflow-y-auto">
-                <DropdownMenuLabel className="text-xs font-bold text-slate-500">
-                  Categorías
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {categories.length === 0 ? (
-                  <div className="py-3 px-3 text-xs text-muted-foreground text-center">
-                    Cargando categorías...
-                  </div>
-                ) : (
-                  categories.map((category) => (
-                    <DropdownMenuItem key={category.id || category.slug} asChild>
-                      <Link
-                        href={`/products?category=${category.slug}`}
-                        className="cursor-pointer font-medium flex items-center justify-between"
-                      >
-                        <span className="truncate">{category.name}</span>
-                        {category.productCount !== undefined && category.productCount > 0 && (
-                          <span className="text-[10px] text-muted-foreground ml-2 font-mono">
-                            {category.productCount}
-                          </span>
-                        )}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/products"
-                    className="cursor-pointer font-semibold text-primary justify-center text-xs"
-                  >
-                    Ver todos los productos
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Links con iconos */}
-            <Link href="/instalaciones" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
-              <Settings className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
-              <span>Instalaciones</span>
-            </Link>
-
-            <Link href="/ofertas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
-              <Heart className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
-              <span>Ofertas</span>
-            </Link>
-
-            <Link href="/diseno-e-ideas" className="inline-flex items-center gap-1.5 hover:text-primary transition-colors">
-              <User className="h-3.5 w-3.5 text-slate-500" strokeWidth={1.75} />
-              <span className="font-semibold text-slate-900 dark:text-white">Diseño e ideas+</span>
-              <span className="rounded-full bg-red-600 px-1.5 py-0.2 text-[10px] font-bold text-white uppercase">
-                Nuevo
-              </span>
-            </Link>
-          </div>
-
-          {/* WhatsApp Cotizar (Derecha) */}
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-1.5 px-3 py-1 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors font-bold tracking-wide text-xs"
-          >
-            <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
-              {socialLinks[0].icon}
-            </svg>
-            COTIZAR
-          </a>
-        </div>
       </div>
     </header>
   )
 }
-

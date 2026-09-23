@@ -41,13 +41,20 @@ export function Footer({ products = [] }: { products?: FooterProduct[] }) {
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/iconozumba.png"
+                src="/logo-light.png"
                 alt="TumbadosZumba"
-                width={36}
-                height={36}
-                className="h-9 w-9 rounded-lg object-contain"
+                width={120}
+                height={32}
+                className="h-8 w-auto object-contain dark:hidden"
               />
-              <span className="text-xl font-bold">TumbadosZumba</span>
+              <Image
+                src="/logo-dark.png"
+                alt="TumbadosZumba"
+                width={120}
+                height={32}
+                className="h-8 w-auto object-contain hidden dark:block"
+              />
+              <span className="font-bold text-lg">TumbadosZumba</span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground">
               Tu tienda de tumbados de gypsum de confianza. Los mejores productos y acabados para tu hogar a los mejores precios.

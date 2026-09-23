@@ -22,6 +22,9 @@ export const metadata: Metadata = {
     shortcut: "/iconozumba.png",
     apple: "/iconozumba.png",
   },
+  other: {
+    google: "notranslate",
+  },
 }
 
 export default function RootLayout({

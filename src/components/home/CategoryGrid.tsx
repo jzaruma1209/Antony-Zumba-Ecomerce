@@ -12,13 +12,13 @@ export function CategoryGrid({ products }: { products: PopularProduct[] }) {
   const topProducts = products.slice(0, 4)
 
   return (
-    <section className="pt-1.5 pb-0.5 sm:pt-1.5 sm:pb-0.5">
+    <section className="pt-1 pb-0.5 sm:pt-1 sm:pb-0.5">
       <div className="container mx-auto px-4">
         {/* Title row */}
-        <div className="mb-1 flex items-center justify-between">
+        <div className="mb-0.5 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <TrendingUp className="size-3 text-brand-orange" strokeWidth={1.75} />
-            <h2 className="text-[11px] font-semibold text-slate-700 dark:text-slate-300">
+            <h2 className="text-[10.5px] font-semibold text-slate-600 dark:text-slate-400">
               Productos más buscados
             </h2>
           </div>
@@ -28,9 +28,9 @@ export function CategoryGrid({ products }: { products: PopularProduct[] }) {
             href="https://wa.me/593997119881?text=Hola%2C%20me%20comunico%20desde%20la%20tienda%20web.%20Requiero%20una%20cotizaci%C3%B3n%20t%C3%A9cnica%20de%20materiales."
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex md:hidden shrink-0 items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors font-bold tracking-wide text-[10px]"
+            className="inline-flex md:hidden shrink-0 items-center gap-1 px-2 py-0.5 rounded-full bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 transition-colors font-bold tracking-wide text-[9.5px]"
           >
-            <svg className="size-3 fill-current" viewBox="0 0 24 24">
+            <svg className="size-2.5 fill-current" viewBox="0 0 24 24">
               <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
             </svg>
             <span>COTIZAR</span>
@@ -41,7 +41,7 @@ export function CategoryGrid({ products }: { products: PopularProduct[] }) {
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 no-scrollbar [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {topProducts.length === 0
             ? (
-                <div className="text-xs text-muted-foreground py-0.5">
+                <div className="text-[10px] text-muted-foreground py-0.5">
                   No hay productos disponibles actualmente
                 </div>
               )
@@ -49,12 +49,12 @@ export function CategoryGrid({ products }: { products: PopularProduct[] }) {
                 <Link
                   key={product.id}
                   href={`/products/${product.slug}`}
-                  className="group inline-flex shrink-0 items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-2.5 py-0.5 text-[11px] font-medium text-slate-700 dark:text-slate-300 transition-all hover:border-brand-orange hover:text-brand-orange shadow-xs"
+                  className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200/90 dark:border-slate-700/80 bg-white dark:bg-slate-900 px-2 py-[2px] text-[10px] font-medium text-slate-600 dark:text-slate-300 transition-all hover:border-brand-orange hover:text-brand-orange hover:shadow-xs"
                 >
-                  <Search className="size-2.5 text-slate-400 group-hover:text-brand-orange transition-colors" strokeWidth={1.75} />
-                  <span>{product.name}</span>
+                  <Search className="size-2.5 text-slate-400 group-hover:text-brand-orange transition-colors shrink-0" strokeWidth={1.75} />
+                  <span className="leading-tight">{product.name}</span>
                   {product.price > 0 && (
-                    <span className="text-[9px] font-mono font-semibold text-brand-navy dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded-full">
+                    <span className="text-[9px] font-mono font-semibold text-brand-navy dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1.5 py-0 rounded-full leading-tight">
                       ${Number(product.price).toFixed(2)}
                     </span>
                   )}

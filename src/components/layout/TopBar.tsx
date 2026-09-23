@@ -6,20 +6,20 @@ export function TopBar() {
       <div className="container mx-auto px-4">
         <div className="flex h-6 items-center justify-between text-[11px]">
           <div className="flex items-center gap-1">
-            <span className="hidden sm:inline">Envio a</span>
+            <span className="hidden sm:inline">Envío a</span>
             <span className="font-semibold">Ecuador</span>
           </div>
           <div className="flex items-center gap-4 sm:gap-6">
             <div className="flex items-center gap-1.5">
-              <Truck className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Envio Confiable</span>
+              <Truck className="h-3.5 w-3.5" strokeWidth={1.75} />
+              <span className="hidden sm:inline">Envío Confiable</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <RotateCcw className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Garantia de Calidad</span>
+              <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} />
+              <span className="hidden sm:inline">Garantía de Calidad</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="h-3.5 w-3.5" />
+              <ShieldCheck className="h-3.5 w-3.5" strokeWidth={1.75} />
               <span className="hidden sm:inline">Compra Segura</span>
             </div>
           </div>
