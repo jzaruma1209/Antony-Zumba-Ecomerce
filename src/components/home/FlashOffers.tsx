@@ -77,7 +77,7 @@ function OfferCard({ product }: { product: Product }) {
   const [intPart, decPart] = product.price.toFixed(2).split(".")
   const tag =
     product.stock > 0 && product.stock <= 10
-      ? "ÚLTIMOS CUPOS"
+      ? "POCAS UNIDADES"
       : discount >= 20
       ? "TIEMPO LIMITADO"
       : null

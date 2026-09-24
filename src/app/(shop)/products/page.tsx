@@ -36,11 +36,13 @@ function ProductsContent() {
     const category = searchParams.get("category")
     const search = searchParams.get("search")
 
-    const newFilters: Partial<FilterState> = {
+    const newFilters: FilterState = {
       categories: category ? [category] : [],
       brands: [],
       priceRange: [0, 10000],
+      sortBy: "newest",
       search: search || undefined,
+      offersOnly: false,
     }
 
     setFilters(newFilters)
@@ -48,10 +50,10 @@ function ProductsContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
-
   const handleFiltersChange = useCallback((newFilters: FilterState) => {
-    setFilters(newFilters)
-    fetchProducts(newFilters)
+    const fullFilters: FilterState = { ...newFilters, offersOnly: false }
+    setFilters(fullFilters)
+    fetchProducts(fullFilters)
   }, [setFilters, fetchProducts])
 
   const activeFilterCount =
@@ -109,9 +111,11 @@ function ProductsContent() {
           />
           <SortSelect
             value={filters.sortBy}
-            onChange={(sortBy) =>
-              setFilters({ sortBy: sortBy as FilterState["sortBy"] })
-            }
+            onChange={(sortBy) => {
+              const updated: FilterState = { ...filters, sortBy: sortBy as FilterState["sortBy"], offersOnly: false }
+              setFilters(updated)
+              fetchProducts(updated)
+            }}
           />
         </div>
       </div>

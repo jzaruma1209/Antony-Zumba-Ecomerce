@@ -24,6 +24,8 @@ const defaultFilters: FilterState = {
   brands: [],
   priceRange: [0, 10000],
   sortBy: "newest",
+  offersOnly: false,
+  search: undefined,
 }
 
 // AbortController para cancelar requests anteriores y evitar race conditions

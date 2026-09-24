@@ -25,6 +25,8 @@ export function FilterSidebar({ filters, onFiltersChange }: FilterSidebarProps) 
       categories: [],
       priceRange: [0, 10000],
       sortBy: filters.sortBy,
+      offersOnly: filters.offersOnly,
+      search: filters.search,
     })
   }
 

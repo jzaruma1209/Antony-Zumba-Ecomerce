@@ -24,34 +24,36 @@ function OffersContent() {
   const { products, loading, filters, setFilters, fetchProducts, fetchCategories, fetchBrands } = useProductsStore()
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
-  // Initialize filters from URL params with offersOnly = true
+  // Sincronizar categorías y marcas una sola vez al montar
+  useEffect(() => {
+    fetchCategories()
+    fetchBrands()
+  }, [fetchCategories, fetchBrands])
+
+  // Efecto principal: sincronizar filtros desde la URL y disparar fetchProducts()
   useEffect(() => {
     const category = searchParams.get("category")
     const brand = searchParams.get("brand")
 
-    const initialFilters: Partial<FilterState> = {
+    const newFilters: FilterState = {
+      categories: category ? [category] : [],
+      brands: brand ? [brand] : [],
+      priceRange: [0, 10000],
+      sortBy: "newest",
       offersOnly: true,
-    }
-    if (category) {
-      initialFilters.categories = [category]
-    }
-    if (brand) {
-      initialFilters.brands = [brand]
+      search: undefined,
     }
 
-    setFilters(initialFilters)
-    fetchCategories()
-    fetchBrands()
-  }, [searchParams, setFilters, fetchCategories, fetchBrands])
-
-  // Fetch products when filters change
-  useEffect(() => {
-    fetchProducts({ offersOnly: true })
-  }, [filters, fetchProducts])
+    setFilters(newFilters)
+    fetchProducts(newFilters)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const handleFiltersChange = useCallback((newFilters: FilterState) => {
-    setFilters({ ...newFilters, offersOnly: true })
-  }, [setFilters])
+    const fullFilters: FilterState = { ...newFilters, offersOnly: true }
+    setFilters(fullFilters)
+    fetchProducts(fullFilters)
+  }, [setFilters, fetchProducts])
 
   const activeFilterCount =
     filters.brands.length +
@@ -100,9 +102,11 @@ function OffersContent() {
           />
           <SortSelect
             value={filters.sortBy}
-            onChange={(sortBy) =>
-              setFilters({ sortBy: sortBy as FilterState["sortBy"] })
-            }
+            onChange={(sortBy) => {
+              const updated: FilterState = { ...filters, sortBy: sortBy as FilterState["sortBy"], offersOnly: true }
+              setFilters(updated)
+              fetchProducts(updated)
+            }}
           />
         </div>
       </div>
