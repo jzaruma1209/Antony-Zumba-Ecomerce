@@ -55,16 +55,16 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md px-4">
-      <Card>
-        <CardHeader className="space-y-1 text-center">
+    <div className="w-full">
+      <Card className="shadow-lg">
+        <CardHeader className="space-y-2 text-center pb-2">
           <CardTitle className="text-2xl font-bold">Iniciar Sesión</CardTitle>
           <CardDescription>
             Ingresa tus credenciales para acceder a tu cuenta
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+          <CardContent className="space-y-5">
             <GoogleSignInButton callbackUrl={callbackUrl} />
 
             <div className="relative">

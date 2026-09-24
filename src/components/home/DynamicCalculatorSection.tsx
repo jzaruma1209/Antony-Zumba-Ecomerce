@@ -142,189 +142,276 @@ export function DynamicCalculatorSection() {
   return (
     <>
       <article
-        className="relative min-h-[360px] w-full overflow-hidden rounded-xl text-white select-none p-5"
+        className="relative w-full overflow-hidden rounded-2xl text-white select-none"
         style={{
-          background: "linear-gradient(160deg, #2E6BFF 0%, #1E4FD6 55%, #0a1a3a 100%)",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+          background: "linear-gradient(145deg, #1a3a8a 0%, #1535cc 40%, #0d1f6e 100%)",
+          boxShadow: "0 24px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
         }}
       >
-        <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full pointer-events-none" style={{ background: "rgba(46,107,255,0.2)", filter: "blur(24px)" }} />
+        {/* Decoración de fondo */}
+        <div className="absolute -right-12 -top-12 w-48 h-48 rounded-full pointer-events-none" style={{ background: "rgba(100,150,255,0.15)", filter: "blur(40px)" }} />
+        <div className="absolute -left-8 -bottom-8 w-36 h-36 rounded-full pointer-events-none" style={{ background: "rgba(30,80,255,0.12)", filter: "blur(32px)" }} />
+        <div className="absolute top-0 left-0 right-0 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }} />
 
-        <div className="relative z-10 flex flex-col h-full gap-2.5">
-          <div className="flex items-center gap-2">
-            <div className="flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-sm" style={{ background: "rgba(255,255,255,0.15)" }}>
-              <CalculatorIcon size={16} strokeWidth={1.75} className="text-white" />
+        <div className="relative z-10 flex flex-col gap-4 p-5">
+          {/* Header */}
+          <div className="flex items-center gap-3">
+            <div
+              className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
+            >
+              <CalculatorIcon size={18} strokeWidth={1.75} className="text-white" />
             </div>
             <div>
-              <h3 className="text-xs font-bold leading-none text-white uppercase tracking-wider">
+              <h3 className="text-sm font-extrabold leading-none text-white tracking-wide">
                 Calculadora de Materiales
               </h3>
-              <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>
+              <p className="text-[11px] mt-1 font-medium" style={{ color: "rgba(180,200,255,0.8)" }}>
                 Cotiza tus materiales al instante
               </p>
             </div>
           </div>
 
-          <div>
-            <label className="block text-[10px] font-semibold uppercase tracking-wide mb-1" style={{ color: "rgba(255,255,255,0.75)" }}>
-              Sistema constructivo
-            </label>
-            <select
-              value={selectedCalcId}
-              onChange={(e) => setSelectedCalcId(e.target.value)}
-              className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none cursor-pointer"
-              style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.22)" }}
-            >
-              {calculators.map((calc) => (
-                <option key={calc.id} value={calc.id} style={{ color: "#111" }}>
-                  {calc.name}
-                </option>
-              ))}
-            </select>
+          {/* Separador */}
+          <div className="h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
+
+          {/* Campos */}
+          <div className="flex flex-col gap-3">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "rgba(180,200,255,0.7)" }}>
+                Sistema constructivo
+              </label>
+              <div className="relative">
+                <select
+                  value={selectedCalcId}
+                  onChange={(e) => setSelectedCalcId(e.target.value)}
+                  className="w-full rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none cursor-pointer appearance-none pr-8"
+                  style={{
+                    background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  {calculators.map((calc) => (
+                    <option key={calc.id} value={calc.id} style={{ color: "#111", background: "#fff" }}>
+                      {calc.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 4l4 4 4-4" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "rgba(180,200,255,0.7)" }}>
+                Metros Cuadrados (m²)
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={area}
+                  onChange={(e) => setArea(e.target.value)}
+                  placeholder="Ej: 15.00"
+                  step="0.1"
+                  min="0.1"
+                  className="w-full rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                  style={{
+                    background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    backdropFilter: "blur(8px)",
+                  }}
+                />
+                <span
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold"
+                  style={{ color: "rgba(180,200,255,0.6)" }}
+                >
+                  m²
+                </span>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-[10px] font-semibold uppercase tracking-wide mb-1" style={{ color: "rgba(255,255,255,0.75)" }}>
-              Metros Cuadrados (m²)
-            </label>
-            <input
-              type="number"
-              value={area}
-              onChange={(e) => setArea(e.target.value)}
-              placeholder="Ej: 15.00"
-              step="0.1"
-              min="0.1"
-              className="w-full rounded-lg px-2.5 py-1.5 text-xs text-white placeholder:text-white/35 focus:outline-none"
-              style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.22)" }}
-            />
-          </div>
-
-          <div className="mt-auto pt-1">
-            <button
-              onClick={handleCalc}
-              className="w-full flex items-center justify-center gap-1.5 font-bold text-xs py-2 rounded-lg transition-all shadow-md active:scale-95"
-              style={{ background: "#F0731E" }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#FF8A2E")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.background = "#F0731E")}
-            >
-              Calcular Materiales →
-            </button>
-          </div>
+          {/* Botón */}
+          <button
+            onClick={handleCalc}
+            className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3 rounded-xl transition-all active:scale-95 mt-1"
+            style={{
+              background: "linear-gradient(135deg, #FF7A1E 0%, #F0531E 100%)",
+              boxShadow: "0 4px 16px rgba(240,83,30,0.45), inset 0 1px 0 rgba(255,255,255,0.15)",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 6px 24px rgba(240,83,30,0.6), inset 0 1px 0 rgba(255,255,255,0.15)")}
+            onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "0 4px 16px rgba(240,83,30,0.45), inset 0 1px 0 rgba(255,255,255,0.15)")}
+          >
+            <CalculatorIcon size={15} strokeWidth={2} />
+            Calcular Materiales
+            <span style={{ opacity: 0.8 }}>→</span>
+          </button>
         </div>
       </article>
 
       {showResults && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3" style={{ background: "rgba(2,4,10,0.82)", backdropFilter: "blur(5px)" }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(2,4,15,0.88)", backdropFilter: "blur(8px)" }}>
           <div
             className="w-full rounded-2xl overflow-hidden"
             style={{
-              maxWidth: 520,
-              maxHeight: "92vh",
-              background: "#0B1220",
-              border: "1px solid #1F2A40",
-              boxShadow: "0 30px 60px rgba(0,0,0,0.7)",
+              maxWidth: 500,
+              maxHeight: "90vh",
+              background: "linear-gradient(180deg, #0d1a35 0%, #091224 100%)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 32px 64px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06)",
               display: "flex",
               flexDirection: "column",
             }}
           >
-            <div className="flex items-start justify-between px-5 py-4 border-b" style={{ borderColor: "#1F2A40" }}>
-              <div>
-                <h3 className="text-base font-bold text-white m-0 flex items-center gap-2">
-                  <Package size={20} strokeWidth={1.75} className="text-[#F0731E]" />
-                  <span>{selectedCalc?.name}</span>
-                </h3>
-                <div className="flex items-center gap-2.5 mt-0.5">
-                  <p className="text-xs" style={{ color: "#8B95AC" }}>
-                    Área: <span className="font-mono">{fmt(parseFloat(area))}</span> m² • {results.length} materiales
-                  </p>
-                  {selectedCalc && results.length < selectedCalc.materials.length && (
-                    <button
-                      type="button"
-                      onClick={handleResetItems}
-                      className="text-[11px] text-orange-400 hover:text-orange-300 hover:underline inline-flex items-center gap-1 transition-colors"
-                      title="Restablecer todos los materiales calculados"
-                    >
-                      <RotateCcw size={12} strokeWidth={1.75} />
-                      Restablecer
-                    </button>
-                  )}
+            {/* Header del modal */}
+            <div className="px-5 py-4" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: "rgba(240,115,30,0.15)", border: "1px solid rgba(240,115,30,0.3)" }}
+                  >
+                    <Package size={18} strokeWidth={1.75} style={{ color: "#F0731E" }} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-white leading-tight">{selectedCalc?.name}</h3>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span
+                        className="text-[11px] font-mono px-2 py-0.5 rounded-full"
+                        style={{ background: "rgba(255,255,255,0.07)", color: "rgba(180,200,255,0.8)" }}
+                      >
+                        {fmt(parseFloat(area))} m²
+                      </span>
+                      <span className="text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>
+                        {results.length} {results.length === 1 ? "material" : "materiales"}
+                      </span>
+                      {selectedCalc && results.length < selectedCalc.materials.length && (
+                        <button
+                          type="button"
+                          onClick={handleResetItems}
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold transition-colors"
+                          style={{ color: "#F0731E" }}
+                        >
+                          <RotateCcw size={11} strokeWidth={2} />
+                          Restablecer
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
+                <button
+                  onClick={() => setShowResults(false)}
+                  className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
+                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}
+                  aria-label="Cerrar"
+                >
+                  <X size={16} strokeWidth={2} />
+                </button>
               </div>
-              <button
-                onClick={() => setShowResults(false)}
-                className="text-white/60 hover:text-white p-1 rounded-md transition-colors"
-                aria-label="Cerrar"
-              >
-                <X size={20} strokeWidth={1.75} />
-              </button>
             </div>
 
-            <div className="overflow-y-auto px-5 py-2 flex-1 divide-y divide-[#1F2A40]" style={{ borderColor: "#1F2A40" }}>
+            {/* Lista de materiales */}
+            <div className="overflow-y-auto flex-1 px-5 py-2">
               {results.length === 0 ? (
-                <div className="py-10 text-center text-gray-400">
-                  <p className="text-sm">Has quitado todos los materiales de la lista.</p>
+                <div className="py-10 text-center">
+                  <div
+                    className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center"
+                    style={{ background: "rgba(255,255,255,0.05)" }}
+                  >
+                    <Package size={22} strokeWidth={1.5} style={{ color: "rgba(255,255,255,0.25)" }} />
+                  </div>
+                  <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>Lista de materiales vacía</p>
                   <button
                     type="button"
                     onClick={handleResetItems}
-                    className="mt-3 inline-flex items-center gap-1.5 text-xs text-orange-400 font-semibold hover:underline"
+                    className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                    style={{ color: "#F0731E" }}
                   >
-                    <RotateCcw size={14} strokeWidth={1.75} />
+                    <RotateCcw size={13} strokeWidth={2} />
                     Restablecer lista original
                   </button>
                 </div>
               ) : (
-                results.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between py-2.5 gap-3">
-                    <span className="text-sm text-white flex-1 min-w-0 pr-2">{item.name}</span>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="font-mono font-bold text-sm" style={{ color: "#F0731E" }}>
-                        {fmt(item.qty)} {item.unit}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveItem(idx)}
-                        className="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-white/10 active:scale-95 transition-all"
-                        title="Quitar este material antes de enviar"
-                        aria-label={`Eliminar ${item.name}`}
-                      >
-                        <Trash2 size={16} strokeWidth={1.75} />
-                      </button>
+                <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                  {results.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between py-3 gap-3">
+                      <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#F0731E", opacity: 0.7 }} />
+                        <span className="text-sm text-white truncate">{item.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className="font-mono font-bold text-sm px-2.5 py-1 rounded-lg"
+                          style={{ background: "rgba(240,115,30,0.12)", color: "#F0931E", border: "1px solid rgba(240,115,30,0.2)" }}
+                        >
+                          {fmt(item.qty)} {item.unit}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItem(idx)}
+                          className="w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-95"
+                          style={{ color: "rgba(255,255,255,0.3)" }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "rgba(239,68,68,0.12)"
+                            e.currentTarget.style.color = "#ef4444"
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = "transparent"
+                            e.currentTarget.style.color = "rgba(255,255,255,0.3)"
+                          }}
+                          title="Quitar material"
+                          aria-label={`Eliminar ${item.name}`}
+                        >
+                          <Trash2 size={14} strokeWidth={1.75} />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
             </div>
 
-            <div className="px-5 py-4 space-y-3 border-t" style={{ borderColor: "#1F2A40" }}>
+            {/* Footer con input y acciones */}
+            <div className="px-5 py-4 space-y-3" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
               <input
                 type="text"
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                placeholder="Tu nombre (requerido)"
-                className="w-full rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-gray-500 focus:outline-none"
-                style={{ background: "#111B2E", border: "1px solid #1F2A40" }}
+                placeholder="Tu nombre completo"
+                className="w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none transition-colors"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                }}
+                onFocus={(e) => (e.currentTarget.style.borderColor = "rgba(240,115,30,0.5)")}
+                onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
               />
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowResults(false)}
-                  className="flex-1 py-2.5 rounded-lg text-sm transition-colors"
-                  style={{ background: "#111B2E", border: "1px solid #1F2A40", color: "#E7ECF5" }}
+                  className="py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    color: "rgba(255,255,255,0.6)",
+                  }}
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSendWhatsApp}
                   disabled={results.length === 0}
-                  className="flex-1 py-2.5 rounded-lg text-sm font-bold text-white transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ background: "#25D366" }}
-                  onMouseEnter={(e) => {
-                    if (results.length > 0) (e.currentTarget as HTMLButtonElement).style.background = "#20bd5a"
-                  }}
-                  onMouseLeave={(e) => {
-                    if (results.length > 0) (e.currentTarget as HTMLButtonElement).style.background = "#25D366"
+                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
+                  style={{
+                    background: "linear-gradient(135deg, #25D366 0%, #1aad54 100%)",
+                    boxShadow: results.length > 0 ? "0 4px 16px rgba(37,211,102,0.35)" : "none",
                   }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                   </svg>
                   Enviar por WhatsApp
