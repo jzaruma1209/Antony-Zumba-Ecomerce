@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { Calculator } from "@/types"
 import { Calculator as CalculatorIcon, Package, X, Trash2, RotateCcw } from "lucide-react"
 
@@ -13,6 +14,53 @@ interface MaterialItem {
   name: string
   qty: number
   unit: string
+}
+
+function Skeleton({ className = "" }: { className?: string }) {
+  return (
+    <div className={`relative overflow-hidden bg-white/10 ${className}`}>
+      <motion.div
+        className="absolute inset-0"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent)" }}
+        animate={{ x: ["-100%", "100%"] }}
+        transition={{ duration: 1.3, repeat: Infinity, ease: "linear" }}
+      />
+    </div>
+  )
+}
+
+function CalculatorSkeleton() {
+  return (
+    <div
+      className="relative w-full overflow-hidden text-white"
+      style={{ background: "linear-gradient(145deg, #1a3a8a 0%, #1535cc 40%, #0d1f6e 100%)" }}
+    >
+      <div className="flex flex-col gap-4 p-5">
+        <div className="flex items-center gap-3">
+          <Skeleton className="w-9 h-9 flex-shrink-0" />
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-3 w-40" />
+            <Skeleton className="h-2.5 w-28" />
+          </div>
+        </div>
+
+        <div className="h-px w-full" style={{ background: "rgba(255,255,255,0.08)" }} />
+
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-2.5 w-32" />
+            <Skeleton className="h-[42px] w-full" />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-2.5 w-36" />
+            <Skeleton className="h-[42px] w-full" />
+          </div>
+        </div>
+
+        <Skeleton className="h-[46px] w-full mt-1" />
+      </div>
+    </div>
+  )
 }
 
 export function DynamicCalculatorSection() {
@@ -121,17 +169,9 @@ export function DynamicCalculatorSection() {
     window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, "_blank")
   }
 
-  if (loading) {
+  if (!loading && calculators.length === 0) {
     return (
-      <div className="h-full w-full rounded-xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white">
-        <p>Cargando calculadora...</p>
-      </div>
-    )
-  }
-
-  if (calculators.length === 0) {
-    return (
-      <div className="h-full w-full rounded-xl bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white">
+      <div className="h-full w-full bg-gradient-to-br from-blue-600 to-blue-900 flex items-center justify-center text-white">
         <p>No hay calculadoras disponibles</p>
       </div>
     )
@@ -141,8 +181,18 @@ export function DynamicCalculatorSection() {
 
   return (
     <>
-      <article
-        className="relative w-full overflow-hidden rounded-2xl text-white select-none"
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div key="skeleton" exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+            <CalculatorSkeleton />
+          </motion.div>
+        ) : (
+      <motion.article
+        key="form"
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
+        className="relative w-full overflow-hidden text-white select-none"
         style={{
           background: "linear-gradient(145deg, #1a3a8a 0%, #1535cc 40%, #0d1f6e 100%)",
           boxShadow: "0 24px 48px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1)",
@@ -157,8 +207,8 @@ export function DynamicCalculatorSection() {
           {/* Header */}
           <div className="flex items-center gap-3">
             <div
-              className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
-              style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}
+              className="flex-shrink-0 w-9 h-9 flex items-center justify-center"
+              style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.15)" }}
             >
               <CalculatorIcon size={18} strokeWidth={1.75} className="text-white" />
             </div>
@@ -185,7 +235,7 @@ export function DynamicCalculatorSection() {
                 <select
                   value={selectedCalcId}
                   onChange={(e) => setSelectedCalcId(e.target.value)}
-                  className="w-full rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none cursor-pointer appearance-none pr-8"
+                  className="w-full px-3 py-2.5 text-sm text-white focus:outline-none cursor-pointer appearance-none pr-8"
                   style={{
                     background: "rgba(255,255,255,0.08)",
                     border: "1px solid rgba(255,255,255,0.15)",
@@ -218,7 +268,7 @@ export function DynamicCalculatorSection() {
                   placeholder="Ej: 15.00"
                   step="0.1"
                   min="0.1"
-                  className="w-full rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
+                  className="w-full px-3 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none"
                   style={{
                     background: "rgba(255,255,255,0.08)",
                     border: "1px solid rgba(255,255,255,0.15)",
@@ -238,7 +288,7 @@ export function DynamicCalculatorSection() {
           {/* Botón */}
           <button
             onClick={handleCalc}
-            className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3 rounded-xl transition-all active:scale-95 mt-1"
+            className="w-full flex items-center justify-center gap-2 font-bold text-sm py-3 transition-all active:scale-95 mt-1"
             style={{
               background: "linear-gradient(135deg, #FF7A1E 0%, #F0531E 100%)",
               boxShadow: "0 4px 16px rgba(240,83,30,0.45), inset 0 1px 0 rgba(255,255,255,0.15)",
@@ -251,12 +301,14 @@ export function DynamicCalculatorSection() {
             <span style={{ opacity: 0.8 }}>→</span>
           </button>
         </div>
-      </article>
+      </motion.article>
+        )}
+      </AnimatePresence>
 
       {showResults && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: "rgba(2,4,15,0.88)", backdropFilter: "blur(8px)" }}>
           <div
-            className="w-full rounded-2xl overflow-hidden"
+            className="w-full overflow-hidden"
             style={{
               maxWidth: 500,
               maxHeight: "90vh",
@@ -272,7 +324,7 @@ export function DynamicCalculatorSection() {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                    className="w-9 h-9 flex items-center justify-center flex-shrink-0"
                     style={{ background: "rgba(240,115,30,0.15)", border: "1px solid rgba(240,115,30,0.3)" }}
                   >
                     <Package size={18} strokeWidth={1.75} style={{ color: "#F0731E" }} />
@@ -281,7 +333,7 @@ export function DynamicCalculatorSection() {
                     <h3 className="text-sm font-extrabold text-white leading-tight">{selectedCalc?.name}</h3>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span
-                        className="text-[11px] font-mono px-2 py-0.5 rounded-full"
+                        className="text-[11px] font-mono px-2 py-0.5"
                         style={{ background: "rgba(255,255,255,0.07)", color: "rgba(180,200,255,0.8)" }}
                       >
                         {fmt(parseFloat(area))} m²
@@ -305,7 +357,7 @@ export function DynamicCalculatorSection() {
                 </div>
                 <button
                   onClick={() => setShowResults(false)}
-                  className="w-8 h-8 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
+                  className="w-8 h-8 flex items-center justify-center transition-colors flex-shrink-0"
                   style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.5)" }}
                   aria-label="Cerrar"
                 >
@@ -319,7 +371,7 @@ export function DynamicCalculatorSection() {
               {results.length === 0 ? (
                 <div className="py-10 text-center">
                   <div
-                    className="w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center"
+                    className="w-12 h-12 mx-auto mb-3 flex items-center justify-center"
                     style={{ background: "rgba(255,255,255,0.05)" }}
                   >
                     <Package size={22} strokeWidth={1.5} style={{ color: "rgba(255,255,255,0.25)" }} />
@@ -340,12 +392,12 @@ export function DynamicCalculatorSection() {
                   {results.map((item, idx) => (
                     <div key={idx} className="flex items-center justify-between py-3 gap-3">
                       <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#F0731E", opacity: 0.7 }} />
+                        <div className="w-1.5 h-1.5 flex-shrink-0" style={{ background: "#F0731E", opacity: 0.7 }} />
                         <span className="text-sm text-white truncate">{item.name}</span>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span
-                          className="font-mono font-bold text-sm px-2.5 py-1 rounded-lg"
+                          className="font-mono font-bold text-sm px-2.5 py-1"
                           style={{ background: "rgba(240,115,30,0.12)", color: "#F0931E", border: "1px solid rgba(240,115,30,0.2)" }}
                         >
                           {fmt(item.qty)} {item.unit}
@@ -353,7 +405,7 @@ export function DynamicCalculatorSection() {
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(idx)}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center transition-all active:scale-95"
+                          className="w-7 h-7 flex items-center justify-center transition-all active:scale-95"
                           style={{ color: "rgba(255,255,255,0.3)" }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.background = "rgba(239,68,68,0.12)"
@@ -382,7 +434,7 @@ export function DynamicCalculatorSection() {
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
                 placeholder="Tu nombre completo"
-                className="w-full rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none transition-colors"
+                className="w-full px-4 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none transition-colors"
                 style={{
                   background: "rgba(255,255,255,0.05)",
                   border: "1px solid rgba(255,255,255,0.1)",
@@ -393,7 +445,7 @@ export function DynamicCalculatorSection() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowResults(false)}
-                  className="py-2.5 px-4 rounded-xl text-sm font-medium transition-colors"
+                  className="py-2.5 px-4 text-sm font-medium transition-colors"
                   style={{
                     background: "rgba(255,255,255,0.05)",
                     border: "1px solid rgba(255,255,255,0.08)",
@@ -405,7 +457,7 @@ export function DynamicCalculatorSection() {
                 <button
                   onClick={handleSendWhatsApp}
                   disabled={results.length === 0}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
+                  className="flex-1 py-2.5 text-sm font-bold text-white transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
                   style={{
                     background: "linear-gradient(135deg, #25D366 0%, #1aad54 100%)",
                     boxShadow: results.length > 0 ? "0 4px 16px rgba(37,211,102,0.35)" : "none",

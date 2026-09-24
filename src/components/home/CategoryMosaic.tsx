@@ -3,6 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 import { X } from "lucide-react"
 import { DynamicCalculatorSection } from "@/components/home/DynamicCalculatorSection"
 
@@ -20,6 +22,8 @@ interface MosaicCard {
   tone: "dark" | "light" | "brand"
   /** ajuste de imagen: cover o contain para verla completa */
   imageFit?: "cover" | "contain"
+  /** al hacer clic, cubre la pantalla con una cortina antes de navegar */
+  curtain?: boolean
 }
 
 const cards: MosaicCard[] = [
@@ -42,6 +46,7 @@ const cards: MosaicCard[] = [
     wide: true,
     tone: "brand",
     imageFit: "contain",
+    curtain: true,
   },
   {
     overline: "En Casa",
@@ -95,51 +100,67 @@ const toneStyles: Record<
 }
 
 export function CategoryMosaic() {
+  const router = useRouter()
   const [openCalc, setOpenCalc] = useState(false)
+  const [curtainHref, setCurtainHref] = useState<string | null>(null)
+
+  function handleCurtainNavigate(href: string) {
+    setCurtainHref(href)
+    // navega cuando la cortina ya cubrió toda la pantalla + una pausa breve
+    setTimeout(() => router.push(href), 650)
+  }
 
   return (
     <section className="container mx-auto px-4 pt-4 pb-3">
       <div className="grid grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4">
-        {/* Tarjeta destacada: abre la calculadora en popup */}
-        <button
-          type="button"
-          onClick={() => setOpenCalc(true)}
-          className="col-span-1 lg:col-span-3 group relative overflow-hidden rounded-md text-left h-[150px] sm:h-[178px] transition-transform active:scale-[0.99] hover:-translate-y-0.5"
-          style={{ background: "linear-gradient(160deg, #2E6BFF 0%, #1E4FD6 55%, #0a1a3a 100%)" }}
-        >
-          <div
-            className="absolute -right-10 -top-10 size-36 rounded-full pointer-events-none"
-            style={{ background: "rgba(255,255,255,0.18)", filter: "blur(28px)" }}
-          />
-          <div className="absolute -right-3 -bottom-5 sm:-right-2 sm:-bottom-4 w-28 sm:w-36 h-36 sm:h-44 pointer-events-none transition-transform duration-300 group-hover:scale-105">
-            <Image
-              src="https://res.cloudinary.com/dxkmtbde/image/upload/v1789012176/basictech/media/general/nfxz6pdjr7z9uiyuihda.png"
-              alt="Calculadora de Materiales"
-              fill
-              sizes="(max-width: 1024px) 140px, 160px"
-              className="object-contain drop-shadow-2xl"
-            />
-          </div>
-          <div className="relative z-10 flex h-full flex-col p-4 sm:p-5">
-            <span className="text-[11px] font-medium text-white/60">Cotiza al instante</span>
-            <h3 className="text-base sm:text-lg font-bold leading-tight text-white">Calculadora de</h3>
-            <p className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-white/90">
-              MATERIALES
-            </p>
-            <span className="mt-auto inline-flex w-fit items-center rounded-full bg-brand-orange px-4 py-1.5 text-xs font-semibold text-white shadow-md">
-              Calcular
-            </span>
-          </div>
-        </button>
+        {/* Tarjeta destacada: se expande en su lugar hacia la calculadora (shared layout animation) */}
+        <div className="col-span-1 lg:col-span-3 relative h-[150px] sm:h-[178px]">
+          {!openCalc && (
+            <motion.button
+              layoutId="calc-card"
+              type="button"
+              onClick={() => setOpenCalc(true)}
+              className="group absolute inset-0 overflow-hidden text-left"
+              style={{
+                background: "linear-gradient(160deg, #2E6BFF 0%, #1E4FD6 55%, #0a1a3a 100%)",
+                borderRadius: 0,
+              }}
+              whileHover={{ y: -2, transition: { duration: 0.15 } }}
+              whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+              transition={{ type: "spring", stiffness: 110, damping: 18 }}
+            >
+              <div
+                className="absolute -right-10 -top-10 size-36 rounded-full pointer-events-none"
+                style={{ background: "rgba(255,255,255,0.18)", filter: "blur(28px)" }}
+              />
+              <div className="absolute -right-3 -bottom-5 sm:-right-2 sm:-bottom-4 w-28 sm:w-36 h-36 sm:h-44 pointer-events-none transition-transform duration-300 group-hover:scale-105">
+                <Image
+                  src="https://res.cloudinary.com/dxkmtbde/image/upload/v1789012176/basictech/media/general/nfxz6pdjr7z9uiyuihda.png"
+                  alt="Calculadora de Materiales"
+                  fill
+                  sizes="(max-width: 1024px) 140px, 160px"
+                  className="object-contain drop-shadow-2xl"
+                />
+              </div>
+              <div className="relative z-10 flex h-full flex-col p-4 sm:p-5">
+                <span className="text-[11px] font-medium text-white/60">Cotiza al instante</span>
+                <h3 className="text-base sm:text-lg font-bold leading-tight text-white">Calculadora de</h3>
+                <p className="text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-white/90">
+                  MATERIALES
+                </p>
+                <span className="mt-auto inline-flex w-fit items-center rounded-full bg-brand-orange px-4 py-1.5 text-xs font-semibold text-white shadow-md">
+                  Calcular
+                </span>
+              </div>
+            </motion.button>
+          )}
+        </div>
 
         {cards.map((card) => {
           const t = toneStyles[card.tone]
-          return (
-            <Link
-              key={card.accent}
-              href={card.href}
-              className={`${card.span} group relative overflow-hidden rounded-md h-[150px] sm:h-[178px] ${t.bg} transition-transform hover:-translate-y-0.5`}
-            >
+          const cardClassName = `${card.span} group relative overflow-hidden rounded-md h-[150px] sm:h-[178px] ${t.bg} text-left transition-transform hover:-translate-y-0.5`
+          const cardContent = (
+            <>
               {/* Panel de imagen a la derecha, nítido y visible */}
               <div
                 className={`absolute right-2 sm:right-3 top-2 sm:top-3 bottom-2 sm:bottom-3 overflow-hidden rounded-sm ${
@@ -183,37 +204,91 @@ export function CategoryMosaic() {
                   Explorar
                 </span>
               </div>
+            </>
+          )
+
+          if (card.curtain) {
+            return (
+              <button
+                key={card.accent}
+                type="button"
+                onClick={() => handleCurtainNavigate(card.href)}
+                className={cardClassName}
+              >
+                {cardContent}
+              </button>
+            )
+          }
+
+          return (
+            <Link key={card.accent} href={card.href} className={cardClassName}>
+              {cardContent}
             </Link>
           )
         })}
       </div>
 
-      {/* Popup de la calculadora */}
-      {openCalc && (
-        <div
-          className="fixed inset-0 z-40 flex items-center justify-center p-4"
-          style={{ background: "rgba(2,4,10,0.82)", backdropFilter: "blur(5px)" }}
-          onClick={() => setOpenCalc(false)}
-        >
-          <div
-            className="relative w-full max-w-sm"
-            onClick={(e) => e.stopPropagation()}
+      {/* Popup de la calculadora: la tarjeta se transforma en este contenedor */}
+      <AnimatePresence>
+        {openCalc && (
+          <motion.div
+            className="fixed inset-0 z-40 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.36 }}
+            style={{ background: "rgba(2,4,10,0.82)", backdropFilter: "blur(5px)" }}
+            onClick={() => setOpenCalc(false)}
           >
-            <button
-              type="button"
-              onClick={() => setOpenCalc(false)}
-              className="absolute -top-9 right-0 z-10 flex items-center gap-1 text-xs text-white/70 hover:text-white transition-colors"
-              aria-label="Cerrar calculadora"
+            <motion.div
+              layoutId="calc-card"
+              className="relative w-full max-w-sm overflow-hidden"
+              style={{ borderRadius: 0 }}
+              transition={{ type: "spring", stiffness: 93, damping: 17 }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <X size={16} strokeWidth={1.75} />
-              Cerrar
-            </button>
-            <div className="w-full">
+              <button
+                type="button"
+                onClick={() => setOpenCalc(false)}
+                className="absolute right-3 top-3 z-20 flex items-center justify-center w-8 h-8 text-white/70 hover:text-white transition-colors"
+                style={{ background: "rgba(255,255,255,0.1)" }}
+                aria-label="Cerrar calculadora"
+              >
+                <X size={16} strokeWidth={1.75} />
+              </button>
               <DynamicCalculatorSection />
-            </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cortina de página: entra en diagonal desde el costado en rojo de marca antes de navegar a Herramientas */}
+      <AnimatePresence>
+        {curtainHref && (
+          <div className="fixed inset-0 z-50 overflow-hidden pointer-events-none">
+            <motion.div
+              className="absolute inset-y-0 left-0"
+              style={{
+                width: "140%",
+                background: "#D93025",
+                skewX: -20,
+                transformOrigin: "top left",
+              }}
+              initial={{ x: "-100%" }}
+              animate={{ x: "0%" }}
+              transition={{ duration: 0.55, ease: [0.65, 0, 0.35, 1] }}
+            />
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.25 }}
+            >
+              <span className="text-xl font-extrabold tracking-tight text-white">HERRAMIENTAS</span>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </section>
   )
 }

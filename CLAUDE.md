@@ -64,6 +64,10 @@ Las calculadoras de materiales son **completamente configurables desde el admin*
 
 Ver [CALCULATORS.md](./CALCULATORS.md) para documentación detallada.
 
+## Animaciones (Motion)
+
+Para replicar el patrón "Bento Grid Expandible" (card que se transforma en modal con `layoutId`) o el "Skeleton Loader" (placeholders con shimmer), sigue estrictamente las reglas y plantillas del skill [.claude/skills/motion-bento-skeleton/SKILL.md](./.claude/skills/motion-bento-skeleton/SKILL.md). No improvises variantes nuevas de estos patrones.
+
 ## Rules
 
 - Al momento de crear datos nuevos no uses Modales, usa paginas dedicadas para los formularios 
