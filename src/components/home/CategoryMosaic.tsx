@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
@@ -22,8 +21,8 @@ interface MosaicCard {
   tone: "dark" | "light" | "brand"
   /** ajuste de imagen: cover o contain para verla completa */
   imageFit?: "cover" | "contain"
-  /** al hacer clic, cubre la pantalla con una cortina antes de navegar */
-  curtain?: boolean
+  /** al hacer clic, cubre la pantalla con una cortina de este color antes de navegar */
+  curtain: { bg: string; text: string }
 }
 
 const cards: MosaicCard[] = [
@@ -35,6 +34,7 @@ const cards: MosaicCard[] = [
     image: "https://res.cloudinary.com/dxkmtbde/image/upload/v1788980567/basictech/media/general/p4exapcgkhtif2341fgb.png",
     span: "col-span-1 lg:col-span-3",
     tone: "light",
+    curtain: { bg: "#F47B20", text: "#FFFFFF" },
   },
   {
     overline: "Tendencia",
@@ -46,7 +46,7 @@ const cards: MosaicCard[] = [
     wide: true,
     tone: "brand",
     imageFit: "contain",
-    curtain: true,
+    curtain: { bg: "#D93025", text: "#FFFFFF" },
   },
   {
     overline: "En Casa",
@@ -58,6 +58,7 @@ const cards: MosaicCard[] = [
     wide: true,
     tone: "dark",
     imageFit: "contain",
+    curtain: { bg: "#111827", text: "#FFFFFF" },
   },
   {
     overline: "Diseño & Lujo",
@@ -69,6 +70,7 @@ const cards: MosaicCard[] = [
     wide: true,
     tone: "light",
     imageFit: "contain",
+    curtain: { bg: "#F1F5F9", text: "#F47B20" },
   },
 ]
 
@@ -102,12 +104,13 @@ const toneStyles: Record<
 export function CategoryMosaic() {
   const router = useRouter()
   const [openCalc, setOpenCalc] = useState(false)
-  const [curtainHref, setCurtainHref] = useState<string | null>(null)
+  const [curtainCard, setCurtainCard] = useState<MosaicCard | null>(null)
 
-  function handleCurtainNavigate(href: string) {
-    setCurtainHref(href)
+  function handleCurtainNavigate(card: MosaicCard) {
+    if (curtainCard) return
+    setCurtainCard(card)
     // navega cuando la cortina ya cubrió toda la pantalla + una pausa breve
-    setTimeout(() => router.push(href), 650)
+    setTimeout(() => router.push(card.href), 650)
   }
 
   return (
@@ -207,23 +210,15 @@ export function CategoryMosaic() {
             </>
           )
 
-          if (card.curtain) {
-            return (
-              <button
-                key={card.accent}
-                type="button"
-                onClick={() => handleCurtainNavigate(card.href)}
-                className={cardClassName}
-              >
-                {cardContent}
-              </button>
-            )
-          }
-
           return (
-            <Link key={card.accent} href={card.href} className={cardClassName}>
+            <button
+              key={card.accent}
+              type="button"
+              onClick={() => handleCurtainNavigate(card)}
+              className={cardClassName}
+            >
               {cardContent}
-            </Link>
+            </button>
           )
         })}
       </div>
@@ -262,15 +257,15 @@ export function CategoryMosaic() {
         )}
       </AnimatePresence>
 
-      {/* Cortina de página: entra en diagonal desde el costado en rojo de marca antes de navegar a Herramientas */}
+      {/* Cortina de página: entra en diagonal desde el costado con el color de la categoría antes de navegar */}
       <AnimatePresence>
-        {curtainHref && (
+        {curtainCard && (
           <div className="fixed inset-0 z-50 overflow-hidden pointer-events-none">
             <motion.div
               className="absolute inset-y-0 left-0"
               style={{
                 width: "140%",
-                background: "#D93025",
+                background: curtainCard.curtain.bg,
                 skewX: -20,
                 transformOrigin: "top left",
               }}
@@ -284,7 +279,12 @@ export function CategoryMosaic() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.25 }}
             >
-              <span className="text-xl font-extrabold tracking-tight text-white">HERRAMIENTAS</span>
+              <span
+                className="text-xl font-extrabold tracking-tight"
+                style={{ color: curtainCard.curtain.text }}
+              >
+                {curtainCard.accent}
+              </span>
             </motion.div>
           </div>
         )}

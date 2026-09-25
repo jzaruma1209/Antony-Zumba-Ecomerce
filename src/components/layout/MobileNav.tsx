@@ -2,16 +2,16 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Menu, User, Heart, Package, Building2, PanelTop, Layers, Grid3x3, Frame, LayoutDashboard, Lightbulb, RectangleHorizontal, Wrench } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { User, Heart, Package, Building2, PanelTop, Layers, Grid3x3, Frame, LayoutDashboard, Lightbulb, RectangleHorizontal, Wrench } from "lucide-react"
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
+import { socialLinks } from "@/lib/social"
 import type { Category } from "@/types"
 
 const iconMap: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
@@ -27,18 +27,17 @@ const iconMap: Record<string, React.ComponentType<{ className?: string; strokeWi
   Package,
 }
 
-export function MobileNav({ categories = [] }: { categories?: Category[] }) {
-  const [open, setOpen] = React.useState(false)
+interface MobileNavProps {
+  categories?: Category[]
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
 
+// El botón que lo abre es "Menú" en la barra inferior (MobileBottomNav)
+export function MobileNav({ categories = [], open, onOpenChange: setOpen }: MobileNavProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-9 w-9 md:hidden">
-          <Menu className="h-4 w-4" strokeWidth={1.75} />
-          <span className="sr-only">Menu</span>
-        </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="w-[300px] sm:w-[350px]">
+      <SheetContent side="left" className="w-[300px] sm:w-[350px] overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-left">Menu</SheetTitle>
         </SheetHeader>
@@ -46,7 +45,7 @@ export function MobileNav({ categories = [] }: { categories?: Category[] }) {
           {/* User Actions */}
           <div className="flex flex-col gap-2">
             <Link
-              href="/account"
+              href="/profile"
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
             >
@@ -54,7 +53,7 @@ export function MobileNav({ categories = [] }: { categories?: Category[] }) {
               Mi Cuenta
             </Link>
             <Link
-              href="/favorites"
+              href="/profile/favorites"
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
             >
@@ -62,7 +61,7 @@ export function MobileNav({ categories = [] }: { categories?: Category[] }) {
               Favoritos
             </Link>
             <Link
-              href="/orders"
+              href="/profile/orders"
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent"
             >
@@ -124,6 +123,30 @@ export function MobileNav({ categories = [] }: { categories?: Category[] }) {
             >
               Ver Todos los Productos
             </Link>
+          </div>
+
+          <Separator />
+
+          {/* Redes sociales: en celular reemplazan a los botones flotantes */}
+          <div className="flex items-center justify-center gap-3 pb-4">
+            {socialLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.label}
+                title={link.label}
+                className={cn(
+                  "flex h-11 w-11 items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-110",
+                  link.className
+                )}
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden>
+                  {link.icon}
+                </svg>
+              </a>
+            ))}
           </div>
         </div>
       </SheetContent>

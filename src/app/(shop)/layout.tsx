@@ -3,6 +3,7 @@ import { TopBar } from "@/components/layout/TopBar"
 import { Header } from "@/components/layout/Header"
 import { Footer } from "@/components/layout/Footer"
 import { WhatsAppFloat } from "@/components/layout/WhatsAppFloat"
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav"
 import { getCategories, getBestSellingProducts } from "@/lib/queries"
 
 // Igual que en la home: refresco mínimo para no dejar categorías/menú
@@ -21,7 +22,8 @@ export default async function ShopLayout({
   ])
 
   return (
-    <div className="min-h-screen flex flex-col">
+    // En celular se deja espacio abajo para la barra de navegación fija
+    <div className="min-h-screen flex flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">
       <TopBar />
       <Suspense fallback={null}>
         <Header categories={categories} />
@@ -29,6 +31,7 @@ export default async function ShopLayout({
       <main className="flex-1">{children}</main>
       <Footer products={bestSellers} />
       <WhatsAppFloat />
+      <MobileBottomNav categories={categories} />
     </div>
   )
 }

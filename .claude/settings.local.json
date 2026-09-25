@@ -49,7 +49,8 @@
       "WebSearch",
       "PowerShell(New-Item *)",
       "PowerShell(Remove-Item *)",
-      "Bash(mkdir -p \".claude/skills/motion-bento-skeleton\")"
+      "Bash(mkdir -p \".claude/skills/motion-bento-skeleton\")",
+      "Bash(cp \"C:/Users/jzaru/AppData/Local/Temp/claude/C--Users-jzaru-OneDrive-Desktop-paul-cauralis-Antony-Zumba-ecomerce-Antony-Ecomerce/9b821350-aee2-4e31-809d-5b00d20dfcce/scratchpad/propuesta-mosaico.html\" \"C:/Users/jzaru/OneDrive/Desktop/paul/cauralis/Antony Zumba ecomerce/Antony Ecomerce/public/zz-propuesta-tmp.html\")"
     ]
   },
   "disabledMcpjsonServers": [

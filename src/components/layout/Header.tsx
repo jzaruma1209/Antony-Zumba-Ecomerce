@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ThemeToggle } from "./ThemeToggle"
-import { MobileNav } from "./MobileNav"
 import { SearchSuggestionsDropdown } from "./SearchSuggestionsDropdown"
 import { useCartStore } from "@/stores/cart-store"
 import { useFavoritesStore } from "@/stores/favorites-store"
@@ -31,14 +30,12 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
   const [searchQuery, setSearchQuery] = useState("")
   const [mounted, setMounted] = useState(false)
   const [isHidden, setIsHidden] = useState(false)
-  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false)
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [suggestionsLoading, setSuggestionsLoading] = useState(false)
   const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([])
   const [suggestedCategories, setSuggestedCategories] = useState<Category[]>([])
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const mobileSearchContainerRef = useRef<HTMLDivElement>(null)
-  const mobileInputRef = useRef<HTMLInputElement>(null)
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
   const lastScrollY = useRef(0)
   const itemCount = useCartStore((state) => state.getItemCount())
@@ -128,16 +125,6 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
     if (searchParams.get("search")) {
       router.push("/products")
     }
-  }
-
-  const toggleMobileSearch = () => {
-    setIsMobileSearchOpen((prev) => {
-      const next = !prev
-      if (next) {
-        setTimeout(() => mobileInputRef.current?.focus(), 100)
-      }
-      return next
-    })
   }
 
   const handleScroll = useCallback(() => {
@@ -342,10 +329,10 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm text-white transition-all hover:brightness-110 hover:shadow-lg active:scale-95 shrink-0"
-                  style={{ backgroundColor: "#F47B20" }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold text-base text-white transition-all hover:brightness-110 hover:shadow-lg active:scale-95 shrink-0"
+                  style={{ backgroundColor: "#25D366" }}
                 >
-                  <svg className="h-4 w-4 fill-white" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 fill-white" viewBox="0 0 24 24">
                     {socialLinks[0].icon}
                   </svg>
                   COTIZAR
@@ -416,8 +403,19 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
         </div>
 
         {/* ── MOBILE HEADER ────────────────────────────────────────── */}
-        <div className="flex md:hidden h-14 items-center justify-between gap-3">
-          <Link href="/" className="flex items-center shrink-0" aria-label="TumbadosZumba">
+        {/* Cuenta | Logo centrado | Contáctanos (estilo app) */}
+        <div className="grid md:hidden grid-cols-[4.5rem_1fr_4.5rem] h-14 items-center">
+          <Link
+            href={session ? "/profile" : "/login"}
+            className="flex flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <User className="h-5 w-5 text-primary" strokeWidth={1.75} />
+            <span className="max-w-full truncate" translate="no">
+              {mounted && session ? session.user?.name?.split(" ")[0] : "Cuenta"}
+            </span>
+          </Link>
+
+          <Link href="/" className="flex items-center justify-center" aria-label="TumbadosZumba">
             <Image
               src="/logo-light.png"
               alt="TumbadosZumba"
@@ -436,30 +434,24 @@ export function Header({ categories = [] }: { categories?: Category[] }) {
             />
           </Link>
 
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={toggleMobileSearch}
-              aria-label="Alternar barra de búsqueda"
-            >
-              <Search className="h-4 w-4" strokeWidth={1.75} />
-              <span className="sr-only">Buscar</span>
-            </Button>
-            <MobileNav categories={categories} />
-          </div>
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-[#25D366] transition-opacity hover:opacity-80"
+          >
+            <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24" aria-hidden>
+              {socialLinks[0].icon}
+            </svg>
+            <span>Contáctanos</span>
+          </a>
         </div>
 
-        {/* Mobile Search Bar */}
-        <div
-          ref={mobileSearchContainerRef}
-          className={`pb-3 md:hidden transition-all duration-200 relative ${isMobileSearchOpen ? "block" : "hidden"}`}
-        >
+        {/* Mobile Search Bar (siempre visible) */}
+        <div ref={mobileSearchContainerRef} className="pb-3 md:hidden relative">
           <form onSubmit={handleSearchSubmit} className="relative w-full">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" strokeWidth={1.75} />
             <Input
-              ref={mobileInputRef}
               type="search"
               value={searchQuery}
               onChange={(e) => handleQueryChange(e.target.value)}

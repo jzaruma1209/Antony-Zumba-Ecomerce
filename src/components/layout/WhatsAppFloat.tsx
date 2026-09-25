@@ -33,7 +33,8 @@ export function WhatsAppFloat() {
 
   return (
     <>
-      <div className="fixed bottom-5 right-5 z-50 flex items-center gap-3 print:hidden">
+      {/* En celular se ocultan: WhatsApp va en el header y las redes en el Menú */}
+      <div className="fixed bottom-5 right-5 z-50 hidden md:flex items-center gap-3 print:hidden">
         {links.map((link, i) => {
           const isWhatsApp = link.label.toLowerCase().includes("whatsapp")
 
