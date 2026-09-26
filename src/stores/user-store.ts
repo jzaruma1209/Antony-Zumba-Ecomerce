@@ -41,6 +41,22 @@ interface UserProfile {
   avatar?: string
 }
 
+interface ProformaItem {
+  id: string
+  name: string
+  unit: string
+  quantity: number
+}
+
+interface Proforma {
+  id: string
+  status: string
+  area: number
+  createdAt: string
+  calculator: { id: string; name: string }
+  items: ProformaItem[]
+}
+
 interface AddressInput {
   label: string
   name: string
@@ -56,12 +72,14 @@ interface UserState {
   profile: UserProfile | null
   addresses: Address[]
   orders: Order[]
+  proformas: Proforma[]
   loading: boolean
   error: string | null
   // Actions
   setProfile: (profile: UserProfile) => void
   fetchAddresses: () => Promise<void>
   fetchOrders: () => Promise<void>
+  fetchProformas: () => Promise<void>
   createAddress: (data: AddressInput) => Promise<Address>
   updateAddress: (id: string, data: AddressInput) => Promise<Address>
   deleteAddress: (id: string) => Promise<void>
@@ -71,6 +89,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   profile: null,
   addresses: [],
   orders: [],
+  proformas: [],
   loading: false,
   error: null,
 
@@ -95,6 +114,18 @@ export const useUserStore = create<UserState>((set, get) => ({
       if (!response.ok) throw new Error("Error fetching orders")
       const orders = await response.json()
       set({ orders, loading: false })
+    } catch (error) {
+      set({ error: (error as Error).message, loading: false })
+    }
+  },
+
+  fetchProformas: async () => {
+    set({ loading: true, error: null })
+    try {
+      const response = await fetch("/api/proformas")
+      if (!response.ok) throw new Error("Error fetching proformas")
+      const data = await response.json()
+      set({ proformas: data.proformas, loading: false })
     } catch (error) {
       set({ error: (error as Error).message, loading: false })
     }

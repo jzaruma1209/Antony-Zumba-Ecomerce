@@ -7,7 +7,7 @@ import type {
 
 type ProductWithRelations = PrismaProduct & {
   category: PrismaCategory
-  brand: PrismaBrand
+  brand: PrismaBrand | null
 }
 
 type CategoryWithCount = PrismaCategory & {
@@ -23,10 +23,10 @@ export function transformProduct(product: ProductWithRelations): Product {
     id: product.id,
     name: product.name,
     slug: product.slug,
-    brand: product.brand.name,
+    brand: product.brand?.name ?? "",
     category: product.category.slug,
     categoryId: product.categoryId,
-    brandId: product.brandId,
+    brandId: product.brandId ?? undefined,
     isActive: product.isActive,
     price: Number(product.price),
     originalPrice: product.comparePrice ? Number(product.comparePrice) : undefined,

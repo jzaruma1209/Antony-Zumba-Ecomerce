@@ -12,6 +12,7 @@ interface Material {
   name: string
   unit: string
   yield: string
+  unitPrice: string
 }
 
 export default function NewCalculatorPage() {
@@ -21,12 +22,12 @@ export default function NewCalculatorPage() {
   const [description, setDescription] = useState('')
   const [area, setArea] = useState('32')
   const [materials, setMaterials] = useState<Material[]>([
-    { name: 'Plancha', unit: 'plancha', yield: '0.35' },
-    { name: 'Ángulos', unit: 'und', yield: '0.60' },
+    { name: 'Plancha', unit: 'plancha', yield: '0.35', unitPrice: '' },
+    { name: 'Ángulos', unit: 'und', yield: '0.60', unitPrice: '' },
   ])
 
   const addMaterial = () => {
-    setMaterials([...materials, { name: '', unit: '', yield: '' }])
+    setMaterials([...materials, { name: '', unit: '', yield: '', unitPrice: '' }])
   }
 
   const removeMaterial = (index: number) => {
@@ -69,7 +70,8 @@ export default function NewCalculatorPage() {
           materials: materials.map(m => ({
             name: m.name,
             unit: m.unit,
-            yield: parseFloat(m.yield)
+            yield: parseFloat(m.yield),
+            unitPrice: m.unitPrice ? parseFloat(m.unitPrice) : null
           }))
         })
       })
@@ -156,7 +158,7 @@ export default function NewCalculatorPage() {
             {materials.map((material, index) => (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-4 gap-3 p-4 bg-card border rounded-lg items-end"
+                className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 bg-card border rounded-lg items-end"
               >
                 <div>
                   <label className="text-xs font-medium text-muted-foreground">
@@ -192,6 +194,20 @@ export default function NewCalculatorPage() {
                     value={material.yield}
                     onChange={(e) => updateMaterial(index, 'yield', e.target.value)}
                     placeholder="0.35"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Precio unitario (opcional)
+                  </label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={material.unitPrice}
+                    onChange={(e) => updateMaterial(index, 'unitPrice', e.target.value)}
+                    placeholder="Ej: 8.50"
                     className="mt-1"
                   />
                 </div>

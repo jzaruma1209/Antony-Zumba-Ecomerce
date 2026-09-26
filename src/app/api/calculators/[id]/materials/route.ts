@@ -1,16 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
 
 type Params = Promise<{ id: string }>
+
+function parseUnitPrice(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') return null
+  const parsed = parseFloat(value as string)
+  return Number.isFinite(parsed) ? parsed : null
+}
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Params }
 ) {
+  const session = await auth()
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
+  }
+
   try {
     const { id } = await params
     const body = await req.json()
-    const { name, unit, yield: yieldValue } = body
+    const { name, unit, yield: yieldValue, unitPrice } = body
 
     const maxPosition = await prisma.calculatorMaterial.findFirst({
       where: { calculatorId: id },
@@ -25,6 +37,7 @@ export async function POST(
         name,
         unit,
         yield: parseFloat(yieldValue),
+        unitPrice: parseUnitPrice(unitPrice),
         position: newPosition,
         calculatorId: id
       }
@@ -44,10 +57,15 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Params }
 ) {
+  const session = await auth()
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
+  }
+
   try {
     await params
     const body = await req.json()
-    const { materialId, name, unit, yield: yieldValue, position } = body
+    const { materialId, name, unit, yield: yieldValue, position, unitPrice } = body
 
     const material = await prisma.calculatorMaterial.update({
       where: { id: materialId },
@@ -55,6 +73,7 @@ export async function PUT(
         name,
         unit,
         yield: parseFloat(yieldValue),
+        unitPrice: parseUnitPrice(unitPrice),
         position: parseInt(position)
       }
     })
@@ -73,6 +92,11 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Params }
 ) {
+  const session = await auth()
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
+  }
+
   try {
     await params
     const { searchParams } = new URL(req.url)

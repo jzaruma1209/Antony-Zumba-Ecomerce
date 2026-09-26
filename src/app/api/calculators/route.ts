@@ -1,12 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
 
+// Público: nunca incluir unitPrice aquí (lo consume la calculadora del home)
 export async function GET() {
   try {
     const calculators = await prisma.calculator.findMany({
-      include: {
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        area: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
         materials: {
-          orderBy: { position: 'asc' }
+          orderBy: { position: 'asc' },
+          select: {
+            id: true,
+            name: true,
+            unit: true,
+            yield: true,
+            position: true,
+            createdAt: true,
+            updatedAt: true,
+            calculatorId: true
+          }
         }
       },
       where: { isActive: true }
@@ -23,6 +43,11 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await auth()
+  if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 })
+  }
+
   try {
     const body = await req.json()
     const { name, description, area, materials } = body
@@ -40,6 +65,9 @@ export async function POST(req: NextRequest) {
             name: material.name,
             unit: material.unit,
             yield: parseFloat(material.yield),
+            unitPrice: material.unitPrice != null && material.unitPrice !== ''
+              ? parseFloat(material.unitPrice)
+              : null,
             position: index
           }))
         }

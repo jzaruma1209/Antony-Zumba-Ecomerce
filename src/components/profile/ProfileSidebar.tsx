@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { User, Package, MapPin, Heart, Settings, LogOut } from "lucide-react"
+import { User, Package, MapPin, Heart, Settings, LogOut, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -12,6 +12,7 @@ import { userProfile } from "@/data/mock-user"
 const navigation = [
   { name: "Mi Perfil", href: "/profile", icon: User },
   { name: "Mis Pedidos", href: "/profile/orders", icon: Package },
+  { name: "Mis Proformas", href: "/profile/proformas", icon: FileText },
   { name: "Direcciones", href: "/profile/addresses", icon: MapPin },
   { name: "Favoritos", href: "/profile/favorites", icon: Heart },
   { name: "Configuracion", href: "/profile/settings", icon: Settings },

@@ -37,6 +37,12 @@ enum PaymentMethod {
   CASH_ON_DELIVERY
 }
 
+enum ProformaStatus {
+  PENDIENTE
+  COTIZADA
+  ENVIADA
+}
+
 // ==================== MODELS ====================
 
 model User {
@@ -48,11 +54,13 @@ model User {
   avatar    String?
   role      UserRole   @default(CUSTOMER)
   status    UserStatus @default(ACTIVE)
+  deletedAt DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
   addresses Address[]
   orders    Order[]
+  proformas Proforma[]
 
   @@map("users")
 }
@@ -110,8 +118,8 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  brandId String
-  brand   Brand @relation(fields: [brandId], references: [id])
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id])
 
   orderItems OrderItem[]
 
@@ -216,6 +224,7 @@ model Calculator {
   updatedAt   DateTime @updatedAt
 
   materials   CalculatorMaterial[]
+  proformas   Proforma[]
 
   @@map("calculators")
 }
@@ -225,6 +234,7 @@ model CalculatorMaterial {
   name        String
   unit        String
   yield       Decimal  @db.Decimal(10, 4)
+  unitPrice   Decimal? @db.Decimal(10, 2)
   position    Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -232,8 +242,49 @@ model CalculatorMaterial {
   calculatorId String
   calculator   Calculator @relation(fields: [calculatorId], references: [id], onDelete: Cascade)
 
+  proformaItems ProformaItem[]
+
   @@index([calculatorId])
   @@map("calculator_materials")
+}
+
+model Proforma {
+  id           String         @id @default(cuid())
+  status       ProformaStatus @default(PENDIENTE)
+  area         Decimal        @db.Decimal(10, 2)
+  contactName  String?
+  contactPhone String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  calculatorId String
+  calculator   Calculator @relation(fields: [calculatorId], references: [id])
+
+  items ProformaItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("proformas")
+}
+
+model ProformaItem {
+  id        String   @id @default(cuid())
+  name      String
+  unit      String
+  quantity  Decimal  @db.Decimal(10, 2)
+  unitPrice Decimal? @db.Decimal(10, 2)
+
+  proformaId String
+  proforma   Proforma @relation(fields: [proformaId], references: [id], onDelete: Cascade)
+
+  materialId String?
+  material   CalculatorMaterial? @relation(fields: [materialId], references: [id], onDelete: SetNull)
+
+  @@index([proformaId])
+  @@map("proforma_items")
 }
 
 model MediaItem {

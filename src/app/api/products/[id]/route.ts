@@ -72,7 +72,7 @@ export async function PUT(
       warrantyPeriod: body.warranty && body.warrantyPeriod ? String(body.warrantyPeriod) : null,
       isActive: body.isActive !== undefined ? Boolean(body.isActive) : true,
       categoryId: String(body.categoryId),
-      brandId: String(body.brandId),
+      brandId: body.brandId ? String(body.brandId) : null,
     }
 
     const product = await prisma.product.update({

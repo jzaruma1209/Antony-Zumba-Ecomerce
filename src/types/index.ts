@@ -60,6 +60,7 @@ export interface CalculatorMaterial {
   unit: string
   yield: number
   position: number
+  unitPrice?: number | null
 }
 
 export interface Calculator {
@@ -70,4 +71,28 @@ export interface Calculator {
   area: number
   isActive: boolean
   materials: CalculatorMaterial[]
+}
+
+export type ProformaStatus = 'PENDIENTE' | 'COTIZADA' | 'ENVIADA'
+
+export interface ProformaItem {
+  id: string
+  name: string
+  unit: string
+  quantity: number
+  unitPrice?: number | null
+  total?: number
+}
+
+export interface Proforma {
+  id: string
+  status: ProformaStatus
+  area: number
+  contactName?: string | null
+  contactPhone?: string | null
+  createdAt: string
+  calculator: { id: string; name: string }
+  items: ProformaItem[]
+  user?: { id: string; name: string; email: string; phone?: string | null }
+  total?: number
 }

@@ -20,12 +20,17 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get("limit")
     const offset = searchParams.get("offset")
     const search = searchParams.get("search")
+    const includeAll = searchParams.get("includeAll") === "true"
 
     // Build where clause
-    const where: Record<string, unknown> = {
-      isActive: true,
-      stock: { gt: 0 },
-    }
+    // includeAll se usa desde el panel admin para ver también productos
+    // inactivos o sin stock, que la tienda pública no debe mostrar.
+    const where: Record<string, unknown> = includeAll
+      ? {}
+      : {
+          isActive: true,
+          stock: { gt: 0 },
+        }
 
     if (category) {
       where.category = {
@@ -176,7 +181,7 @@ export async function POST(request: NextRequest) {
         warranty: body.warranty ?? false,
         warrantyPeriod: body.warranty && body.warrantyPeriod ? String(body.warrantyPeriod) : null,
         categoryId: body.categoryId,
-        brandId: body.brandId,
+        brandId: body.brandId || null,
       },
       include: {
         category: true,

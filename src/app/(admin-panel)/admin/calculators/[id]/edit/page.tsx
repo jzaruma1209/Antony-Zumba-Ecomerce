@@ -121,7 +121,10 @@ export default function EditCalculatorPage() {
             body: JSON.stringify({
               name: material.name,
               unit: material.unit,
-              yield: parseFloat(material.yield.toString())
+              yield: parseFloat(material.yield.toString()),
+              unitPrice: material.unitPrice != null && material.unitPrice !== ('' as unknown)
+                ? parseFloat(material.unitPrice.toString())
+                : null
             })
           })
         } else {
@@ -133,7 +136,10 @@ export default function EditCalculatorPage() {
               name: material.name,
               unit: material.unit,
               yield: parseFloat(material.yield.toString()),
-              position: material.position
+              position: material.position,
+              unitPrice: material.unitPrice != null && material.unitPrice !== ('' as unknown)
+                ? parseFloat(material.unitPrice.toString())
+                : null
             })
           })
         }
@@ -221,7 +227,7 @@ export default function EditCalculatorPage() {
             {materials.map((material, index) => (
               <div
                 key={material.id}
-                className="grid grid-cols-1 md:grid-cols-4 gap-3 p-4 bg-card border rounded-lg items-end"
+                className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 bg-card border rounded-lg items-end"
               >
                 <div>
                   <label className="text-xs font-medium text-muted-foreground">
@@ -257,6 +263,20 @@ export default function EditCalculatorPage() {
                     value={material.yield}
                     onChange={(e) => updateMaterial(index, 'yield', e.target.value)}
                     placeholder="0.35"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">
+                    Precio unitario (opcional)
+                  </label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    value={material.unitPrice ?? ''}
+                    onChange={(e) => updateMaterial(index, 'unitPrice', e.target.value)}
+                    placeholder="Ej: 8.50"
                     className="mt-1"
                   />
                 </div>

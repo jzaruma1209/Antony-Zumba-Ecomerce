@@ -2,13 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { User, Package, MapPin, Heart, Settings } from "lucide-react"
+import { User, Package, MapPin, Heart, Settings, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 const navigation = [
   { name: "Perfil", href: "/profile", icon: User },
   { name: "Pedidos", href: "/profile/orders", icon: Package },
+  { name: "Proformas", href: "/profile/proformas", icon: FileText },
   { name: "Direcciones", href: "/profile/addresses", icon: MapPin },
   { name: "Favoritos", href: "/profile/favorites", icon: Heart },
   { name: "Config", href: "/profile/settings", icon: Settings },

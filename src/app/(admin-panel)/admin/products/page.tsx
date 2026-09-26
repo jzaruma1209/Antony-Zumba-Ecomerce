@@ -109,7 +109,7 @@ export default function AdminProductsPage() {
     const fetchData = async () => {
       try {
         const [productsRes, categoriesRes] = await Promise.all([
-          fetch("/api/products"),
+          fetch("/api/products?includeAll=true"),
           fetch("/api/categories"),
         ])
 

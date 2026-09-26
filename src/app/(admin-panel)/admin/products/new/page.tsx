@@ -49,7 +49,7 @@ const productSchema = z.object({
   comparePrice: z.number().min(0, "El precio anterior debe ser mayor o igual a 0").optional(),
   stock: z.number({ error: "El stock es requerido" }).min(0, "El stock debe ser mayor o igual a 0"),
   categoryId: z.string().min(1, "La categoria es requerida"),
-  brandId: z.string().min(1, "La marca es requerida"),
+  brandId: z.string().optional(),
   isNew: z.boolean(),
   isFeatured: z.boolean(),
   freeShipping: z.boolean(),
@@ -83,6 +83,8 @@ export default function NewProductPage() {
   const [images, setImages] = useState<UploadedImage[]>([])
   const [isOffer, setIsOffer] = useState(false)
   const [showOfferAlert, setShowOfferAlert] = useState(false)
+  const [showMissingFieldsAlert, setShowMissingFieldsAlert] = useState(false)
+  const [pendingData, setPendingData] = useState<ProductFormData | null>(null)
   const [warrantyOption, setWarrantyOption] = useState<string>("1-mes")
   const [customWarranty, setCustomWarranty] = useState<string>("")
   const [specs, setSpecs] = useState<SpecItem[]>([])
@@ -171,16 +173,21 @@ export default function NewProductPage() {
   }
 
   const onSubmit = async (data: ProductFormData) => {
-    if (images.length === 0) {
-      alert("Debes subir al menos una imagen")
-      return
-    }
-
     if (isOffer && data.showPrice && (!data.comparePrice || Number(data.comparePrice) <= 0)) {
       setShowOfferAlert(true)
       return
     }
 
+    if (!data.brandId) {
+      setPendingData(data)
+      setShowMissingFieldsAlert(true)
+      return
+    }
+
+    await saveProduct(data)
+  }
+
+  const saveProduct = async (data: ProductFormData) => {
     const returnPolicy = watch("returnPolicy")
     const warranty = watch("warranty")
 
@@ -330,7 +337,7 @@ export default function NewProductPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="brandId">Marca</Label>
+                <Label htmlFor="brandId">Marca (opcional)</Label>
                 <Select onValueChange={(value) => setValue("brandId", value)}>
                   <SelectTrigger id="brandId">
                     <SelectValue placeholder="Seleccionar marca" />
@@ -673,6 +680,41 @@ export default function NewProductPage() {
               }}
             >
               Ingresar precio anterior
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Aviso si faltan campos recomendados para mostrar la tarjeta del producto */}
+      <AlertDialog open={showMissingFieldsAlert} onOpenChange={setShowMissingFieldsAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Faltan campos recomendados</AlertDialogTitle>
+            <AlertDialogDescription>
+              Para que este producto se muestre correctamente en las tarjetas de la tienda, completa estos campos: Marca. Puedes guardarlo así de todas formas y completarlo después.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowMissingFieldsAlert(false)
+                setPendingData(null)
+              }}
+            >
+              Volver a editar
+            </Button>
+            <AlertDialogAction
+              onClick={async () => {
+                setShowMissingFieldsAlert(false)
+                if (pendingData) {
+                  await saveProduct(pendingData)
+                  setPendingData(null)
+                }
+              }}
+            >
+              Guardar de todas formas
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

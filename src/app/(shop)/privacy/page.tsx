@@ -41,7 +41,7 @@ export default function PrivacyPage() {
               </div>
               <div>
                 <p className="font-medium text-slate-900 dark:text-white">Información de Terceros:</p>
-                <p>Podemos recibir información sobre usted de terceros si utiliza servicios de autenticación como Google Sign-In.</p>
+                <p>Podemos recibir información sobre usted de terceros si utiliza servicios externos de autenticación al iniciar sesión.</p>
               </div>
             </div>
           </section>
@@ -129,7 +129,7 @@ export default function PrivacyPage() {
               <li>• Derecho a portabilidad de datos</li>
             </ul>
             <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-              Para ejercer estos derechos, contáctenos en: tumbadoszumba2508@gmail.com
+              Puede eliminar su cuenta y sus datos directamente desde "Mi cuenta → Configuración → Eliminar cuenta". Para el resto de estos derechos, o si prefiere hacerlo por este medio, contáctenos en: tumbadoszumba2508@gmail.com
             </p>
           </section>
 

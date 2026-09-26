@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { Search, UserPlus, MoreHorizontal, Mail, Ban, Eye, Shield } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Search, UserPlus, MoreHorizontal, Mail, Ban, Eye, Shield, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -88,7 +89,8 @@ function UsersSkeleton() {
 }
 
 export default function AdminUsersPage() {
-  const { users, loading, fetchUsers } = useAdminStore()
+  const router = useRouter()
+  const { users, loading, fetchUsers, updateUserStatus } = useAdminStore()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [roleFilter, setRoleFilter] = useState("all")
@@ -96,6 +98,16 @@ export default function AdminUsersPage() {
   useEffect(() => {
     fetchUsers()
   }, [fetchUsers])
+
+  const handleToggleSuspend = async (userId: string, currentStatus: string) => {
+    const nextStatus = currentStatus === "suspended" ? "active" : "suspended"
+    try {
+      await updateUserStatus(userId, nextStatus)
+    } catch (error) {
+      console.error(error)
+      alert("No se pudo actualizar el estado del usuario.")
+    }
+  }
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
@@ -273,9 +285,15 @@ export default function AdminUsersPage() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
+                              <DropdownMenuItem disabled>
                                 <Eye className="mr-2 h-4 w-4" />
                                 Ver perfil
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => router.push(`/admin/proformas?userId=${user.id}`)}
+                              >
+                                <FileText className="mr-2 h-4 w-4" />
+                                Ver proformas
                               </DropdownMenuItem>
                               <DropdownMenuItem>
                                 <Mail className="mr-2 h-4 w-4" />
@@ -289,12 +307,17 @@ export default function AdminUsersPage() {
                               )}
                               <DropdownMenuSeparator />
                               {user.status !== "suspended" ? (
-                                <DropdownMenuItem className="text-destructive">
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onClick={() => handleToggleSuspend(user.id, user.status)}
+                                >
                                   <Ban className="mr-2 h-4 w-4" />
                                   Suspender
                                 </DropdownMenuItem>
                               ) : (
-                                <DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleToggleSuspend(user.id, user.status)}
+                                >
                                   Reactivar cuenta
                                 </DropdownMenuItem>
                               )}

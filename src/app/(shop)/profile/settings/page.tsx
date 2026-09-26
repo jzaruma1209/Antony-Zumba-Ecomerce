@@ -1,5 +1,8 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { signOut } from "next-auth/react"
 import { Save, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,6 +29,25 @@ import {
 } from "@/components/ui/alert-dialog"
 
 export default function SettingsPage() {
+  const router = useRouter()
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true)
+    try {
+      const response = await fetch("/api/users/me", { method: "DELETE" })
+      if (!response.ok) {
+        throw new Error("Error al eliminar la cuenta")
+      }
+      await signOut({ redirect: false })
+      router.push("/")
+    } catch (error) {
+      console.error(error)
+      alert("No se pudo eliminar tu cuenta. Intenta de nuevo.")
+      setIsDeleting(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -197,9 +219,13 @@ export default function SettingsPage() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                    Eliminar cuenta
+                  <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    onClick={handleDeleteAccount}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Eliminando..." : "Eliminar cuenta"}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

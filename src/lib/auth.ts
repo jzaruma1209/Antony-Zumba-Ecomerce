@@ -30,6 +30,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null
         }
 
+        if (user.status !== "ACTIVE") {
+          return null
+        }
+
         const passwordMatch = await bcrypt.compare(
           credentials.password as string,
           user.password
@@ -44,6 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.name,
           role: user.role,
+          phone: user.phone,
         }
       },
     }),
@@ -65,9 +70,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
           user.id = newUser.id
           user.role = newUser.role
+          user.phone = newUser.phone
         } else {
+          if (existingUser.status !== "ACTIVE") {
+            return false
+          }
           user.id = existingUser.id
           user.role = existingUser.role
+          user.phone = existingUser.phone
         }
       }
       return true
@@ -76,6 +86,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.id = user.id as string
         token.role = user.role as string
+        token.phone = (user as { phone?: string | null }).phone ?? null
       }
       return token
     },
@@ -83,6 +94,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.id as string
         session.user.role = token.role as string
+        session.user.phone = (token.phone as string | null) ?? null
       }
       return session
     },

@@ -56,6 +56,19 @@ interface AdminOrder {
   updatedAt: string
 }
 
+interface AdminProforma {
+  id: string
+  status: string
+  area: number
+  contactName: string | null
+  contactPhone: string | null
+  createdAt: string
+  user: { id: string; name: string; email: string; phone: string | null }
+  calculator: { id: string; name: string }
+  itemCount: number
+  total: number
+}
+
 interface AdminUser {
   id: string
   name: string
@@ -81,6 +94,12 @@ interface AdminState {
   // Users
   users: AdminUser[]
 
+  // Proformas
+  proformas: AdminProforma[]
+  proformasTotal: number
+  proformasPendientes: number
+  proformasCotizadas: number
+
   loading: boolean
   error: string | null
 
@@ -88,7 +107,13 @@ interface AdminState {
   fetchDashboard: () => Promise<void>
   fetchOrders: (params?: { status?: string; limit?: number; offset?: number }) => Promise<void>
   fetchUsers: (params?: { role?: string; status?: string }) => Promise<void>
+  updateUserStatus: (id: string, status: string) => Promise<void>
   updateOrderStatus: (id: string, status: string) => Promise<void>
+  fetchProformas: (params?: { status?: string; userId?: string; q?: string }) => Promise<void>
+  updateProforma: (
+    id: string,
+    patch: { status?: string; contactName?: string; contactPhone?: string }
+  ) => Promise<void>
 }
 
 export const useAdminStore = create<AdminState>((set, get) => ({
@@ -98,6 +123,10 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   orders: [],
   ordersTotal: 0,
   users: [],
+  proformas: [],
+  proformasTotal: 0,
+  proformasPendientes: 0,
+  proformasCotizadas: 0,
   loading: false,
   error: null,
 
@@ -155,6 +184,23 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     }
   },
 
+  updateUserStatus: async (id, status) => {
+    set({ loading: true, error: null })
+    try {
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      })
+      if (!response.ok) throw new Error("Error updating user status")
+
+      await get().fetchUsers()
+    } catch (error) {
+      set({ error: (error as Error).message, loading: false })
+      throw error
+    }
+  },
+
   updateOrderStatus: async (id, status) => {
     set({ loading: true, error: null })
     try {
@@ -167,6 +213,45 @@ export const useAdminStore = create<AdminState>((set, get) => ({
 
       // Refresh orders after update
       await get().fetchOrders()
+    } catch (error) {
+      set({ error: (error as Error).message, loading: false })
+      throw error
+    }
+  },
+
+  fetchProformas: async (params = {}) => {
+    set({ loading: true, error: null })
+    try {
+      const searchParams = new URLSearchParams()
+      if (params.status) searchParams.set("status", params.status)
+      if (params.userId) searchParams.set("userId", params.userId)
+      if (params.q) searchParams.set("q", params.q)
+
+      const response = await fetch(`/api/admin/proformas?${searchParams}`)
+      if (!response.ok) throw new Error("Error fetching proformas")
+      const data = await response.json()
+      set({
+        proformas: data.proformas,
+        proformasTotal: data.total,
+        proformasPendientes: data.pendientes,
+        proformasCotizadas: data.cotizadas,
+        loading: false,
+      })
+    } catch (error) {
+      set({ error: (error as Error).message, loading: false })
+    }
+  },
+
+  updateProforma: async (id, patch) => {
+    set({ loading: true, error: null })
+    try {
+      const response = await fetch(`/api/admin/proformas/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      })
+      if (!response.ok) throw new Error("Error updating proforma")
+      await get().fetchProformas()
     } catch (error) {
       set({ error: (error as Error).message, loading: false })
       throw error
